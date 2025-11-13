@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<head>
+  <link rel="stylesheet" type="text/css" href="qrc:/scripts/3rdparty/markdown.css">
+  <script src="qrc:/scripts/3rdparty/marked.min.js"></script>
+  <script src="qrc:/scripts/3rdparty/qwebchannel.js"></script>
+</head>
+<body>
+  <div id="placeholder"></div>
+  <script>
+  'use strict';
+
+  var placeholder = document.getElementById('placeholder');
+  var content;
+
+  var updateText = function(text) {
+      placeholder.innerHTML = marked(text);
+      content.htmltext = placeholder.innerHTML;
+  }
+
+  new QWebChannel(qt.webChannelTransport,
+    function(channel) {
+      content = channel.objects.content;
+      updateText(content.text);
+      content.textChanged.connect(updateText);
+    }
+  );
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,57 @@
+<RCC>
+    <qresource prefix="/menu">
+        <file>Icons/DeleteCurrentRecordIcon24.png</file>
+        <file>Icons/DisplayNextRecordIcon24.png</file>
+        <file>Icons/DisplayPrevRecordIcon24.png</file>
+        <file>Icons/NewCloneRecordIcon24.png</file>
+        <file>Icons/NewCreateRecordIcon24.png</file>
+        <file>Icons/QuestionMessageIcon24.png</file>
+        <file>Icons/SelectDisplayRecordIcon24.png</file>
+        <file>Icons/SaveCurrentRecordIcon24.png</file>
+        <file>Icons/DetailedCSDIcon24.png</file>
+        <file>Icons/DatabaseModeIcon24.png</file>
+        <file>Icons/ModelingProjectIcon24.png</file>
+        <file>Icons/CancelIcon24.png</file>
+        <file>Icons/SetKeyTemplateIcon24.png</file>
+        <file>Icons/ShowFilesIcon24.png</file>
+        <file>Icons/RemakeRecordIcon24.png</file>
+        <file>Icons/DatabaseFunctionIcon24.png</file>
+        <file>Icons/DocumentsPileIcon24.png</file>
+        <file>Icons/DocumentDatabaseIcon24.png</file>
+        <file>Icons/DualThModuleIcon24.png</file>
+        <file>Icons/outgoing24.png</file>
+        <file>Icons/Incoming24.png</file>
+        <file>Icons/PlotDataOnGraphIcon24.png</file>
+        <file>Icons/HomeInHelpMenu24.png</file>
+        <file>Icons/SearchBackwardIcon24.png</file>
+        <file>Icons/SearchForwardIcon24.png</file>
+        <file>Icons/InfoMessageIcon24.png</file>
+        <file>Icons/PrintDataToFileIcon24.png</file>
+        <file>Icons/jsonio-logo-icon.png</file>
+        <file>Icons/jsonui-logo-icon.png</file>
+        <file>Icons/load_db.png</file>
+        <file>Icons/save_db.png</file>
+        <file>Icons/Exp-foreign.png</file>
+        <file>Icons/Imp-foreign.png</file>
+        <file>Icons/Imp-exp-foreign.png</file>
+        <file>Icons/action-export.png</file>
+        <file>Icons/action-import.png</file>
+        <file>Icons/ShowGEMResultsIcon24.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>scripts/template.html</file>
+        <file>scripts/highlight.js/highlight.pack.js</file>
+        <file>scripts/highlight.js/styles/default.css</file>
+        <file>scripts/highlight.js/styles/github.css</file>
+        <file>scripts/mermaid/mermaid.full.min.js</file>
+        <file>scripts/mermaid/mermaid.css</file>
+        <file>scripts/template_presentation.html</file>
+        <file>scripts/3rdparty/MARKDOWN-LICENSE.txt</file>
+        <file>scripts/3rdparty/markdown.css</file>
+        <file>scripts/3rdparty/MARKED-LICENSE.txt</file>
+        <file>scripts/3rdparty/marked.min.js</file>
+        <file>scripts/3rdparty/qt_attribution.json</file>
+        <file>scripts/3rdparty/qwebchannel.js</file>
+        <file>scripts/index.html</file>
+    </qresource>
+</RCC>

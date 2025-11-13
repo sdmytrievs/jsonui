@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TableEditWidget</class>
+ <widget class="QMainWindow" name="TableEditWidget">
+  <property name="windowModality">
+   <enum>Qt::WindowModality::NonModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Tabular Data Editor Widget</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionExport_to_CSV_File"/>
+    <addaction name="actionImport_from_CVS"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionCalculator"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelect_row"/>
+    <addaction name="actionSelect_co_lumn"/>
+    <addaction name="actionSelect_all"/>
+    <addaction name="separator"/>
+    <addaction name="action_Copy"/>
+    <addaction name="actionCopy_wit_h_names"/>
+    <addaction name="separator"/>
+    <addaction name="actionC_ut"/>
+    <addaction name="action_Paste"/>
+    <addaction name="actionPaste_transposed"/>
+    <addaction name="actionClear"/>
+   </widget>
+   <widget class="QMenu" name="menu_Tools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionMark_Columns_as_X"/>
+    <addaction name="actionMark_Columns_as_Y"/>
+    <addaction name="separator"/>
+    <addaction name="actionPlot_Results"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_Help"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_Tools"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionExport_to_CSV_File">
+   <property name="text">
+    <string>&amp;Export Whole Table to CSV File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Export Whole Table to CSV File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Whole Table to CSV file ...</string>
+   </property>
+  </action>
+  <action name="actionExport_Selected_to_CSV_File">
+   <property name="text">
+    <string>Export &amp;Selected Area to CSV File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Export Selected Area to CSV File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export Selected Area to CSV file ...</string>
+   </property>
+  </action>
+  <action name="actionImport_from_CVS">
+   <property name="text">
+    <string>&amp;Import Table from CVS File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Import Table from CVS File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import Table from CVS file ... </string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>&amp;Close Widget</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Widget</string>
+   </property>
+  </action>
+  <action name="actionCalculator">
+   <property name="text">
+    <string>Calculat&amp;or ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Use calculator  to the specified cells</string>
+   </property>
+   <property name="shortcut">
+    <string>F8</string>
+   </property>
+  </action>
+  <action name="actionSelect_row">
+   <property name="text">
+    <string>Select &amp;Row</string>
+   </property>
+   <property name="toolTip">
+    <string>Select current row</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionSelect_co_lumn">
+   <property name="text">
+    <string>Select Co&amp;lumn</string>
+   </property>
+   <property name="toolTip">
+    <string>Select current column</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionSelect_all">
+   <property name="text">
+    <string>Select &amp;All</string>
+   </property>
+   <property name="toolTip">
+    <string>Select all cells</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="action_Copy">
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy selected cells</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionCopy_wit_h_names">
+   <property name="text">
+    <string>Copy wit&amp;h names</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy selected header&amp;cells</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="actionC_ut">
+   <property name="text">
+    <string>C&amp;ut</string>
+   </property>
+   <property name="toolTip">
+    <string>Cut selected cells</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="action_Paste">
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="toolTip">
+    <string>Paste to selected area</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionPaste_transposed">
+   <property name="text">
+    <string>Paste &amp;transposed</string>
+   </property>
+   <property name="toolTip">
+    <string>Paste transposed to selected area</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="text">
+    <string>Cl&amp;ear</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear selected cells</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Del</string>
+   </property>
+  </action>
+  <action name="actionMark_Columns_as_X">
+   <property name="text">
+    <string>Mark Column as &amp;X (toggle) </string>
+   </property>
+   <property name="iconText">
+    <string>Mark Column as X (toggle)</string>
+   </property>
+   <property name="toolTip">
+    <string>Mark Column as X (toggle)</string>
+   </property>
+  </action>
+  <action name="actionMark_Columns_as_Y">
+   <property name="text">
+    <string>&amp;Mark Columns as Y (toggle)</string>
+   </property>
+  </action>
+  <action name="actionPlot_Results">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/PlotDataOnGraphIcon24.png</normaloff>:/menu/Icons/PlotDataOnGraphIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Plot Y-marked Columns ...</string>
+   </property>
+   <property name="iconText">
+    <string>Plot Y-marked Columns ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Plot Y-marked Columns ...</string>
+   </property>
+  </action>
+  <action name="action_Help">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Help</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../jsonui.qrc"/>
+ </resources>
+ <connections/>
+</ui>

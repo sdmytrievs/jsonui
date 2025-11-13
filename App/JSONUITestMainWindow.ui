@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TJSONUITestWin</class>
+ <widget class="QMainWindow" name="TJSONUITestWin">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>831</width>
+    <height>446</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>JSONUI Test Main Window</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>831</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionSet_I_O_Files_Location"/>
+    <addaction name="separator"/>
+    <addaction name="actionNewVertex"/>
+    <addaction name="actionNew_Edge_Editor_Window"/>
+    <addaction name="separator"/>
+    <addaction name="actionNew_Bson"/>
+    <addaction name="actionNew_Collection_Data_Editor"/>
+    <addaction name="actionNew_Impex"/>
+    <addaction name="actionNew_CSV"/>
+    <addaction name="actionNew_Key_Selection"/>
+    <addaction name="separator"/>
+    <addaction name="actionE_xit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionPreferences"/>
+    <addaction name="separator"/>
+    <addaction name="actionContents"/>
+    <addaction name="separator"/>
+    <addaction name="actionVersion"/>
+    <addaction name="actionAuthors"/>
+    <addaction name="actionLicense"/>
+    <addaction name="separator"/>
+    <addaction name="action_Help_About"/>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="action_Show_comments"/>
+    <addaction name="action_Display_enums"/>
+    <addaction name="action_Edit_id"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_View"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="floatable">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPreferences"/>
+   <addaction name="separator"/>
+   <addaction name="actionNewVertex"/>
+   <addaction name="actionNew_Edge_Editor_Window"/>
+   <addaction name="actionNew_Bson"/>
+   <addaction name="actionNew_Impex"/>
+   <addaction name="actionNew_CSV"/>
+   <addaction name="separator"/>
+   <addaction name="actionContents"/>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionAdd_schema_file">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/DetailedCSDIcon24.png</normaloff>:/menu/Icons/DetailedCSDIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set Location of Data &amp;Schema Files ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Data Schemas Location ...</string>
+   </property>
+  </action>
+  <action name="actionE_xit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionNewVertex">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/DocumentDatabaseIcon24.png</normaloff>:/menu/Icons/DocumentDatabaseIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New DataBase Vertex Data Editor  ...</string>
+   </property>
+   <property name="iconText">
+    <string>New DataBase Vertex Data Editor  ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New DataBase Vertex Data Editor  ...</string>
+   </property>
+  </action>
+  <action name="actionPreferences">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/SetKeyTemplateIcon24.png</normaloff>:/menu/Icons/SetKeyTemplateIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Preferences ...</string>
+   </property>
+   <property name="iconText">
+    <string>Preferences ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Preferences ...</string>
+   </property>
+  </action>
+  <action name="action_Help_About">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Help Viewer ...</string>
+   </property>
+   <property name="iconText">
+    <string>Open Help Viewer ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Help Viewer ...</string>
+   </property>
+  </action>
+  <action name="actionAuthors">
+   <property name="text">
+    <string>Au&amp;thors ...</string>
+   </property>
+  </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>&amp;License ...</string>
+   </property>
+  </action>
+  <action name="actionContents">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Help &amp;Contents ...</string>
+   </property>
+  </action>
+  <action name="action_Show_comments">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Display Comments to Data Fields</string>
+   </property>
+  </action>
+  <action name="action_Display_enums">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Show Enum Names Instead of Values</string>
+   </property>
+  </action>
+  <action name="actionSet_I_O_Files_Location">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set Location of &amp;Input/Output Files ...</string>
+   </property>
+   <property name="iconText">
+    <string>Set Location of Input/Output Files ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Set Location of Input/Output Files ...</string>
+   </property>
+  </action>
+  <action name="actionSet_Database_Location">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/DatabaseModeIcon24.png</normaloff>:/menu/Icons/DatabaseModeIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set Database &amp;Location ...</string>
+   </property>
+  </action>
+  <action name="actionVersion">
+   <property name="text">
+    <string>&amp;Version ...</string>
+   </property>
+  </action>
+  <action name="action_Edit_id">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/CancelIcon24.png</normaloff>:/menu/Icons/CancelIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Edit _id of DB Documents (Records) </string>
+   </property>
+  </action>
+  <action name="actionNew_Edge_Editor_Window">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/DualThModuleIcon24.png</normaloff>:/menu/Icons/DualThModuleIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>New DataBase Link (&amp;Edge) Data Editor ...</string>
+   </property>
+   <property name="iconText">
+    <string>New DataBase Link (Edge) Data Editor ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New DataBase Link (Edge) Data Editor ...</string>
+   </property>
+  </action>
+  <action name="actionNew_Bson">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/DetailedCSDIcon24.png</normaloff>:/menu/Icons/DetailedCSDIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Schema-&amp;Based Data Editor ...</string>
+   </property>
+   <property name="iconText">
+    <string>New Schema-Based Data Editor ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New Schema-Based Data Editor ...</string>
+   </property>
+  </action>
+  <action name="actionNew_CSV">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>New Table Data Editor from &amp;CSV File ...</string>
+   </property>
+   <property name="iconText">
+    <string>New Table Data Editor from CSV File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New Table Data Editor from CSV File ...</string>
+   </property>
+  </action>
+  <action name="actionNew_Impex">
+   <property name="icon">
+    <iconset resource="../jsonui.qrc">
+     <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Ne&amp;w Impex Description for Foreign Data ...</string>
+   </property>
+   <property name="iconText">
+    <string>New Impex Description for Foreign Data ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New Impex Description for Foreign Data ...</string>
+   </property>
+  </action>
+  <action name="actionNew_Collection_Data_Editor">
+   <property name="text">
+    <string>New Collection Data Editor ...</string>
+   </property>
+  </action>
+  <action name="actionNew_Key_Selection">
+   <property name="text">
+    <string>New Key Selection ...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../jsonui.qrc"/>
+ </resources>
+ <connections/>
+</ui>

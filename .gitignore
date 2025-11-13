@@ -1,0 +1,9 @@
+.directory
+.DS_Store
+/build
+*.pro.user
+*.pro.user.*
+*.pro.autosave
+
+
+

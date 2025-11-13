@@ -1,0 +1,43 @@
+{
+     "jsonio" :   {
+
+     },
+     "log" :   {
+          "modules" :   [
+               "arango-cpp",
+               "jsonio",
+               "jsonqml"
+          ],
+          "level" :   "info",
+          "module_level" :   {
+               "jsonqml" :   "debug"
+          }
+     },
+     "jsonui" :   {
+          "ShowComments" :   false,
+          "ShowEnumNames" :   false,
+          "CanEdit_id" :   false,
+          "KeepExpanded" :   true,
+          "CanEditDocPages" :   false,
+          "CurrentDBConnection" :   "ArangoDBLocal"
+     },
+     "arangodb" :   {
+          "ArangoDBLocal" :   {
+               "DBName" :   "hub_main",
+               "DBCreate" :   true,
+               "DB_URL" :   "http://localhost:8529",
+               "DBUser" :   "root",
+               "DBUserPassword" :   "",
+               "DBAccess" :   "rw",
+               "DBRootName" :   "_system",
+               "DBRootUser" :   "root",
+               "DBRootPassword" :   ""
+          },
+          "UseArangoDBInstance" :   "ArangoDBLocal"
+     },
+     "common" :   {
+          "WorkDirectoryPath" :   ".",
+          "SchemasDirectory" :   "schemas",
+          "ResourcesDirectory" :   ""
+     }
+}
