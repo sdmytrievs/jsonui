@@ -1,29 +1,31 @@
 #ifndef TABLECLIENT_H
 #define TABLECLIENT_H
 
+#include <set>
 #include <memory>
 #include <QObject>
 #include <QAbstractItemModel>
 #include <QItemSelectionModel>
+#include "jsonqml/models/select_model.h"
 
 namespace jsonqml {
 
 class TableClientPrivate;
 
+const int default_table_settings = TableFlag::TableIsEditable|TableFlag::RowSortingEnabled;
+
 class TableClient : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(QAbstractItemModel* csvmodel READ csvmodel NOTIFY csvModelChanged)
+    Q_PROPERTY(QAbstractItemModel* csvmodel READ tableModel NOTIFY tableModelChanged)
     Q_PROPERTY(bool sortingEnabled READ sortingEnabled NOTIFY tablePropertiesChanged)
-    Q_PROPERTY(QString csvfile READ csvfile WRITE setCsvFile NOTIFY csvFileChanged)
 
     Q_DISABLE_COPY(TableClient)
 
 signals:
-    void csvModelChanged();
+    void tableModelChanged();
     void tablePropertiesChanged();
-    void csvFileChanged();
 
 public slots:
     void copySelected(const QModelIndexList& selection);
@@ -31,23 +33,19 @@ public slots:
     void pasteSelected(const QModelIndexList& selection);
 
 public:
-    explicit TableClient(QObject *parent = nullptr);
+    explicit TableClient(SelectModel* table_model, int mode=default_table_settings, QObject *parent = nullptr);
     ~TableClient();
 
-    QAbstractItemModel *csvmodel();
+    QAbstractItemModel *tableModel();
     bool sortingEnabled();
-    const QString &csvfile() {
-        return csv_file;
-    }
-    void setCsvFile(const QString& file);
-
-    Q_INVOKABLE void readCSV(const QString& path);
-    Q_INVOKABLE void saveCSV(const QString& path);
     Q_INVOKABLE QItemSelection selectAll();
 
-protected:
-    QString csv_file{"File"};
+    QModelIndex indexRow(int row) const;
+    int rowIndex(const QModelIndex& index) const;
+    std::set<std::size_t> rowsSelection(const QItemSelection& selection);
+    QItemSelection selectionRows(const std::set<std::size_t>& rows);
 
+protected:
     std::unique_ptr<TableClientPrivate> impl_ptr;
     TableClientPrivate* impl_func()
     { return reinterpret_cast<TableClientPrivate *>(impl_ptr.get()); }

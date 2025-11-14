@@ -26,10 +26,10 @@ TableEditWidget::TableEditWidget(const QString& title,
     //setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
 
     if(mode_using & TableFlag::GraphDataEnabled) {
-        table_client.reset(new ChartClient(this));
+        table_client.reset(new ChartClient(mode, this));
     }
     else {
-        table_client.reset(new TableClient(this));
+        table_client.reset(new CSVClient(mode, this));
     }
 
     table_view.reset(new MatrixTable(mode, table_client.get(), this));

@@ -20,6 +20,7 @@ using model_line_t = std::vector<std::string>;
 using model_table_t = std::vector<model_line_t>;
 
 enum TableFlag {
+    SingleSelection =   0x0020,///< Multiple items can be selected
     RowSortingEnabled =   0x0010,///< Added sorting into colums
     GraphDataEnabled =  0x0004,  ///< Connect 2d graphic for columns
     TableIsEditable =   0x0002,  ///< Enable editing

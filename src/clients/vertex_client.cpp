@@ -218,9 +218,22 @@ QString VertexClient::editorId() {
    return QString::fromStdString(impl_func()->id_from_editor());
 }
 
+std::string VertexClient::tableId(size_t row) const
+{
+    if(impl_func()->keys_model) {
+        return impl_func()->keys_model->get_id(row);
+    }
+    return {};
+}
+
 QAbstractItemModel *VertexClient::keysmodel()
 {
     return impl_func()->keys_list_model();
+}
+
+SelectModel *VertexClient::tablemodel()
+{
+    return impl_func()->keys_model.get();
 }
 
 bool VertexClient::sortingEnabled()

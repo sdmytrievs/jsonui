@@ -1,7 +1,7 @@
 #ifndef CHARTCLIENT_H
 #define CHARTCLIENT_H
 
-#include "jsonqml/clients/table_client.h"
+#include "jsonqml/clients/csv_client.h"
 #include "jsonqml/charts/graph_data.h"
 #include "jsonqml/charts/legend_model.h"
 #include "jsonqml/charts/xyseries_decorator.h"
@@ -10,7 +10,7 @@ namespace jsonqml {
 
 class ChartClientPrivate;
 
-class ChartClient : public TableClient
+class ChartClient : public CSVClient
 {
     Q_OBJECT
 
@@ -31,7 +31,7 @@ public slots:
     void toggleY(int column);
 
 public:
-    explicit ChartClient(QObject *parent = nullptr);
+    explicit ChartClient(int mode=default_table_settings, QObject *parent = nullptr);
     ~ChartClient();
 
     ChartData* chartData();

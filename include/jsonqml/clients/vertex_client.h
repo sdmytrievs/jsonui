@@ -7,6 +7,7 @@
 namespace jsonqml {
 
 class VertexClientPrivate;
+class SelectModel;
 
 class VertexClient : public JsonClient
 {
@@ -34,12 +35,14 @@ public:
     explicit VertexClient(QObject *parent = nullptr);
 
     QAbstractItemModel *keysmodel();
+    SelectModel *tablemodel();
     bool sortingEnabled();
     Q_INVOKABLE bool queryExecuting();
 
     Q_INVOKABLE virtual void readEditorData(int row);
     Q_INVOKABLE virtual void readEditorId(QString vertex_id);
     Q_INVOKABLE QString editorId();
+    std::string tableId(size_t row) const;
 
 protected:
     VertexClientPrivate* impl_func()

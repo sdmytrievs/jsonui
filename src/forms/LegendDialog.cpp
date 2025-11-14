@@ -36,7 +36,6 @@ LegendDialog::~LegendDialog()
 {
 }
 
-
 void  LegendDialog::CmChangeGraphType(int /*new_type*/)
 {
 }
@@ -131,7 +130,6 @@ void LegendDialog::set_chart_data()
     label_font = chart_data->axisFont();
     ui->pLabelFont->setText(label_font.toString());
 }
-
 
 bool LegendDialog::apply2dialog()
 {

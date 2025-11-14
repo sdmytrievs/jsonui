@@ -5,15 +5,6 @@
 
 namespace jsonqml {
 
-
-QAbstractItemModel *TableClientPrivate::csv_model() const
-{
-    if(sorting_enabled()) {
-        return sort_proxy_model.get();
-    }
-    return csv_model_data.get();
-}
-
 bool TableClientPrivate::sorting_enabled() const
 {
     return keys_table_mode&RowSortingEnabled;
@@ -21,11 +12,85 @@ bool TableClientPrivate::sorting_enabled() const
 
 void TableClientPrivate::init()
 {
-    csv_model_data.reset(new CSVModel());
     if(sorting_enabled()) {
         sort_proxy_model.reset(new SortFilterProxyModel());
-        sort_proxy_model->setSourceModel(csv_model_data.get());
+        sort_proxy_model->setSourceModel(current_model);
     }
+}
+
+QAbstractItemModel *TableClientPrivate::table_model() const
+{
+    if(sorting_enabled()) {
+        return sort_proxy_model.get();
+    }
+    return current_model;
+}
+
+QModelIndex TableClientPrivate::model_index_row(int row) const
+{
+    if(sorting_enabled()) {
+        return sort_proxy_model->mapFromSource(sort_proxy_model->sourceModel()->index(row,0)) ;
+    }
+    return current_model->index(row,0);
+}
+
+int TableClientPrivate::model_row_index(const QModelIndex &index) const
+{
+    if(sorting_enabled()) {
+        return sort_proxy_model->mapToSource(index).row();
+    }
+    return index.row();
+}
+
+std::set<std::size_t> TableClientPrivate::rows_selected(const QItemSelection& itemselection) const
+{
+    std::set<std::size_t> rows;
+    QItemSelection selitems = itemselection;
+    if(sorting_enabled()) {
+        selitems = sort_proxy_model->mapSelectionToSource(selitems);
+    }
+    QModelIndexList selection = selitems.indexes();
+
+    // Multiple rows can be selected
+    for(int i=0; i< selection.count(); ++i) {
+        QModelIndex index = selection.at(i);
+        if( index.column() == 0 ) {
+            rows.insert( index.row() );
+        }
+    }
+    return rows;
+}
+
+QItemSelection TableClientPrivate::select_rows(const std::set<std::size_t> &rows) const
+{
+    QItemSelection selitems;
+    int start_row=-1, end_row=-1;
+    // make groups for save time
+    for(int row: rows ) {
+        if(row >= current_model->rowCount()) {
+            break;
+        }
+        if(start_row == -1) {
+            start_row = end_row = row;
+        }
+        else if(end_row+1 == row) {
+            end_row++;
+        }
+        else {
+            selitems.merge(QItemSelection(current_model->index(start_row, 0), current_model->index(end_row, 0)),
+                           QItemSelectionModel::Select);
+            start_row = end_row = row;
+        }
+    }
+    if(start_row != -1) {
+        selitems.merge(QItemSelection(current_model->index(start_row, 0), current_model->index(end_row, 0)),
+                       QItemSelectionModel::Select);
+    }
+
+    if(sorting_enabled()) {
+        selitems = sort_proxy_model->mapSelectionFromSource(selitems);
+    }
+    return selitems;
 }
 
 Selection TableClientPrivate::get_selection_range(const QModelIndexList& selection, bool to_paste)
@@ -46,8 +111,8 @@ Selection TableClientPrivate::get_selection_range(const QModelIndexList& selecti
 
     // only one selected => all for end of table
     if(to_paste && sel_box.fromCol==sel_box.toCol && sel_box.fromRow==sel_box.toRow) {
-        sel_box.toCol = csv_model()->columnCount()-1;
-        sel_box.toRow = csv_model()->rowCount()-1;
+        sel_box.toCol = table_model()->columnCount()-1;
+        sel_box.toRow = table_model()->rowCount()-1;
     }
     return sel_box;
 }
@@ -59,7 +124,7 @@ QString TableClientPrivate::create_header(const Selection& sel_box)
         if(col > sel_box.fromCol) {
             clip_text += splitCol;
         }
-        text = csv_model()->headerData(col, Qt::Horizontal, Qt::DisplayRole).toString();
+        text = table_model()->headerData(col, Qt::Horizontal, Qt::DisplayRole).toString();
         clip_text += (text.isEmpty() ? " " : text);;
     }
     return clip_text;
@@ -73,7 +138,7 @@ QString TableClientPrivate::create_string(const Selection& sel_box)
             if(col > sel_box.fromCol) {
                 clip_text += splitCol;
             }
-            text = csv_model()->index(row,col).data(Qt::DisplayRole).toString();
+            text = table_model()->index(row,col).data(Qt::DisplayRole).toString();
             clip_text += (text.isEmpty() ? " " : text);
         }
         clip_text += splitRow;
@@ -90,7 +155,7 @@ void TableClientPrivate::set_from_string(const QString& str, const Selection& se
     for(int it=0, row=sel.fromRow; it<rows.count()&&row<=sel.toRow; it++, row++) {
         const QStringList cells = rows[it].split(splitCol, Qt::KeepEmptyParts);
         for(int cell=0, column=sel.fromCol; cell<cells.count()&&column<=sel.toCol; cell++,column++)  {
-            csv_model()->setData(csv_model()->index(row,column), cells[cell].trimmed(), Qt::EditRole);
+            table_model()->setData(table_model()->index(row,column), cells[cell].trimmed(), Qt::EditRole);
         }
     }
 }
@@ -118,32 +183,6 @@ void TableClientPrivate::paste_selected(const QModelIndexList &selection)
     set_from_string(clip_text, sel);
 }
 
-void TableClientPrivate::read_CSV(const QString &path)
-{
-    QFile file(path);
-    if(!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        uiSettings().setError("could not open file");
-        return;
-    }
-    QByteArray ba = file.readAll();
-    std::string csv_srtring =ba.toStdString();
-    csv_model_data->setCsvString(std::move(csv_srtring));
-    file.close();
-}
-
-void TableClientPrivate::save_CSV(const QString &path)
-{
-    auto csv_string = csv_model_data->getCsvString();
-    QFile file(path);
-    if(!file.open(QIODevice::WriteOnly)) {
-        uiSettings().setError("could not open file");
-        return;
-    }
-    QTextStream stream(&file);
-    stream << csv_string.c_str();
-    file.close();
-}
-
 //--------------------------------------------------------------------------
 
 TableClient::TableClient(TableClientPrivate* impl, QObject *parent):
@@ -152,16 +191,16 @@ TableClient::TableClient(TableClientPrivate* impl, QObject *parent):
 {
 }
 
-TableClient::TableClient(QObject *parent):
-    TableClient(new TableClientPrivate, parent)
+TableClient::TableClient(SelectModel* table_model, int mode, QObject *parent):
+    TableClient(new TableClientPrivate(table_model, mode), parent)
 {
 }
 
 TableClient::~TableClient() {}
 
-QAbstractItemModel *TableClient::csvmodel()
+QAbstractItemModel *TableClient::tableModel()
 {
-    return impl_func()->csv_model();
+    return impl_func()->table_model();
 }
 
 bool TableClient::sortingEnabled()
@@ -169,55 +208,35 @@ bool TableClient::sortingEnabled()
     return impl_func()->sorting_enabled();
 }
 
-void TableClient::setCsvFile(const QString& path)
-{
-    QFileInfo file(path);
-    csv_file = file.fileName();
-    emit csvFileChanged();
-}
-
-void TableClient::readCSV(const QString &url)
-{
-    if(url.isEmpty()) {
-        return;
-    }
-    uiSettings().setError(QString());
-    try {
-        // save work path
-        auto path = uiSettings().handleFileChosen(url);
-        impl_func()->read_files(path);
-        setCsvFile(path);
-    }
-    catch(std::exception& e) {
-        uiSettings().setError(e.what());
-    }
-}
-
-void TableClient::saveCSV(const QString &url)
-{
-    if(url.isEmpty()) {
-        return;
-    }
-    uiSettings().setError(QString());
-    try {
-        auto path = uiSettings().handleFileChosen(url);
-        impl_func()->save_files(path);
-        setCsvFile(path);
-    }
-    catch(std::exception& e) {
-        uiSettings().setError(e.what());
-    }
-}
-
 QItemSelection TableClient::selectAll()
 {
-    auto dmodel=csvmodel();
+    auto dmodel = tableModel();
     QItemSelection all_sel;
     if(dmodel->rowCount()>0 && dmodel->columnCount()>0) {
         all_sel.select(dmodel->index(0,0),
                        dmodel->index(dmodel->rowCount()-1,dmodel->columnCount()-1));
     }
     return all_sel;
+}
+
+QModelIndex TableClient::indexRow(int row) const
+{
+    return impl_func()->model_index_row(row);
+}
+
+int TableClient::rowIndex(const QModelIndex &index) const
+{
+    return impl_func()->model_row_index(index);
+}
+
+std::set<std::size_t> TableClient::rowsSelection(const QItemSelection &selection)
+{
+    return impl_func()->rows_selected(selection);
+}
+
+QItemSelection TableClient::selectionRows(const std::set<std::size_t> &rows)
+{
+    return impl_func()->select_rows(rows);
 }
 
 void TableClient::copySelected(const QModelIndexList& selection)

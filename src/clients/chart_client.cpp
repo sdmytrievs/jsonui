@@ -6,7 +6,7 @@
 #include <QtCharts/QValueAxis>
 
 #include "jsonqml/clients/chart_client.h"
-#include "table_client_p.h"
+#include "csv_client_p.h"
 #include "jsonio/jsondump.h"
 #include "jsonio/txt2file.h"
 
@@ -17,13 +17,13 @@ void getLinePen(QPen& pen, const SeriesLineData& linedata);
 QStringList allImageFilters();
 
 
-class ChartClientPrivate  : public TableClientPrivate
+class ChartClientPrivate  : public CSVClientPrivate
 {
     Q_DISABLE_COPY_MOVE(ChartClientPrivate)
 
 public:
-    explicit ChartClientPrivate():
-        TableClientPrivate()
+    explicit ChartClientPrivate(int mode):
+        CSVClientPrivate(mode)
     {
         init_charts();
     }
@@ -162,7 +162,7 @@ void ChartClientPrivate::toggle_Y(int column)
 //--------------------------------------------------------------------------
 
 ChartClient::ChartClient(ChartClientPrivate *impl, QObject *parent):
-    TableClient(impl, parent)
+    CSVClient(impl, parent)
 {
     connect(chartData(), &ChartData::changedModelSelections,
             this, [this]() { legendModel()->updateLines(chartData()->lines());
@@ -171,8 +171,8 @@ ChartClient::ChartClient(ChartClientPrivate *impl, QObject *parent):
     connect(chartData(), &ChartData::dataChanged, this, &ChartClient::chartDataChanged);
 }
 
-ChartClient::ChartClient(QObject *parent):
-    ChartClient(new ChartClientPrivate(), parent)
+ChartClient::ChartClient(int mode, QObject *parent):
+    ChartClient(new ChartClientPrivate(mode), parent)
 {}
 
 ChartClient::~ChartClient()

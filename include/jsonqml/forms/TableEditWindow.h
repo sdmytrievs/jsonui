@@ -9,7 +9,7 @@ class TableEditWidget;
 
 namespace jsonqml {
 
-class TableClient;
+class CSVClient;
 class MatrixTable;
 class GraphDialog;
 
@@ -37,7 +37,7 @@ public:
 
 private:
     QScopedPointer<Ui::TableEditWidget> ui;
-    QScopedPointer<TableClient> table_client;
+    QScopedPointer<CSVClient> table_client;
     QScopedPointer<MatrixTable> table_view;
     QScopedPointer<GraphDialog> graph_dlg;
 

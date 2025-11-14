@@ -3,8 +3,7 @@
 #include <QKeyEvent>
 #include <QLineEdit>
 
-#include "jsonqml/models/csv_model.h"
-#include "jsonqml/clients/chart_client.h"
+#include "jsonqml/clients/table_client.h"
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/CalcDialog.h"
@@ -47,7 +46,7 @@ MatrixTable::MatrixTable(int mode, TableClient* atable_client, QWidget* parent):
     setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::AnyKeyPressed);
 
     setSortingEnabled(table_client->sortingEnabled());
-    setModel(table_client->csvmodel());
+    setModel(table_client->tableModel());
     setItemDelegate(new MatrixDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
@@ -210,9 +209,9 @@ void MatrixTable::runCalc()
 }
 
 void MatrixTable::selRow()
- {
+{
     selectRow(currentIndex().row());
- }
+}
 
 void MatrixTable::selColumn()
 {
@@ -249,7 +248,7 @@ void MatrixTable::copyDataHeader()
 
 void MatrixTable::pasteData()
 {
-   table_client->pasteSelected(selectedIndexes());
+    table_client->pasteSelected(selectedIndexes());
 }
 
 void MatrixTable::pasteTransposedData()
@@ -258,6 +257,35 @@ void MatrixTable::pasteTransposedData()
     // !!!  traspose clip_text
     uiSettings().copy(clip_text);
     table_client->pasteSelected(selectedIndexes());
+}
+
+void MatrixTable::setCurrentRow(int row)
+{
+    if(model()->rowCount() <= 0) {
+        return;
+    }
+    row = std::min(row, model()->rowCount()-1);
+    row = std::max(row, 0);
+    setCurrentIndex(table_client->indexRow(row));
+}
+
+int MatrixTable::selectedRow() const
+{
+    if(model()->rowCount() <= 0 || !currentIndex().isValid()) {
+        return -1;
+    }
+    return table_client->rowIndex(currentIndex());
+}
+
+void MatrixTable::selectRows(const std::set<std::size_t> &rows)
+{
+    QItemSelection selitems = table_client->selectionRows(rows);
+    selectionModel()->select(selitems, QItemSelectionModel::Rows|QItemSelectionModel::ClearAndSelect);
+}
+
+std::set<std::size_t> MatrixTable::allSelectedRows() const
+{
+    return table_client->rowsSelection(selectionModel()->selection());
 }
 
 //---------------------------------------------------------------------------

@@ -29,7 +29,7 @@ public slots:
     void CmNewVertex() {}
     void CmNewEdge() {}
     void CmNewBson() {}
-    void CmNewCollection() {}
+    void CmNewCollection();
     void CmNewCsv();
     void CmNewImpexFormat() {}
 

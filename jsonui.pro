@@ -40,11 +40,14 @@ HEADERS += \
     include/jsonqml/charts/legend_data.h \
     include/jsonqml/charts/legend_model.h \
     include/jsonqml/charts/xyseries_decorator.h \
+    include/jsonqml/clients/csv_client.h \
+    include/jsonqml/clients/csv_client_p.h \
     include/jsonqml/forms/CalcDialog.h \
     include/jsonqml/forms/FileDialogs.h \
     include/jsonqml/forms/GraphDialog.h \
     include/jsonqml/forms/LegendDialog.h \
     include/jsonqml/forms/PreferencesUI.h \
+    include/jsonqml/forms/SelectDialog.h \
     include/jsonqml/forms/SymbolDialog.h \
     include/jsonqml/forms/TableEditWindow.h \
     include/jsonqml/forms/chart_view.h \
@@ -65,6 +68,7 @@ HEADERS += \
     src/arango_database_p.h \
     src/arango_document_p.h \
     src/charts/markershapes.h \
+    src/clients/csv_client_p.h \
     src/clients/json_client_p.h \
     src/clients/vertex_client_p.h \
     src/clients/edge_client_p.h \
@@ -82,11 +86,13 @@ SOURCES += \
     src/charts/legend_model.cpp \
     src/charts/markershapes.cpp \
     src/charts/xyseries_decorator.cpp \
+    src/clients/csv_client.cpp \
     src/forms/CalcDialog.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
     src/forms/LegendDialog.cpp \
     src/forms/PreferencesUI.cpp \
+    src/forms/SelectDialog.cpp \
     src/forms/SymbolDialog.cpp \
     src/forms/TableEditWindow.cpp \
     src/forms/chart_view.cpp \
@@ -111,6 +117,7 @@ FORMS += \
     src/forms/GraphDialog.ui \
     src/forms/LegendDialog.ui \
     src/forms/PreferencesUI.ui \
+    src/forms/SelectDialog.ui \
     src/forms/SymbolDialog.ui \
     src/forms/TableEditWindow.ui
 

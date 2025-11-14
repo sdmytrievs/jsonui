@@ -1,5 +1,6 @@
 #pragma once
 
+#include <set>
 #include <QItemDelegate>
 #include <QTableView>
 
@@ -49,6 +50,11 @@ public:
     explicit MatrixTable(int mode, TableClient* atable_client, QWidget* parent = nullptr);
 
     void makePopupContextMenu(QMenu *menu, QModelIndex index);
+
+    void setCurrentRow(int row);
+    int selectedRow() const;
+    void selectRows(const std::set<std::size_t> &rows);
+    std::set<std::size_t> allSelectedRows() const;
 
 protected:
     int mode_using;

@@ -5,7 +5,9 @@
 #include "jsonio/exceptions.h"
 #include "jsonqml/forms/PreferencesUI.h"
 #include "jsonqml/forms/TableEditWindow.h"
+#include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/models/schema_model.h"
+#include "jsonqml/arango_database.h"
 
 TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
     QMainWindow(parent),
@@ -84,8 +86,8 @@ void TJSONUITestWin::CmNewCsv()
         if(!csv_window) {
             csv_window.reset(new jsonqml::TableEditWidget("CSV editor ",
                                                           jsonqml::TableFlag::TableIsEditable |
-                                                          jsonqml::TableFlag::GraphDataEnabled
-                                                          /*|jsonqml::TableFlag::RowSortingEnabled*/ ));
+                                                          jsonqml::TableFlag::GraphDataEnabled |
+                                                          jsonqml::TableFlag::RowSortingEnabled ));
         }
         else {
             csv_window->raise();
@@ -101,4 +103,33 @@ void TJSONUITestWin::CmNewCsv()
     }
 }
 
+/// Open new JSONUIWidget window
+void TJSONUITestWin::CmNewCollection()
+{
+    try {
+        std::string testcollection ="undefined";
+        auto collist = jsonqml::ArangoDatabase::getCollectionList();
 
+        if(!collist.empty())  {
+            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection, "Please, select collection to edit data", collist, ";" );
+            if(sel_dlg.exec()) {
+                testcollection = collist[sel_dlg.getSelectedIndex()];
+            }
+        }
+        qDebug() << "Select collection" << testcollection;
+        // auto* testWidget = new jsonui17::JsonEditWidget( "", testcollection/*, this*/ );
+
+        // testWidget->setOnCloseEventFunction(onCloseEvent);
+        // testWidget->setShowWidgetFunction(showWidget);
+        // jsonuiWindows.push_back(testWidget);
+        // testWidget->show();
+    }
+    catch(jsonio::jsonio_exception& e)
+    {
+        QMessageBox::critical( this, "jsonio_exception", e.what() );
+    }
+    catch(std::exception& e)
+    {
+        QMessageBox::critical( this, "std::exception", e.what() );
+    }
+}

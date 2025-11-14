@@ -2,7 +2,6 @@
 #define TABLECLIENT_P_H
 
 #include "jsonqml/clients/table_client.h"
-#include "jsonqml/models/csv_model.h"
 
 namespace jsonqml {
 
@@ -36,36 +35,33 @@ class TableClientPrivate
     Q_DISABLE_COPY_MOVE(TableClientPrivate)
 
 public:
-    explicit TableClientPrivate()
+    explicit TableClientPrivate(SelectModel* table_model, int mode):
+        keys_table_mode(mode),
+        current_model(table_model)
     {
         init();
     }
     virtual ~TableClientPrivate() {}
 
     bool sorting_enabled() const;
-    QAbstractItemModel* csv_model() const;
+    QAbstractItemModel* table_model() const;
+
+    QModelIndex model_index_row(int row) const;
+    int model_row_index(const QModelIndex& row) const;
+    std::set<std::size_t> rows_selected(const QItemSelection& selection) const;
+    QItemSelection select_rows(const std::set<std::size_t>& rows) const;
 
     void copy_selected(const QModelIndexList& selection);
     void copy_with_names(const QModelIndexList& selection);
     void paste_selected(const QModelIndexList& selection);
 
-    virtual void read_files(const QString &path)
-    {
-        read_CSV(path);
-    }
-    virtual void save_files(const QString &path)
-    {
-        save_CSV(path);
-    }
-
-    virtual bool is_number(int section)
-    {
-        return csv_model_data->is_number(section) ;
-    }
+    virtual void read_files(const QString &) {}
+    virtual void save_files(const QString &) {}
 
 protected:
     int keys_table_mode = RowSortingEnabled;
-    QSharedPointer<CSVModel> csv_model_data;
+    SelectModel *current_model = nullptr;
+    //QSharedPointer<CSVModel> csv_model_data;
     QSharedPointer<SortFilterProxyModel> sort_proxy_model;
 
     friend class TableClient;
@@ -75,9 +71,6 @@ protected:
     QString create_header(const Selection& sel_box);
     QString create_string(const Selection& sel_box);
     void set_from_string(const QString& str, const Selection& sel);
-
-    void read_CSV(const QString &path);
-    void save_CSV(const QString &path);
 };
 
 }

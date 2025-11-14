@@ -390,6 +390,20 @@ QStringList ArangoDatabase::getVertexesList()
     return new_list;
 }
 
+jsonio::values_t ArangoDatabase::getCollectionList(bool with_chema)
+{
+    jsonio::values_t list;
+    for(const auto& item: defined_collections) {
+        auto name = item.first;
+        if(with_chema) {
+            name+=";"+item.second.schema_name;
+        }
+        list.push_back(name);
+    }
+
+    return list;
+}
+
 std::string ArangoDatabase::collectionFromSchema(const std::string &schema_name)
 {
     for(const auto& item: defined_collections) {
