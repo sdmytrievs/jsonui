@@ -3,11 +3,14 @@
 #include "ui_JSONUITestMainWindow.h"
 
 #include "jsonio/exceptions.h"
+#include "jsonio/dbconnect.h"
 #include "jsonqml/forms/PreferencesUI.h"
 #include "jsonqml/forms/TableEditWindow.h"
+#include "jsonqml/forms/VertexWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/arango_database.h"
+#include "jsonqml/clients/settings_client.h"
 
 TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
     QMainWindow(parent),
@@ -131,5 +134,31 @@ void TJSONUITestWin::CmNewCollection()
     catch(std::exception& e)
     {
         QMessageBox::critical( this, "std::exception", e.what() );
+    }
+}
+
+// Open new VertexWidget window
+void TJSONUITestWin::CmNewVertex()
+{
+    try{
+        std::string testschema ="";
+
+        auto vertex_lst = jsonio::DataBase::getVertexesList();
+        if(!vertex_lst.empty()) {
+            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection, "Please, select collection to edit data", vertex_lst, ";" );
+            if(sel_dlg.exec()) {
+                testschema = vertex_lst[sel_dlg.getSelectedIndex()];
+            }
+        }
+        if(!testschema.empty()) {
+            jsonqml::VertexWidget* prtr = new jsonqml::VertexWidget(QString::fromStdString(testschema), this);
+            prtr->show();
+        }
+    }
+    catch(jsonio::jsonio_exception& e) {
+        QMessageBox::critical(this, "jsonio_exception", e.what());
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical(this, "std::exception", e.what());
     }
 }

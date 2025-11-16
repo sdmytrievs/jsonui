@@ -85,9 +85,11 @@ void VertexClientPrivate::update_keysmodel()
             sort_proxy_model.reset(new SortFilterProxyModel());
             sort_proxy_model->setSourceModel(keys_model.get());
         }
+        qDebug() << "VertexClientPrivate rows " << keys_model->rowCount();
     }
     else {
         keys_model->resetSchema(current_schema_name);
+        qDebug() << "VertexClientPrivate2 rows " << keys_model->rowCount();
     }
     qDebug() << "update_keysmodel";
 }
@@ -231,7 +233,7 @@ QAbstractItemModel *VertexClient::keysmodel()
     return impl_func()->keys_list_model();
 }
 
-SelectModel *VertexClient::tablemodel()
+DBKeysModel *VertexClient::tablemodel()
 {
     return impl_func()->keys_model.get();
 }

@@ -8,7 +8,7 @@ CONFIG += c++20
 #DEFINES  +=  NO_QWEBENGINE
 #DEFINES  +=  USE_MARKDOWN
 #win32:DEFINES += IMPEX_OFF
-#DEFINES += IMPEX_OFF
+DEFINES += IMPEX_OFF
 #DEFINES += USE_THRIFT
 
 QT   += core gui widgets
@@ -45,13 +45,17 @@ HEADERS += \
     include/jsonqml/forms/CalcDialog.h \
     include/jsonqml/forms/FileDialogs.h \
     include/jsonqml/forms/GraphDialog.h \
+    #include/jsonqml/forms/JsonEditWidget.h \
     include/jsonqml/forms/LegendDialog.h \
     include/jsonqml/forms/PreferencesUI.h \
     include/jsonqml/forms/SelectDialog.h \
     include/jsonqml/forms/SymbolDialog.h \
     include/jsonqml/forms/TableEditWindow.h \
+    include/jsonqml/forms/VertexWidget.h \
     include/jsonqml/forms/chart_view.h \
+    include/jsonqml/forms/json_view.h \
     include/jsonqml/forms/table_view.h \
+    include/jsonqml/forms/waitingspinnerwidget.h \
     include/jsonqml/models/base_model.h \
     include/jsonqml/models/json_model.h \
     include/jsonqml/models/schema_model.h \
@@ -90,13 +94,17 @@ SOURCES += \
     src/forms/CalcDialog.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
+    #src/forms/JsonEditWidget.cpp \
     src/forms/LegendDialog.cpp \
     src/forms/PreferencesUI.cpp \
     src/forms/SelectDialog.cpp \
     src/forms/SymbolDialog.cpp \
     src/forms/TableEditWindow.cpp \
+    src/forms/VertexWidget.cpp \
     src/forms/chart_view.cpp \
+    src/forms/json_view.cpp \
     src/forms/table_view.cpp \
+    src/forms/waitingspinnerwidget.cpp \
     src/models/base_model.cpp \
     src/models/json_model.cpp \
     src/models/schema_model.cpp \
@@ -115,11 +123,13 @@ FORMS += \
     App/JSONUITestMainWindow.ui \
     src/forms/CalcDialog.ui \
     src/forms/GraphDialog.ui \
+    #src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \
     src/forms/PreferencesUI.ui \
     src/forms/SelectDialog.ui \
     src/forms/SymbolDialog.ui \
-    src/forms/TableEditWindow.ui
+    src/forms/TableEditWindow.ui \
+    src/forms/VertexWidget.ui
 
 resources.prefix = /$${TARGET}
 

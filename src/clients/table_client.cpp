@@ -12,9 +12,11 @@ bool TableClientPrivate::sorting_enabled() const
 
 void TableClientPrivate::init()
 {
+    qDebug() << "TableClientPrivate::init() rows " << current_model->rowCount();
     if(sorting_enabled()) {
         sort_proxy_model.reset(new SortFilterProxyModel());
         sort_proxy_model->setSourceModel(current_model);
+        qDebug() << "TableClientPrivate::init() rows " << sort_proxy_model->rowCount();
     }
 }
 

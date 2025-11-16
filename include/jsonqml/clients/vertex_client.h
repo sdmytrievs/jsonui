@@ -7,7 +7,7 @@
 namespace jsonqml {
 
 class VertexClientPrivate;
-class SelectModel;
+class DBKeysModel;
 
 class VertexClient : public JsonClient
 {
@@ -35,7 +35,7 @@ public:
     explicit VertexClient(QObject *parent = nullptr);
 
     QAbstractItemModel *keysmodel();
-    SelectModel *tablemodel();
+    DBKeysModel *tablemodel();
     bool sortingEnabled();
     Q_INVOKABLE bool queryExecuting();
 

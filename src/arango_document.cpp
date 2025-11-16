@@ -251,7 +251,7 @@ void ArangoDBDocument::resetClient()
 
 void ArangoDBDocument::resetSchema(std::string aschema_name)
 {
-    ui_logger->debug("resetSchema {}", aschema_name);
+    ui_logger->info("resetSchema {} !!!!!", aschema_name);
     emit started();
     QMutexLocker locker(&result_mutex);
     try {
@@ -267,7 +267,7 @@ void ArangoDBDocument::resetSchema(std::string aschema_name)
 
 void ArangoDBDocument::reloadQuery()
 {
-    ui_logger->debug("reloadQuery {}", impl_func()->last_good_query.queryString());
+    ui_logger->info("reloadQuery {}", impl_func()->last_good_query.queryString());
     emit started();
     QMutexLocker locker(&result_mutex);
     try {

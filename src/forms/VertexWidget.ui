@@ -1,0 +1,696 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>VertexWidget</class>
+ <widget class="QMainWindow" name="VertexWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1002</width>
+    <height>534</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>TMainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QSplitter" name="mainSplitter">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <property name="handleWidth">
+       <number>3</number>
+      </property>
+      <widget class="QWidget" name="keyWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QSplitter" name="keySplitter">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <widget class="QWidget" name="keylistWidget" native="true">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="queryWidget" native="true">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <property name="spacing">
+             <number>0</number>
+            </property>
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>0</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Query</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QTextEdit" name="queryEdit">
+              <property name="readOnly">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="bsonWidget" native="true">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1002</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuDataBase">
+    <property name="title">
+     <string>&amp;Database</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="action_Read"/>
+    <addaction name="action_Update"/>
+    <addaction name="action_Delete"/>
+    <addaction name="actionDeleteMultiple"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport"/>
+    <addaction name="actionUpdateFormat"/>
+    <addaction name="actionExport"/>
+    <addaction name="separator"/>
+    <addaction name="actionSearch"/>
+    <addaction name="actionSearch_Results"/>
+    <addaction name="separator"/>
+    <addaction name="actionBackup_Queried_Records_to_File"/>
+    <addaction name="actionRestore_Multiple_Records_from_File"/>
+    <addaction name="separator"/>
+    <addaction name="actionBackup_Graph_to_File"/>
+    <addaction name="actionRestore_Graph_from_File"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="action_Clone_Structured_Data_Object"/>
+    <addaction name="separator"/>
+    <addaction name="actionImport_Json_File"/>
+    <addaction name="actionExport_Json_File"/>
+    <addaction name="separator"/>
+    <addaction name="actionE_xit"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionContents"/>
+    <addaction name="separator"/>
+    <addaction name="actionVersion"/>
+    <addaction name="actionAuthors"/>
+    <addaction name="actionLicense"/>
+    <addaction name="separator"/>
+    <addaction name="action_Help_About"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_one_field"/>
+    <addaction name="actionReset_Data_to_Defaults"/>
+    <addaction name="action_Delete_field"/>
+    <addaction name="separator"/>
+    <addaction name="action_Resize_array"/>
+    <addaction name="action_Clone_Current"/>
+    <addaction name="separator"/>
+    <addaction name="action_Add_fields"/>
+    <addaction name="action_Delete_fields"/>
+    <addaction name="actionRemove_Alternatives_Union"/>
+    <addaction name="separator"/>
+    <addaction name="actionCopy_Field_Path"/>
+    <addaction name="actionCopy_Field"/>
+    <addaction name="actionPaste_Field"/>
+    <addaction name="separator"/>
+    <addaction name="action_Calculator"/>
+   </widget>
+   <widget class="QMenu" name="menu_View">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionFollow_Edges"/>
+    <addaction name="actionFollow_Edges_Incoming"/>
+    <addaction name="separator"/>
+    <addaction name="actionKeep_Data_Fields_Expanded"/>
+    <addaction name="action_Show_comments"/>
+    <addaction name="action_Display_enums"/>
+    <addaction name="action_Edit_id"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menuDataBase"/>
+   <addaction name="menu_View"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew"/>
+   <addaction name="action_Clone_Structured_Data_Object"/>
+   <addaction name="action_Update"/>
+   <addaction name="action_Delete"/>
+   <addaction name="separator"/>
+   <addaction name="actionPrevious_Record"/>
+   <addaction name="actionNext_Record"/>
+   <addaction name="separator"/>
+   <addaction name="actionFollow_Edges"/>
+   <addaction name="actionFollow_Edges_Incoming"/>
+  </widget>
+  <widget class="QToolBar" name="nameToolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>true</bool>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionSearch"/>
+   <addaction name="actionContents"/>
+   <addaction name="separator"/>
+  </widget>
+  <action name="actionE_xit">
+   <property name="text">
+    <string>C&amp;lose Widget</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;New/Reset Record ...</string>
+   </property>
+   <property name="iconText">
+    <string>New Data Object ...</string>
+   </property>
+   <property name="toolTip">
+    <string>New/Reset Structured  Data Object ...</string>
+   </property>
+  </action>
+  <action name="action_Read">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Read Another Record from DB ...</string>
+   </property>
+   <property name="iconText">
+    <string>Read Another Data Object from DB Record ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Read Another Data Object from DB Record ...</string>
+   </property>
+  </action>
+  <action name="action_Update">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save/&amp;Update Record to Database</string>
+   </property>
+   <property name="toolTip">
+    <string>Create/Update DB Record for Current Data Object</string>
+   </property>
+  </action>
+  <action name="action_Delete">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Current DB Record</string>
+   </property>
+  </action>
+  <action name="actionImport_Json_File">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Read Record from File...</string>
+   </property>
+  </action>
+  <action name="actionExport_Json_File">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Write Record to File ...</string>
+   </property>
+  </action>
+  <action name="action_Help_About">
+   <property name="text">
+    <string> Help &amp;About</string>
+   </property>
+   <property name="iconText">
+    <string>Open Help Viewer ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Help Viewer ...</string>
+   </property>
+  </action>
+  <action name="actionAuthors">
+   <property name="text">
+    <string>Au&amp;thors ...</string>
+   </property>
+  </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>&amp;License ...</string>
+   </property>
+  </action>
+  <action name="action_Add_fields">
+   <property name="text">
+    <string>Add Structured  Fields ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add new line(s) into object</string>
+   </property>
+   <property name="shortcut">
+    <string>F7</string>
+   </property>
+  </action>
+  <action name="action_Delete_field">
+   <property name="text">
+    <string>&amp;Remove Selected Field</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete current line from object</string>
+   </property>
+  </action>
+  <action name="action_Resize_array">
+   <property name="text">
+    <string>Resize Selected List/Map/Set ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Change current array size</string>
+   </property>
+   <property name="shortcut">
+    <string>F4</string>
+   </property>
+  </action>
+  <action name="action_Calculator">
+   <property name="text">
+    <string>Apply Calculator to Selected Fields ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Use Calculator for specified cells</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+  <action name="actionAdd_one_field">
+   <property name="text">
+    <string>Add &amp;One Data Field ...</string>
+   </property>
+  </action>
+  <action name="actionContents">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Help &amp;Contents ...</string>
+   </property>
+  </action>
+  <action name="action_Show_comments">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Display Comments to Data Fields</string>
+   </property>
+  </action>
+  <action name="action_Display_enums">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Show Enum Names Instead of Values</string>
+   </property>
+  </action>
+  <action name="actionSearch">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Search DB Using &amp;Query Widget ...</string>
+   </property>
+   <property name="iconText">
+    <string>Search DB Using Query Widget ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Search DB Using Query Widget ...</string>
+   </property>
+  </action>
+  <action name="actionRemove_Alternatives_Union">
+   <property name="text">
+    <string>Remove Alternatives (&amp;Union)</string>
+   </property>
+  </action>
+  <action name="actionSearch_Results">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/ShowGEMResultsIcon24.png</normaloff>:/menu/Icons/ShowGEMResultsIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>E&amp;xplore Search Results in Table Widget ...</string>
+   </property>
+   <property name="iconText">
+    <string>Explore Search Results in Table Widget ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Explore Search Results in Table Widget ...</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionExport">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/Exp-foreign.png</normaloff>:/menu/Icons/Exp-foreign.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Export DB Records to Foreign Format File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Export DB Records to Foreign Format File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Export DB Records to Foreign Format File ...</string>
+   </property>
+  </action>
+  <action name="actionImport">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/Imp-foreign.png</normaloff>:/menu/Icons/Imp-foreign.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Import DB Records from Foreign Format File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Import DB Records from Foreign Format File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Import DB Records from Foreign Format File ...</string>
+   </property>
+  </action>
+  <action name="actionDeleteMultiple">
+   <property name="text">
+    <string>De&amp;lete Multiple DB Records ...</string>
+   </property>
+   <property name="iconText">
+    <string>Delete Multiple DB Records ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Multiple DB Records ...</string>
+   </property>
+  </action>
+  <action name="actionVersion">
+   <property name="text">
+    <string>&amp;Version ...</string>
+   </property>
+  </action>
+  <action name="actionReset_Data_to_Defaults">
+   <property name="text">
+    <string>Reset Field to &amp;Defaults</string>
+   </property>
+  </action>
+  <action name="actionAction_1">
+   <property name="text">
+    <string>&amp;Action 1 ...</string>
+   </property>
+  </action>
+  <action name="actionAction_2">
+   <property name="text">
+    <string>Action &amp;2 ...</string>
+   </property>
+  </action>
+  <action name="action_Edit_id">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Edit _id of DB (Document) Records </string>
+   </property>
+  </action>
+  <action name="actionBackup_Queried_Records_to_File">
+   <property name="text">
+    <string>&amp;Backup Queried DB Records to File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Backup Queried DB Records to File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Backup Queried DB Records to File ...</string>
+   </property>
+  </action>
+  <action name="actionRestore_Multiple_Records_from_File">
+   <property name="text">
+    <string>Restore &amp;Multiple DB Records from File ...</string>
+   </property>
+  </action>
+  <action name="actionKeep_Data_Fields_Expanded">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Keep Data Fields Expanded</string>
+   </property>
+  </action>
+  <action name="actionNext_Record">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/DisplayNextRecordIcon24.png</normaloff>:/menu/Icons/DisplayNextRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Next Data Object Record</string>
+   </property>
+   <property name="toolTip">
+    <string>Next Data Object Record (from List)</string>
+   </property>
+  </action>
+  <action name="actionPrevious_Record">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/DisplayPrevRecordIcon24.png</normaloff>:/menu/Icons/DisplayPrevRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Previous Data Object Record</string>
+   </property>
+   <property name="toolTip">
+    <string>Previous Data Object Record (from List)</string>
+   </property>
+  </action>
+  <action name="action_Clone_Structured_Data_Object">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/NewCloneRecordIcon24.png</normaloff>:/menu/Icons/NewCloneRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Clone this Record ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Clone this Structured Data Object</string>
+   </property>
+  </action>
+  <action name="actionCopy_Field_Path">
+   <property name="text">
+    <string>Copy Field &amp;Path</string>
+   </property>
+  </action>
+  <action name="actionCopy_Field">
+   <property name="text">
+    <string>Copy &amp;Field Value</string>
+   </property>
+  </action>
+  <action name="actionPaste_Field">
+   <property name="text">
+    <string>Paste Field &amp;Value</string>
+   </property>
+  </action>
+  <action name="actionFollow_Edges">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/outgoing24.png</normaloff>:/menu/Icons/outgoing24.png</iconset>
+   </property>
+   <property name="text">
+    <string>List &amp;Outgoing Links (Edges) ...</string>
+   </property>
+   <property name="iconText">
+    <string>List Outgoing Links (Edges) ...</string>
+   </property>
+   <property name="toolTip">
+    <string>List Outgoing Links (Edges) from this Vertex</string>
+   </property>
+  </action>
+  <action name="actionFollow_Edges_Incoming">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/Incoming24.png</normaloff>:/menu/Icons/Incoming24.png</iconset>
+   </property>
+   <property name="text">
+    <string>List &amp;Incoming Links (Edges) ...</string>
+   </property>
+   <property name="iconText">
+    <string>List Incoming Links (Edges) ...</string>
+   </property>
+   <property name="toolTip">
+    <string>List Incoming Links (Edges) to this Vertex</string>
+   </property>
+  </action>
+  <action name="actionBackup_Graph_to_File">
+   <property name="text">
+    <string>Backup Graph to File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Backup all records connected to current record</string>
+   </property>
+  </action>
+  <action name="actionRestore_Graph_from_File">
+   <property name="text">
+    <string>Restore Graph from File ...</string>
+   </property>
+  </action>
+  <action name="action_Delete_fields">
+   <property name="text">
+    <string>Select and Remove  Fields ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove Selected Data Fields</string>
+   </property>
+   <property name="shortcut">
+    <string>F8</string>
+   </property>
+  </action>
+  <action name="action_Clone_Current">
+   <property name="text">
+    <string>&amp;Clone Selected Field</string>
+   </property>
+   <property name="toolTip">
+    <string>Add copy of current field to end of list/map</string>
+   </property>
+  </action>
+  <action name="actionUpdateFormat">
+   <property name="text">
+    <string>Update DB Records from Foreign Format File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Import DB Records from Foreign Format File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Update DB Records from Foreign Format File ...</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../../jsonui.qrc"/>
+ </resources>
+ <connections/>
+</ui>

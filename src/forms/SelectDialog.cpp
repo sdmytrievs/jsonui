@@ -6,6 +6,7 @@
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/clients/table_client.h"
 #include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/models/db_keys_model.h"
 
 namespace jsonqml {
 
@@ -147,6 +148,7 @@ void SelectDialog::init_dialog(const QString& title)
 // Select document key from current query result for collection
 std::string SelectKeyFrom(const QString& title, VertexClient* vertex, int mode, QWidget* parent)
 {
+    qDebug() << "SelectKeyFrom rows " << vertex->tablemodel()->rowCount();
     SelectDialog sel_dlg(mode, title, vertex->tablemodel(), parent);
     if(sel_dlg.exec())  {
         auto selndx = sel_dlg.selIndex();
