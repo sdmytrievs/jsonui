@@ -130,7 +130,7 @@ QVariant SelectModel::headerData(int section, Qt::Orientation orientation, int r
 void SelectModel::set_default_header()
 {
     if(table.size()>0 && header.empty()) {
-        for(size_t jj=0; jj<table.size(); ++jj) {
+        for(size_t jj=0; jj<table[0].size(); ++jj) {
             header.push_back(std::to_string(jj));
         }
     }

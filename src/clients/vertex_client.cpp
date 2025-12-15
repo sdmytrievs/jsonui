@@ -22,12 +22,21 @@ void VertexClientPrivate::init()
     uiSettings();
     qDebug() << "VertexClientPrivate::init";
     schema_names_list = gen_schema_list();
+}
+
+void VertexClientPrivate::init_keys(const QString& aschema)
+{
+    qDebug() << "VertexClientPrivate::init_keys";
     if(schema_names_list.empty()) { // not defined schema data
         // try use  DBJsonDocument and JsonFree editor
         return;
     }
-    // set first schema as inital
-    update_schema(new_list_default_schema());
+    auto def_schema= aschema;
+    if(def_schema.isEmpty()) {
+        // set first schema as inital
+        def_schema = new_list_default_schema();
+    }
+    update_schema(def_schema);
     // alloc editor model
     json_tree_model.reset(new JsonSchemaModel(current_schema_name, header_names));
 
@@ -137,9 +146,10 @@ bool VertexClientPrivate::set_json(const std::string& json_string, const QString
 
 //-------------------------------------------------------------------------
 
-VertexClient::VertexClient(VertexClientPrivate *impl, QObject *parent):
+VertexClient::VertexClient(const QString& aschema, VertexClientPrivate *impl, QObject *parent):
     JsonClient(impl, parent)
 {
+    impl_func()->init_keys(aschema);
     if(impl_func()->keys_model) {
             connect(impl_func()->keys_model.get(), &DBKeysModel::readedDocument,
                     this, &VertexClient::setEditorData, Qt::UniqueConnection);
@@ -150,8 +160,8 @@ VertexClient::VertexClient(VertexClientPrivate *impl, QObject *parent):
         }
 }
 
-VertexClient::VertexClient(QObject *parent):
-    VertexClient(new VertexClientPrivate(), parent)
+VertexClient::VertexClient(const QString& aschema, QObject *parent):
+    VertexClient(aschema, new VertexClientPrivate(), parent)
 {
     // virtual init into JsonClient
 }

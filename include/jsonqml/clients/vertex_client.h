@@ -32,7 +32,7 @@ protected slots:
     void setEditorOid(std::string doc_id);
 
 public:
-    explicit VertexClient(QObject *parent = nullptr);
+    explicit VertexClient(const QString& aschema, QObject *parent = nullptr);
 
     QAbstractItemModel *keysmodel();
     DBKeysModel *tablemodel();
@@ -50,7 +50,7 @@ protected:
     const VertexClientPrivate* impl_func() const
     { return reinterpret_cast<const VertexClientPrivate *>(impl_ptr.get()); }
 
-    VertexClient(VertexClientPrivate *impl, QObject *parent);
+    VertexClient(const QString& aschema, VertexClientPrivate *impl, QObject *parent);
 };
 
 }

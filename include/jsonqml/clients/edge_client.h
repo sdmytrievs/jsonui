@@ -18,7 +18,7 @@ class EdgeClient : public VertexClient
     Q_DISABLE_COPY(EdgeClient)
 
 public:
-    explicit EdgeClient(QObject *parent = nullptr);
+    explicit EdgeClient(const QString& aschema, QObject *parent = nullptr);
 
     QAbstractItemModel* inmodel();
     QAbstractItemModel* outmodel();
@@ -35,7 +35,7 @@ protected:
     const EdgeClientPrivate* impl_func() const
     { return reinterpret_cast<const EdgeClientPrivate *>(impl_ptr.get()); }
 
-    EdgeClient(EdgeClientPrivate *impl, QObject *parent);
+    EdgeClient(const QString& aschema, EdgeClientPrivate *impl, QObject *parent);
 };
 
 }

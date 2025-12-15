@@ -17,6 +17,7 @@ public:
     virtual ~VertexClientPrivate() {}
 
     void init() override;
+    virtual void init_keys(const QString& aschema);
 
     QStringList gen_schema_list() const override;
     QString new_list_default_schema() const  override

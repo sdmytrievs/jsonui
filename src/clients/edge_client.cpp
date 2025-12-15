@@ -20,11 +20,19 @@ void EdgeClientPrivate::init()
     uiSettings();
     qDebug() << "EdgeClientPrivate::init";
     schema_names_list = gen_schema_list();
+}
+
+void EdgeClientPrivate::init_keys(const QString &aschema)
+{
     if(schema_names_list.empty()) { // not defined schema data
         return;
     }
-    // set first schema as inital
-    update_schema(new_list_default_schema());
+    auto def_schema= aschema;
+    if(def_schema.isEmpty()) {
+        // set first schema as inital
+        def_schema = new_list_default_schema();
+    }
+    update_schema(def_schema);
 
     // alloc editor model
     json_tree_model.reset(new JsonSchemaModel(current_schema_name, header_names));
@@ -108,13 +116,13 @@ bool EdgeClientPrivate::set_json(const std::string& json_string, const QString& 
 
 //---------------------------------------------------------------------
 
-EdgeClient::EdgeClient(EdgeClientPrivate *impl, QObject *parent):
-    VertexClient(impl, parent)
+EdgeClient::EdgeClient(const QString& aschema, EdgeClientPrivate *impl, QObject *parent):
+    VertexClient(aschema, impl, parent)
 {
 }
 
-EdgeClient::EdgeClient(QObject *parent):
-    EdgeClient(new EdgeClientPrivate(), parent)
+EdgeClient::EdgeClient(const QString& aschema, QObject *parent):
+    EdgeClient(aschema, new EdgeClientPrivate(), parent)
 {
     // virtual init into JsonClient
 }

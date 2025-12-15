@@ -30,12 +30,12 @@ ArangoDBDocumentPrivate::ArangoDBDocumentPrivate(DocumentType type, const QStrin
             break;
         }
     }
-    is_dbdocument();
 }
 
 bool ArangoDBDocumentPrivate::is_dbdocument()
 {
     if(!dbdocument && database->db_connected()) {
+        qDebug() << "is_dbdocument";
         const jsonio::DataBase& jsonio_db = database->jsonio_database(doc_type==jsonqml::Resource);
 
         switch(doc_type) {

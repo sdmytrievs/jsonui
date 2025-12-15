@@ -16,6 +16,7 @@ public:
     virtual ~EdgeClientPrivate() {}
 
     void init() override;
+    void init_keys(const QString& aschema) override;
 
     QStringList gen_schema_list() const override;
     QString new_list_default_schema() const  override

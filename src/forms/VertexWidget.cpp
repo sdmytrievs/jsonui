@@ -131,10 +131,7 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
     wait_dialog->start();
 
-    vertex_client.reset(new VertexClient(this));
-    if(!schema_name.isEmpty())  {
-        vertex_client->setSchema(schema_name);
-    }
+    vertex_client.reset(new VertexClient(schema_name, this));
     QObject::connect(vertex_client.get(), &VertexClient::executingChange, this, &VertexWidget::setExecuting);
 
     // define edit tree view
@@ -149,7 +146,11 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     auto mode = single_selection;
     keys_table_client.reset(new TableClient(vertex_client->tablemodel(), mode, this));
     keys_view.reset(new DBKeysTable(mode, keys_table_client.get(),
-            [&](const QModelIndex& index){ openRecordKey(index); }, this));
+            [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
+    QObject::connect(keys_view.get(), SIGNAL(clicked(const QModelIndex&)),
+                     this, SLOT(openRecordKey(const QModelIndex&)));
+    keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    keys_view->horizontalHeader()->setSectionResizeMode( QHeaderView::Interactive );
     ui->horizontalLayout->addWidget(keys_view.get());
 
     set_actions();
