@@ -6,7 +6,7 @@
 namespace jsonqml {
 
 
-const QStringList JsonBaseModel::type_names= {"string", "bool", "int", "double", "object", "array"};
+const QStringList JsonBaseModel::type_names= {"string", "bool", "int", "double", "object", "array", "null"};
 
 JsonBaseModel::JsonBaseModel(QObject *parent):
     QAbstractItemModel(parent)
@@ -31,17 +31,9 @@ const QModelIndex JsonBaseModel::addObject(const QModelIndex &cindex,
     }
 
     int row;
-    QModelIndex parent_index;
     auto item = lineFromIndex(cindex);
-    if(item->isObject() && item->size()<1) {
-        parent_index = cindex.siblingAtColumn(0);
-        row = 0;
-    }
-    else {
-        parent_index = parent(cindex).siblingAtColumn(0);
-        row = rowCount(parent_index);
-    }
-    auto parent_item = lineFromIndex(parent_index);
+    QModelIndex pindex = parent_add(cindex, row);
+    auto parent_item = lineFromIndex(pindex);
 
     std::string new_object_key = field_name.toStdString();
     jsonio::trim(new_object_key);
@@ -55,7 +47,7 @@ const QModelIndex JsonBaseModel::addObject(const QModelIndex &cindex,
     }
 
     try {
-        beginInsertRows(parent_index, row, row);
+        beginInsertRows(pindex, row, row);
         set_value_via_type(parent_item, new_object_key, new_object_type, defval);
         endInsertRows();
     }
@@ -63,7 +55,7 @@ const QModelIndex JsonBaseModel::addObject(const QModelIndex &cindex,
         endInsertRows();
         uiSettings().setError(e.what());
     }
-    return index(row, 0, parent_index);
+    return index(row, 0, pindex);
 }
 
 void JsonBaseModel::resizeArray(const QModelIndex &cindex, int new_size)
@@ -71,14 +63,26 @@ void JsonBaseModel::resizeArray(const QModelIndex &cindex, int new_size)
     auto item = lineFromIndex(cindex);
     auto old_size = rowCount(cindex);
     if(old_size>new_size) {
-        beginRemoveRows(cindex, new_size, old_size-1);
-        item->array_resize(new_size, "");
-        endRemoveRows();
+        try {
+            beginRemoveRows(cindex, new_size, old_size-1);
+            item->array_resize(new_size, "");
+            endRemoveRows();
+        }
+        catch(std::exception& e) {
+            endRemoveRows();
+            uiSettings().setError(e.what());
+        }
     }
     else if(old_size<new_size) {
-        beginInsertRows(cindex, old_size, new_size-1);
-        item->array_resize(new_size, "");
-        endInsertRows();
+        try {
+            beginInsertRows(cindex, old_size, new_size-1);
+            item->array_resize(new_size, "");
+            endInsertRows();
+        }
+        catch(std::exception& e) {
+            endInsertRows();
+            uiSettings().setError(e.what());
+        }
     }
 }
 
@@ -146,11 +150,21 @@ void  JsonBaseModel::setFieldData(const QModelIndex& index, const QString& data)
     }
 }
 
-bool JsonBaseModel::set_value_via_type(jsonio::JsonBase* object, const std::string& add_key,
+bool JsonBaseModel::dataIndex(const QModelIndex &index, QString &data, QString &type, int &size) const
+{
+    auto item = lineFromIndex(index);
+    data = QString::fromStdString(item->getKey());
+    type = item->typeName();
+    size = item->size();
+    return true;
+}
+
+const jsonio::JsonBase* JsonBaseModel::set_value_via_type(jsonio::JsonBase* object, const std::string& add_key,
                                        jsonio::JsonBase::Type add_type, const std::string& add_value)
 {
+    const jsonio::JsonBase* new_object = nullptr;
     if(!object) {
-        return false;
+        return new_object;
     }
 
     switch(add_type) {
@@ -159,21 +173,21 @@ bool JsonBaseModel::set_value_via_type(jsonio::JsonBase* object, const std::stri
     case jsonio::JsonBase::Int:
     case jsonio::JsonBase::Double:
     case jsonio::JsonBase::String:
-        object->set_scalar_via_path(add_key, add_value);
+        new_object = object->set_scalar_via_path(add_key, add_value);
         break;
     case jsonio::JsonBase::Object:
-        object->add_object_via_path(add_key);
+        new_object = &object->add_object_via_path(add_key);
         break;
     case jsonio::JsonBase::Array:
-        /*auto& new_object = */object->add_array_via_path(add_key);
+        new_object = &object->add_array_via_path(add_key);
         //if( !add_value.toString().isEmpty() )
         //    new_object.loads(add_value.toString().toStdString());
         break;
     }
-    return true;
+    return new_object;
 }
 
-jsonio::JsonBase::Type JsonBaseModel::type_from(const QString &field_type)
+jsonio::JsonBase::Type JsonBaseModel::type_from(const QString &field_type) const
 {
     jsonio::JsonBase::Type type = jsonio::JsonBase::Null;
 
@@ -202,6 +216,21 @@ void JsonBaseModel::check_editor_type(const QModelIndex &index)
                                                     {QString("text"), "false"}}));
     }
     emit editorChange();
+}
+
+QModelIndex JsonBaseModel::parent_add(const QModelIndex &index, int &row) const
+{
+    QModelIndex pindex;
+    auto item = lineFromIndex(index);
+    if(item->isObject() && item->size()<1) {
+        pindex = index.siblingAtColumn(0);
+        row = 0;
+    }
+    else {
+        pindex = parent(index).siblingAtColumn(0);
+        row = rowCount(pindex);
+    }
+    return pindex;
 }
 
 } // namespace jsonqml

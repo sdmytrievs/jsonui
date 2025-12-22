@@ -46,9 +46,7 @@ void VertexWidget::set_actions()
     QObject::connect(ui->actionAdd_one_field, &QAction::triggered, json_tree.get(), &JsonView::CmAddObject);
     QObject::connect(ui->action_Clone_Current, &QAction::triggered, json_tree.get(), &JsonView::CmCloneObject);
     QObject::connect(ui->action_Delete_field, &QAction::triggered, json_tree.get(), &JsonView::CmDelObject);
-    QObject::connect(ui->action_Delete_fields, &QAction::triggered, json_tree.get(), &JsonView::CmDelObjects);
     QObject::connect(ui->actionRemove_Alternatives_Union, &QAction::triggered, json_tree.get(), &JsonView::CmDelObjectsUnion);
-    QObject::connect(ui->action_Add_fields, &QAction::triggered, json_tree.get(), &JsonView::CmAddObjects);
     QObject::connect(ui->actionReset_Data_to_Defaults, &QAction::triggered, json_tree.get(), &JsonView::CmResetObject);
     QObject::connect(ui->action_Resize_array, &QAction::triggered, json_tree.get(), &JsonView::CmResizeArray);
     QObject::connect(ui->action_Calculator, &QAction::triggered, json_tree.get(), &JsonView::CmCalc);
@@ -135,14 +133,13 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     QObject::connect(vertex_client.get(), &VertexClient::executingChange, this, &VertexWidget::setExecuting);
 
     // define edit tree view
-    ///QItemDelegate* deleg_schema = new JsonSchemaDelegate();
+    QItemDelegate* deleg_schema = new JsonDelegate();
     json_tree.reset(new JsonView(vertex_client.get(), this));
-    ///json_tree->setItemDelegate(deleg_schema);
+    json_tree->setItemDelegate(deleg_schema);
     json_tree->setColumnWidth(0, 250);
     json_tree->expandToDepth(2);
     ui->verticalLayout->addWidget(json_tree.get());
 
-    qDebug() << "VertexWidget " << vertex_client->tablemodel()->rowCount();
     auto mode = single_selection;
     keys_table_client.reset(new TableClient(vertex_client->tablemodel(), mode, this));
     keys_view.reset(new DBKeysTable(mode, keys_table_client.get(),
@@ -246,7 +243,6 @@ void VertexWidget::CmExportJSON()
 void VertexWidget::CmRead()
 {
     try  {
-
         std::string testschema;
         auto vertex_lst = jsonio::DataBase::getVertexesList();
         if(!vertex_lst.empty()) {

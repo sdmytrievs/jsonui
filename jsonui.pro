@@ -77,6 +77,7 @@ HEADERS += \
     src/clients/vertex_client_p.h \
     src/clients/edge_client_p.h \
     src/clients/table_client_p.h \
+    src/forms/ModelLineDialog.h
 
 SOURCES += \
     #main.cpp \
@@ -96,6 +97,7 @@ SOURCES += \
     src/forms/GraphDialog.cpp \
     #src/forms/JsonEditWidget.cpp \
     src/forms/LegendDialog.cpp \
+    src/forms/ModelLineDialog.cpp \
     src/forms/PreferencesUI.cpp \
     src/forms/SelectDialog.cpp \
     src/forms/SymbolDialog.cpp \
@@ -125,6 +127,7 @@ FORMS += \
     src/forms/GraphDialog.ui \
     #src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \
+    src/forms/ModelLineDialog.ui \
     src/forms/PreferencesUI.ui \
     src/forms/SelectDialog.ui \
     src/forms/SymbolDialog.ui \

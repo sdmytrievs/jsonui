@@ -78,8 +78,10 @@ protected slots:
     }
 
 public:
-    explicit MatrixUniqueSelection(int mode, TableClient* atable_client, const std::vector<int>& col_uniq, QWidget* parent = nullptr):
-        MatrixTable(mode, atable_client, parent), column_to_be_unique(col_uniq)
+    explicit MatrixUniqueSelection(int mode, TableClient* atable_client,
+                                   const std::vector<int>& col_uniq, QWidget* parent = nullptr):
+        MatrixTable(mode, atable_client, parent),
+        column_to_be_unique(col_uniq)
     {}
 
 protected:
@@ -99,19 +101,20 @@ public slots:
     void CmPrevious();
 
 public:
-    DBKeysTable(int mode, TableClient* atable_client, ShowRecord_f show_fn, QWidget* parent = nullptr ):
-        MatrixTable(mode, atable_client, parent), open_function(show_fn)
+    DBKeysTable(int mode, TableClient* atable_client,
+                ShowRecord_f show_fn, QWidget* parent = nullptr):
+        MatrixTable(mode, atable_client, parent),
+        open_function(show_fn)
     {}
 
     /// Move to current id
-    void move_to_key( std::string id_key );
+    void move_to_key(std::string id_key);
 
 protected:
     ShowRecord_f open_function;
 
     void keyPressEvent(QKeyEvent* e);
 };
-
 
 } // namespace jsonu
 

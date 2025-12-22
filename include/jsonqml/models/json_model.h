@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include "jsonqml/models/base_model.h"
 #include "jsonio/jsonfree.h"
 
@@ -21,7 +20,7 @@ public:
     /// Return internal data to const link
     const jsonio::JsonBase& current_object() const override
     {
-        return  root_node;
+        return root_node;
     }
 
     /// Extern update data

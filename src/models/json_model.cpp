@@ -9,11 +9,10 @@ JsonFreeModel::JsonFreeModel(const QStringList& header_names, QObject* parent):
     JsonBaseModel(parent),
     header_data(header_names),
     root_node(jsonio::JsonFree::object())
-{
-    setupModelData("", "");
-}
+{}
 
-JsonFreeModel::~JsonFreeModel() {}
+JsonFreeModel::~JsonFreeModel()
+{}
 
 jsonio::JsonBase* JsonFreeModel::lineFromIndex(const QModelIndex &index) const
 {

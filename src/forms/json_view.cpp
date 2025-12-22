@@ -3,11 +3,14 @@
 #include <QAction>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QLineEdit>
+#include <QComboBox>
 
 #include "jsonqml/clients/json_client.h"
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/json_view.h"
 #include "jsonqml/forms/CalcDialog.h"
+#include "ModelLineDialog.h"
 
 
 namespace jsonqml {
@@ -97,15 +100,6 @@ void JsonView::slotPopupContextMenu(const QPoint &pos)
     menu->addSeparator();
 
     if(themodel && themodel->canBeAdd(index)) {
-        act =  new QAction(tr("Add Structured Fields ..."), this);
-        act->setShortcut(QKeySequence(Qt::Key_F7));
-        act->setShortcutVisibleInContextMenu(true);
-        act->setStatusTip(tr("Add new line(s) into object"));
-        connect(act, &QAction::triggered, this, &JsonView::CmAddObjects);
-        menu->addAction(act);
-    }
-
-    if(themodel && themodel->canBeAdd(index)) {
         act = new QAction(tr("Add &One Field ..."), this);
         act->setShortcut(tr("Ctr+O"));
         act->setStatusTip(tr("Add new line into object"));
@@ -122,17 +116,8 @@ void JsonView::slotPopupContextMenu(const QPoint &pos)
     }
 
     if(themodel && themodel->canBeRemoved(index)) {
-        act =  new QAction(tr("Select and Remove Fields"), this);
-        act->setShortcut(QKeySequence(Qt::Key_F8));
-        act->setShortcutVisibleInContextMenu(true);
-        act->setStatusTip(tr("Delete selected lines from object"));
-        connect(act, &QAction::triggered, this, &JsonView::CmDelObjects);
-        menu->addAction(act);
-    }
-
-    if(themodel && themodel->canBeRemoved(index)) {
         act =  new QAction(tr("&Remove Selected Field"), this);
-        act->setShortcut(tr("Ctr+R"));
+        act->setShortcut(QKeySequence(Qt::Key_F8));
         act->setStatusTip(tr("Delete current line from object"));
         connect(act, &QAction::triggered, this, &JsonView::CmDelObject);
         menu->addAction(act);
@@ -204,9 +189,6 @@ void JsonView::keyPressEvent(QKeyEvent* e)
 {
     if(e->modifiers() & Qt::ControlModifier) {
         switch(e->key()) {
-        case Qt::Key_R:
-            CmDelObject();
-            return;
         case Qt::Key_U:
             CmDelObjectsUnion();
             return;
@@ -238,11 +220,8 @@ void JsonView::keyPressEvent(QKeyEvent* e)
     case Qt::Key_F5:
         CmCalc();
         return;
-    case Qt::Key_F7:
-        CmAddObjects();
-        return;
     case Qt::Key_F8:
-        CmDelObjects();
+        CmDelObject();
         return;
     case Qt::Key_F4:
         CmResizeArray();
@@ -255,39 +234,13 @@ void JsonView::keyPressEvent(QKeyEvent* e)
 void JsonView::CmCalc()
 {
     QModelIndex index = currentIndex();
-    auto themodel = json_client->jsonmodel();
+    JsonBaseModel* themodel = view_model();
     if(themodel && themodel->isNumber(index) && index.column()==1) {
         CalcDialog calc(window());
         if(calc.exec()) {
             QString res = calc.computeFunctionString(index.data(Qt::EditRole).toDouble());
             themodel->setData(index, res, Qt::EditRole);
         }
-    }
-}
-
-void JsonView::CmAddObjects()
-{
-    QModelIndex index = currentIndex();
-    if(!index.isValid()) {
-        index = rootIndex();
-    }
-    JsonBaseModel* themodel = view_model();
-
-    try {
-        if(themodel && themodel->canBeAdd(index)) {
-            // get list of names
-            //const QModelIndex ndx = themodel->addObjects(window(), index);
-            //selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
-        }
-        else {
-            QMessageBox::information(window(), "Add to Object", "Please, determine object to be expanded");
-        }
-    }
-    catch(jsonio::jsonio_exception& e){
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
     }
 }
 
@@ -299,47 +252,36 @@ void JsonView::CmAddObject()
     }
     JsonBaseModel* themodel = view_model();
 
-    try {
-        if(themodel && themodel->canBeAdd(index)) {
-            QString field_type;
-            QString field_name;
-            //!!!!  need dialog to setup  field_type&field_name
+    if(themodel && themodel->canBeAdd(index)) {
+        ModelLineDialog dlg(true, index, this);
+        if(dlg.exec()) {
+            QString field_type = dlg.objectType();
+            QString field_name = dlg.objectName();
             QModelIndex ndx = themodel->addObject(index, field_type, field_name);
+            // resize
+            if(themodel->canBeResized(ndx)) {
+                int new_size = dlg.arraySize();
+                themodel->resizeArray(ndx, new_size);
+            }
             selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
         }
-        else {
-            QMessageBox::information(window(), "Add to Object", "Please, determine object to be expanded");
-        }
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical(window(), "std::exception", e.what());
+    else {
+        QMessageBox::information(window(), "Add to Object", "Please, determine object to be expanded");
     }
 }
-
 
 void JsonView::CmCloneObject()
 {
     QModelIndex index = currentIndex();
     JsonBaseModel* themodel = view_model();
 
-    try {
-        if(index.isValid() && themodel && themodel->canBeCloned(index)) {
-            QModelIndex ndx = themodel->cloneObject(index);
-            selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
-        }
-        else {
-            QMessageBox::information(window(), "Clone Object", "Please, determine object to be expanded");
-        }
+    if(index.isValid() && themodel && themodel->canBeCloned(index)) {
+        QModelIndex ndx = themodel->cloneObject(index);
+        selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
+    else {
+        QMessageBox::information(window(), "Clone Object", "Please, determine object to be expanded");
     }
 }
 
@@ -348,22 +290,13 @@ void JsonView::CmResetObject()
     QModelIndex index = currentIndex();
     JsonBaseModel* themodel = view_model();
 
-    try {
-        if(index.isValid() && themodel) {
-            // collapse(index);
-            themodel->setFieldData(index, "");
-            update();
-            // selectionModel()->setCurrentIndex( index, QItemSelectionModel::ClearAndSelect );
-        }
-        else {
-            QMessageBox::information(window(), "Reset Object", "Please, determine object to be reseted");
-        }
+    if(index.isValid() && themodel) {
+        // collapse(index);
+        themodel->setFieldData(index, "");
+        update();
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
+    else {
+        QMessageBox::information(window(), "Reset Object", "Please, determine object to be reseted");
     }
 }
 
@@ -372,52 +305,13 @@ void JsonView::CmDelObject()
     QModelIndex index = currentIndex();
     JsonBaseModel* themodel = view_model();
 
-    try {
-        if(index.isValid() && themodel && themodel->canBeRemoved(index)) {
-            selectionModel()->clear();
-            collapse(index);
-            themodel->removeObject(index);
-            //update();
-        }
-        else {
-            QMessageBox::information(window(), "Delete from Object", "Please, determine the key-value pair to be deleted");
-        }
+    if(index.isValid() && themodel && themodel->canBeRemoved(index)) {
+        selectionModel()->clear();
+        collapse(index);
+        themodel->removeObject(index);
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-    catch(...) {
-        QMessageBox::critical(window(), "std::exception", "Undefined exception");
-    }
-}
-
-void JsonView::CmDelObjects() //!!!!!!!!!!
-{
-    QModelIndex index = currentIndex();
-    JsonBaseModel* themodel = view_model();
-
-    try {
-        if(index.isValid() && themodel && themodel->canBeRemoved(index)) {
-            selectionModel()->clear();
-            collapse(index);
-            //themodel->delObjects(index);
-            //update();
-        }
-        else {
-            QMessageBox::information(window(), "Delete from Object", "Please, determine the key-value level to be deleted");
-        }
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e)  {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-    catch(...) {
-        QMessageBox::critical(window(), "std::exception", "Undefined exception");
+    else {
+        QMessageBox::information(window(), "Delete from Object", "Please, determine the key-value pair to be deleted");
     }
 }
 
@@ -452,44 +346,25 @@ void JsonView::CmResizeArray()
     QModelIndex index = currentIndex();
     JsonBaseModel* themodel = view_model();
 
-    try {
-        if(index.isValid() && themodel && themodel->canBeResized(index)) {
-            // collapse(index);
-            int new_size=5;
-            // need dialog to set size
+    if(index.isValid() && themodel && themodel->canBeResized(index)) {
+        ModelLineDialog dlg(index, this);
+        if(dlg.exec()) {
+            int new_size=dlg.arraySize();
             themodel->resizeArray(index, new_size);
         }
-        else {
-            QMessageBox::information(window(), "Resize Array", "Please, determine arrays key to be resized");
-        }
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
+    else {
+        QMessageBox::information(window(), "Resize Array", "Please, determine arrays key to be resized");
     }
 }
 
 void JsonView::CopyFieldPath()
 {
     QModelIndex index = currentIndex();
-    auto themodel = current_index_model(index);
-
-    try {
-        if(themodel) {
-            QString clip_text = themodel->getFieldPath(index);
-            uiSettings().copy(clip_text);
-        }
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(this, "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-    catch(...) {
-        QMessageBox::critical( window(), "std::exception", "Undefined exception" );
+    JsonBaseModel* themodel = view_model();
+    if(themodel) {
+        QString clip_text = themodel->getFieldPath(index);
+        uiSettings().copy(clip_text);
     }
 }
 
@@ -497,22 +372,10 @@ void JsonView::CopyFieldPath()
 void JsonView::CopyField()
 {
     QModelIndex index = currentIndex();
-    auto themodel = current_index_model(index);
-
-    try {
-        if(themodel) {
-            QString clip_text = themodel->getFieldData(index);
-            uiSettings().copy(clip_text);
-        }
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-    catch(...) {
-        QMessageBox::critical(window(), "std::exception", "Undefined exception");
+    JsonBaseModel* themodel = view_model();
+    if(themodel) {
+        QString clip_text = themodel->getFieldData(index);
+        uiSettings().copy(clip_text);
     }
 }
 
@@ -522,20 +385,8 @@ void JsonView::PasteField()
     JsonBaseModel* themodel = view_model();
     auto clip_text = uiSettings().paste();
 
-    if(clip_text.isEmpty() || !index.isValid() || !themodel) {
-        return;
-    }
-    try {
+    if(!clip_text.isEmpty() || index.isValid() || themodel) {
         themodel->setFieldData(index, clip_text);
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-    catch(...) {
-        QMessageBox::critical(window(), "std::exception", "Undefined exception");
     }
 }
 
@@ -543,11 +394,11 @@ void JsonView::PasteField()
 void JsonView::CmHelp()
 {
     QModelIndex index = currentIndex();
-    auto themodel = current_index_model( index );
+    auto themodel = current_index_model(index);
     QString hlp= "", schema= "undefined";
 
     if(themodel) {
-        hlp =  themodel->helpName(index);
+        hlp = themodel->helpName(index);
         auto pos = hlp.indexOf('#');
         if(pos >=0) {
             schema = hlp.sliced(0, pos);
@@ -630,6 +481,63 @@ void JsonView::restore_expanded_on_level(const QModelIndex& index,  std::shared_
                 restore_expanded_on_level(index.model()->index(row, 0, index), child);
             }
         }
+    }
+}
+
+// JsonDelegate -------------------------------------------------------
+
+QWidget *JsonDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+                                    const QModelIndex &index) const
+{
+    JsonBaseModel *model = const_cast<JsonBaseModel*>(dynamic_cast<const JsonBaseModel*>(index.model()));
+
+    if(model && model->isEditable(index)) {
+        if(model->useComboBox()) {
+            QComboBox *combo_box = new QComboBox(parent);
+            foreach (const QVariantMap& map, model->editorValues()) {
+                combo_box->addItem(map["text"].toString(), map["value"]);
+            }
+            return combo_box;
+        }
+        else {
+            QLineEdit *line_edit = new QLineEdit(parent);
+            if(model->isNumber(index)) {
+                QDoubleValidator *dvalid = new QDoubleValidator(line_edit);
+                line_edit->setValidator(dvalid);
+            }
+            return line_edit;
+        }
+    }
+    return QItemDelegate::createEditor(parent, option, index);
+}
+
+void JsonDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    QComboBox *cell_edit = dynamic_cast<QComboBox*>(editor);
+    if(cell_edit) {
+        int idx = cell_edit->findData(index.data(Qt::EditRole));
+        if(idx != -1) {
+            cell_edit->setCurrentIndex(idx);
+        }
+    }
+    else {
+        QItemDelegate::setEditorData(editor, index);
+    }
+}
+
+void JsonDelegate::setModelData(QWidget *editor,
+                                QAbstractItemModel *model,
+                                const QModelIndex &index) const
+{
+    QComboBox *cell_edit = dynamic_cast<QComboBox*>(editor);
+    if(cell_edit) {
+        model->setData(index, cell_edit->currentData(), Qt::EditRole);
+        if(index.column() == 0) {
+            model->setData(index.sibling(index.row(), 1), cell_edit->currentText(), Qt::EditRole);
+        }
+    }
+    else {
+        QItemDelegate::setModelData(editor, model, index);
     }
 }
 

@@ -194,7 +194,6 @@
     <addaction name="action_Clone_Current"/>
     <addaction name="separator"/>
     <addaction name="action_Add_fields"/>
-    <addaction name="action_Delete_fields"/>
     <addaction name="actionRemove_Alternatives_Union"/>
     <addaction name="separator"/>
     <addaction name="actionCopy_Field_Path"/>
@@ -655,17 +654,6 @@
   <action name="actionRestore_Graph_from_File">
    <property name="text">
     <string>Restore Graph from File ...</string>
-   </property>
-  </action>
-  <action name="action_Delete_fields">
-   <property name="text">
-    <string>Select and Remove  Fields ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Remove Selected Data Fields</string>
-   </property>
-   <property name="shortcut">
-    <string>F8</string>
    </property>
   </action>
   <action name="action_Clone_Current">

@@ -37,8 +37,6 @@ public:
        return false;
     }
 
-    Q_INVOKABLE bool isEditable(const QModelIndex &index);
-
     Q_INVOKABLE virtual QString helpName(const QModelIndex& index) const
     {
         return QString::fromStdString(lineFromIndex(index)->getHelpName());
@@ -83,6 +81,8 @@ public:
     {
         return type_names;
     }
+
+    Q_INVOKABLE bool isEditable(const QModelIndex &index);
     bool useComboBox() const
     {
         return use_combo_box;
@@ -90,6 +90,12 @@ public:
     QList<QVariantMap> editorValues() const
     {
         return editor_fields_values;
+    }
+
+    bool dataIndex(const QModelIndex &index, QString& data, QString& type, int& size) const;
+    Q_INVOKABLE virtual QStringList fieldNames(const QModelIndex&, QString&) const
+    {
+        return QStringList("new_key");
     }
 
 protected:
@@ -100,12 +106,12 @@ protected:
     virtual jsonio::JsonBase& current_data() const = 0;
     virtual jsonio::JsonBase* lineFromIndex(const QModelIndex& index) const = 0;
 
-    virtual bool set_value_via_type(jsonio::JsonBase* object, const std::string& add_key,
+    virtual const jsonio::JsonBase* set_value_via_type(jsonio::JsonBase* object, const std::string& add_key,
                                     jsonio::JsonBase::Type add_type, const std::string& add_value);
-
-    jsonio::JsonBase::Type type_from(const QString &field_type);
-
     virtual void check_editor_type(const QModelIndex &index);
+    virtual QModelIndex parent_add(const QModelIndex &index, int& row) const;
+
+    jsonio::JsonBase::Type type_from(const QString &field_type) const;
 };
 
 

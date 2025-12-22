@@ -1,7 +1,6 @@
 #include <QColor>
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/clients/settings_client.h"
-//#include "jsonio/io_settings.h"
 
 namespace jsonqml {
 extern std::shared_ptr<spdlog::logger> ui_logger;
@@ -13,9 +12,7 @@ JsonSchemaModel::JsonSchemaModel(const QString& schema_name,
     header_data(header_names),
     current_schema(schema_name),
     root_node(jsonio::JsonSchema::object(current_schema.toStdString()))
-{
-    setupModelData("", schema_name);
-}
+{}
 
 JsonSchemaModel::~JsonSchemaModel() {}
 
@@ -234,44 +231,37 @@ const QModelIndex JsonSchemaModel::addObject(const QModelIndex &cindex,
          uiSettings().setError(" can't add empty key ");
          return cindex;
     }
-    int row=0;
-    QModelIndex parent_index;
-    auto item = lineFromIndex(cindex);
-    if(item->isObject() && item->size()<1) {
-        parent_index = cindex.siblingAtColumn(0);
-        row = 0;
-    }
-    else {
-        parent_index = parent(cindex).siblingAtColumn(0);
-        row = rowCount(parent_index);
-    }
 
-    auto parent_item = schemajs(lineFromIndex(parent_index));
+    int row=0;
+    auto item = lineFromIndex(cindex);
+    QModelIndex pindex = parent_add(cindex, row);
+    auto parent_item = schemajs(lineFromIndex(pindex));
+
     auto field_top_schema_name = parent_item->getStructName();
     std::string new_object_key = field_name.toStdString();
-    auto schema_def = jsonio::ioSettings().Schema().getStruct(field_top_schema_name);
-    if(!schema_def) {
-        uiSettings().setError(" can't add undefined schema "+ QString::fromStdString(field_top_schema_name));
+    auto afield_def = field_def(field_top_schema_name, new_object_key);
+    if(!afield_def) {
+        uiSettings().setError(" can't add field "+ field_name +" into "+ QString::fromStdString(field_top_schema_name));
         return cindex;
     }
-    auto field_def = schema_def->getField(new_object_key);
-    if(!field_def) {
-        uiSettings().setError(" can't add undefined field into "+ QString::fromStdString(field_top_schema_name));
-        return cindex;
-    }
-    std::string def_value = item->checked_value(item->type(), field_def->defaultValue());
-    jsonio::JsonBase::Type new_object_type = jsonio::JsonSchema::fieldtype2basetype(field_def->type(0));
+    jsonio::JsonBase::Type new_object_type = jsonio::JsonSchema::fieldtype2basetype(afield_def->type(0));
+    std::string def_value = item->checked_value(new_object_type, afield_def->defaultValue());
 
+    const jsonio::JsonBase* new_object = nullptr;
     try {
         beginResetModel();
-        set_value_via_type(parent_item, new_object_key, new_object_type, def_value);
+        new_object = set_value_via_type(parent_item, new_object_key, new_object_type, def_value);
         endResetModel();
+        if(new_object) {
+            row = new_object->getNdx();
+        }
     }
     catch(std::exception& e) {
         endResetModel();
         uiSettings().setError(e.what());
     }
-    return index(row, 0, parent_index);
+
+    return index(row, 0, pindex);
 }
 
 const QModelIndex JsonSchemaModel::cloneObject(const QModelIndex &cindex)
@@ -312,9 +302,15 @@ void JsonSchemaModel::removeObject(const QModelIndex &index)
         ui_logger->error("Required data object cannot be deleted {}", field_data->name());
         return;
     }
-    beginRemoveRows(parent(index), index.row(), index.row());
-    item->remove();
-    endRemoveRows();
+    try {
+        beginRemoveRows(parent(index), index.row(), index.row());
+        item->remove();
+        endRemoveRows();
+    }
+    catch(std::exception& e) {
+        endRemoveRows();
+        uiSettings().setError(e.what());
+    }
 }
 
 void  JsonSchemaModel::setFieldData(const QModelIndex& index, const QString& data)
@@ -339,23 +335,35 @@ void  JsonSchemaModel::setFieldData(const QModelIndex& index, const QString& dat
     }
 }
 
-QStringList JsonSchemaModel::fieldNames(const QModelIndex &index) const
+QStringList JsonSchemaModel::fieldNames(const QModelIndex &index, QString& field_top_schema_name) const
 {
-    QModelIndex parent_index;
-    auto item = schemajs(lineFromIndex(index));
-    if(item->isObject() && item->size()<1) {
-        parent_index = index.siblingAtColumn(0);
-    }
-    else  {
-        parent_index = parent(index).siblingAtColumn(0);
-    }
-    auto parent_item = schemajs(lineFromIndex(parent_index));
+    int row=0;
+    QModelIndex pindex = parent_add(index, row);
+    auto parent_item = schemajs(lineFromIndex(pindex));
+    field_top_schema_name = QString::fromStdString(parent_item->getStructName());
     auto no_used_list = parent_item->getNoUsedKeys();
     QStringList list;
     std::transform(no_used_list.begin(), no_used_list.end(),
                    std::back_inserter(list),
                    [](const std::string &v){ return QString::fromStdString(v); });
     return list;
+}
+
+const jsonio::FieldDef* JsonSchemaModel::field_def(const std::string &field_top_schema_name,
+                                       const std::string &field_name)
+{
+    if(field_name.empty()) {
+        return nullptr;
+    }
+    auto schema_def = jsonio::ioSettings().Schema().getStruct(field_top_schema_name);
+    if(!schema_def) {
+        return nullptr;
+    }
+    auto field_def = schema_def->getField(field_name);
+    if(!field_def) {
+        return nullptr;
+    }
+    return field_def;
 }
 
 //-------------------------------------------------------------------------------------

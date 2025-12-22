@@ -1,6 +1,5 @@
 #pragma once
 
-#include <memory>
 #include "jsonqml/models/base_model.h"
 #include "jsonio/jsonschema.h"
 
@@ -30,7 +29,7 @@ public:
     /// Return internal data to const link
     const jsonio::JsonBase& current_object() const override
     {
-        return  root_node;
+        return root_node;
     }
 
     /// Extern update data
@@ -40,7 +39,6 @@ public:
     {
        return true;
     }
-    Q_INVOKABLE QStringList fieldNames(const QModelIndex& index) const;
 
     Q_INVOKABLE bool isUnion(const QModelIndex& index) const override;
     Q_INVOKABLE bool canBeAdd(const QModelIndex& index) const override;
@@ -53,6 +51,9 @@ public:
     Q_INVOKABLE const QModelIndex cloneObject(const QModelIndex& index) override;
     Q_INVOKABLE void removeObject(const QModelIndex& index) override;
     Q_INVOKABLE void setFieldData(const QModelIndex& index, const QString& data) override;
+
+    Q_INVOKABLE QStringList fieldNames(const QModelIndex& index, QString& field_top_schema_name) const override;
+    static const jsonio::FieldDef *field_def(const std::string &field_top_schema_name, const std::string &field_name);
 
 private:
     QModelIndex index(int row, int column, const QModelIndex& parent) const override;
@@ -77,6 +78,7 @@ protected:
         return  const_cast<jsonio::JsonSchema&>(root_node);
     }
     jsonio::JsonBase* lineFromIndex(const QModelIndex& index) const override;
+    void check_editor_type(const QModelIndex &index) override;
 
     QString get_value(int column, const jsonio::JsonBase *object) const;
     const jsonio::EnumDef *get_map_enumdef(const QModelIndex& index) const;
@@ -86,8 +88,6 @@ protected:
         return dynamic_cast<jsonio::JsonSchema*>(base_ptr);
     }
     void enums_to_combobox(const jsonio::EnumDef* enumdef);
-    void check_editor_type(const QModelIndex &index) override;
-
 };
 
 } // namespace jsonqml

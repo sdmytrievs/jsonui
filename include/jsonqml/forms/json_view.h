@@ -4,10 +4,6 @@
 #include <QItemDelegate>
 #include "jsonqml/models/base_model.h"
 
-namespace jsonio {
-class EnumDef;
-}
-
 namespace jsonqml {
 
 class JsonClient;
@@ -25,9 +21,7 @@ public slots:
     void CmHelp();
     void CmCalc();
     void CmAddObject();
-    void CmAddObjects();
     void CmDelObject();
-    void CmDelObjects();
     void CmDelObjectsUnion();
     void CmResizeArray();
     void CmCloneObject();
@@ -81,40 +75,23 @@ protected:
     void restore_expanded_on_level(const QModelIndex& index, std::shared_ptr<ExpandedLevelLine> top_data);
 };
 
-// /// \class JsonFreeDelegate individual items in views are rendered and edited using delegates
-// class JsonFreeDelegate: public QItemDelegate
-// {
-//     Q_OBJECT
+/// \class JsonDelegate individual items in views are rendered and edited using delegates
+class JsonDelegate: public QItemDelegate
+{
+    Q_OBJECT
 
-// public:
+public:
 
-//     JsonFreeDelegate(QObject * parent = nullptr):
-//         QItemDelegate(parent) {}
-//     QWidget *createEditor(QWidget *parent,
-//                           const QStyleOptionViewItem &option,
-//                           const QModelIndex &index) const;
-// };
-
-
-// /// \class JsonSchemaDelegate individual items in views are rendered and edited using delegates
-// class JsonSchemaDelegate: public QItemDelegate
-// {
-//     Q_OBJECT
-
-//     QWidget *enums_to_combobox( QWidget *parent, const jsonio::EnumDef *enumdef) const;
-
-// public:
-
-//     JsonSchemaDelegate(QObject* parent = nullptr):
-//         QItemDelegate(parent)
-//     {}
-//     QWidget *createEditor(QWidget *parent,
-//                           const QStyleOptionViewItem &option,
-//                           const QModelIndex &index) const;
-//     void setEditorData(QWidget *editor, const QModelIndex &index) const;
-//     void setModelData(QWidget *editor, QAbstractItemModel *model,
-//                       const QModelIndex &index) const;
-// };
+    JsonDelegate(QObject* parent = nullptr):
+        QItemDelegate(parent)
+    {}
+    QWidget *createEditor(QWidget *parent,
+                          const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+    void setModelData(QWidget *editor, QAbstractItemModel *model,
+                      const QModelIndex &index) const;
+};
 
 
 } // namespace jsonui

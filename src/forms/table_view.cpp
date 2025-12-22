@@ -21,10 +21,10 @@ QWidget *MatrixDelegate::createEditor(QWidget *parent, const QStyleOptionViewIte
     QLineEdit *lineEdit = new QLineEdit(parent);
 
     if(data_type == QMetaType::Double) {
-        lineEdit->setValidator( new QDoubleValidator );
+        lineEdit->setValidator(new QDoubleValidator);
     }
     else if(data_type == QMetaType::Int) {
-        lineEdit->setValidator( new QIntValidator );
+        lineEdit->setValidator(new QIntValidator);
     }
     return lineEdit;
 }
@@ -44,6 +44,13 @@ MatrixTable::MatrixTable(int mode, TableClient* atable_client, QWidget* parent):
     setVerticalScrollMode(QAbstractItemView::ScrollPerItem);
     setHorizontalScrollMode(QAbstractItemView::ScrollPerItem);
     setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::AnyKeyPressed);
+
+    if(mode_using & TableFlag::SingleSelection) {
+        setSelectionMode(QAbstractItemView::SingleSelection);
+    }
+    else {
+        setSelectionMode(QAbstractItemView::MultiSelection);
+    }
 
     setSortingEnabled(table_client->sortingEnabled());
     setModel(table_client->tableModel());
@@ -355,7 +362,7 @@ void DBKeysTable::CmNext()
         row = std::min( row+1, model()->rowCount()-1 );
         index = index.sibling( row, index.column() );
     }
-    if( index.isValid() )  {
+    if(index.isValid())  {
         open_function(index);
         setCurrentIndex(index);
     }
@@ -386,9 +393,8 @@ void DBKeysTable::move_to_key(std::string id_key)
         selectionModel()->select(items.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows);
         scrollTo(items.first(), QAbstractItemView::EnsureVisible);
     }
-    setColumnHidden( 0, true ); // ??? not hide to edges
+    setColumnHidden(0, true); // ??? not hide to edges
 }
-
 
 } // namespace jsonui
 
