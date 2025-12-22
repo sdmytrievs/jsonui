@@ -260,10 +260,7 @@ void MatrixTable::pasteData()
 
 void MatrixTable::pasteTransposedData()
 {
-    auto clip_text = uiSettings().paste();
-    // !!!  traspose clip_text
-    uiSettings().copy(clip_text);
-    table_client->pasteSelected(selectedIndexes());
+    table_client->pasteSelectedTransposed(selectedIndexes());
 }
 
 void MatrixTable::setCurrentRow(int row)

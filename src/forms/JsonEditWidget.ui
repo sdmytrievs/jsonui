@@ -18,12 +18,12 @@
     <item>
      <widget class="QSplitter" name="mainSplitter">
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
       <property name="handleWidth">
        <number>3</number>
       </property>
-      <widget class="QWidget" name="bsonWidget" native="true">
+      <widget class="QWidget" name="jsonWidget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
          <number>0</number>
@@ -97,7 +97,6 @@
     <addaction name="action_Resize_array"/>
     <addaction name="action_Clone_Current"/>
     <addaction name="separator"/>
-    <addaction name="action_Add_fields"/>
     <addaction name="action_Delete_fields"/>
     <addaction name="actionRemove_Alternatives_Union"/>
     <addaction name="separator"/>
@@ -171,7 +170,7 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -265,20 +264,6 @@
     <string>&amp;License ...</string>
    </property>
   </action>
-  <action name="action_Add_fields">
-   <property name="text">
-    <string>Add Structured Fields ...</string>
-   </property>
-   <property name="iconText">
-    <string>Add Structured Data Fields ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Add Structured Data Fields ...</string>
-   </property>
-   <property name="shortcut">
-    <string>F7</string>
-   </property>
-  </action>
   <action name="action_Delete_field">
    <property name="text">
     <string>&amp;Remove Selected Field</string>
@@ -331,7 +316,7 @@
   </action>
   <action name="actionContents">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -387,7 +372,7 @@
   </action>
   <action name="action_Clone_Structured_Data_Object">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCloneRecordIcon24.png</normaloff>:/menu/Icons/NewCloneRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -417,7 +402,7 @@
   </action>
   <action name="action_Delete">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -426,7 +411,7 @@
   </action>
   <action name="action_Update">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
    </property>
    <property name="text">
@@ -438,7 +423,7 @@
   </action>
   <action name="action_Read">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
    </property>
    <property name="text">
@@ -453,7 +438,7 @@
   </action>
   <action name="action_Create">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -485,7 +470,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../jsonui.qrc"/>
+  <include location="../../jsonui.qrc"/>
  </resources>
  <connections/>
 </ui>

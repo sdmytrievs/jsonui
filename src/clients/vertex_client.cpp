@@ -10,8 +10,9 @@ namespace jsonqml {
 
 extern std::shared_ptr<spdlog::logger> ui_logger;
 
-VertexClientPrivate::VertexClientPrivate():
+VertexClientPrivate::VertexClientPrivate(DocumentType dtype):
     JsonClientPrivate(),
+    doc_type(dtype),
     keys_model(nullptr),
     sort_proxy_model(nullptr)
 {
@@ -46,7 +47,24 @@ void VertexClientPrivate::init_keys(const QString& aschema)
 
 QStringList VertexClientPrivate::gen_schema_list() const
 {
-    return ArangoDatabase::getVertexesList();
+    QStringList lst;
+
+    switch(doc_type) {
+    case Json:
+    case Schema:
+        lst = ArangoDatabase::getSchemasList();
+        break;
+    case Vertex:
+        lst = ArangoDatabase::getVertexesList();
+        break;
+    case Edge:
+        lst = ArangoDatabase::getEdgesList();
+        break;
+    case Resource:
+        lst = ArangoDatabase::getResourcesList();
+        break;
+    }
+    return lst;
 }
 
 QAbstractItemModel *VertexClientPrivate::keys_list_model() const
@@ -89,7 +107,7 @@ void VertexClientPrivate::update_keysmodel()
     if(keys_model.get()==nullptr) {
         // could be zero, if schema list empty
         // alloc when refresh list
-        keys_model.reset(new DBKeysModel(Vertex, current_schema_name));
+        keys_model.reset(new DBKeysModel(doc_type, current_schema_name));
         if(sorting_enabled()) {
             sort_proxy_model.reset(new SortFilterProxyModel());
             sort_proxy_model->setSourceModel(keys_model.get());
@@ -161,10 +179,14 @@ VertexClient::VertexClient(const QString& aschema, VertexClientPrivate *impl, QO
 }
 
 VertexClient::VertexClient(const QString& aschema, QObject *parent):
-    VertexClient(aschema, new VertexClientPrivate(), parent)
+    VertexClient(aschema, new VertexClientPrivate(Vertex), parent)
 {
     // virtual init into JsonClient
 }
+
+VertexClient::VertexClient(DocumentType dtype, const QString &aschema, QObject *parent):
+    VertexClient(aschema, new VertexClientPrivate(dtype), parent)
+{ }
 
 bool VertexClient::queryExecuting()
 {

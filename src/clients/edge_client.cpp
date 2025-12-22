@@ -9,7 +9,7 @@
 namespace jsonqml {
 
 EdgeClientPrivate::EdgeClientPrivate():
-    VertexClientPrivate(),
+    VertexClientPrivate(Edge),
     in_model(nullptr),
     out_model(nullptr)
 {

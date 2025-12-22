@@ -51,6 +51,7 @@ public:
     Q_INVOKABLE const QModelIndex cloneObject(const QModelIndex& index) override;
     Q_INVOKABLE void removeObject(const QModelIndex& index) override;
     Q_INVOKABLE void setFieldData(const QModelIndex& index, const QString& data) override;
+    Q_INVOKABLE void delObjectsUnion(const QModelIndex &index) override;
 
     Q_INVOKABLE QStringList fieldNames(const QModelIndex& index, QString& field_top_schema_name) const override;
     static const jsonio::FieldDef *field_def(const std::string &field_top_schema_name, const std::string &field_name);

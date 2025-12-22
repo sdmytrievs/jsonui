@@ -87,6 +87,8 @@ public:
     }
     static QStringList getEdgesList();
     static QStringList getVertexesList();
+    static QStringList getResourcesList();
+    static QStringList getSchemasList();
     static jsonio::values_t getCollectionList(bool with_chema=true);
     static std::string collectionFromSchema(const std::string& schema_name);
     static std::string schemaFromCollection(const std::string& collection_name);

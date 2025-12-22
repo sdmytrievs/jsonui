@@ -8,13 +8,13 @@ extern std::shared_ptr<spdlog::logger> ui_logger;
 std::string ArangoDatabase::resources_database_name = "resources";
 
 std::map<std::string, ArangoDatabase::CollectionData> ArangoDatabase::user_defined_collections=
-{
-    {"queries", {{"Query"}, {"name", "qschema", "comment"}}},
-    {"docpages", {{"DocPages"}, {"type", "name", "ext"}}},
-    {"impexdefs", {{"ImpexFormat"}, {"direction", "name", "impexschema", "schema", "comment"}}}
+    {
+        {"queries", {{"Query"}, {"name", "qschema", "comment"}}},
+        {"docpages", {{"DocPages"}, {"type", "name", "ext"}}},
+        {"impexdefs", {{"ImpexFormat"}, {"direction", "name", "impexschema", "schema", "comment"}}}
 };
 std::map<std::string, ArangoDatabase::CollectionData> ArangoDatabase::defined_collections=
-        ArangoDatabase::user_defined_collections;
+    ArangoDatabase::user_defined_collections;
 
 
 ArangoDatabase& arango_db()
@@ -214,7 +214,7 @@ bool ArangoDatabasePrivate::update_database(std::string& error_message)
         }
         update_work_database(db_connect, error_message);
         if(resourse_database) { // change only if used before
-          update_resource_database();
+            update_resource_database();
         }
 
         ui_logger->info("Update database connect to: {} {}", db_connect.serverUrl, db_connect.databaseName);
@@ -285,7 +285,7 @@ void ArangoDatabase::ConnectFromSettings()
 ArangoDBDocument* ArangoDatabase::createDocument(DocumentType type, const QString &document_schema_name)
 {
     ArangoDBDocument* new_doc = new ArangoDBDocument(this,
-             new ArangoDBDocumentPrivate(type, document_schema_name, impl_func()));
+                                                     new ArangoDBDocumentPrivate(type, document_schema_name, impl_func()));
     return new_doc;
 }
 
@@ -388,6 +388,26 @@ QStringList ArangoDatabase::getVertexesList()
                    std::back_inserter(new_list),
                    [](const std::string &v){ return QString::fromStdString(v); });
     return new_list;
+}
+
+QStringList ArangoDatabase::getResourcesList()
+{
+    QStringList list;
+    list << "Query" << "DocPages" << "ImpexFormat";
+    return list;
+}
+
+QStringList ArangoDatabase::getSchemasList()
+{
+    QStringList list;
+    auto resource_lst = getResourcesList();
+    for(const auto& item: defined_collections) {
+        QString schema = QString::fromStdString(item.second.schema_name);
+        if(!resource_lst.contains(schema)) {
+            list << schema;
+        }
+    }
+    return list;
 }
 
 jsonio::values_t ArangoDatabase::getCollectionList(bool with_chema)

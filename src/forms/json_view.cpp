@@ -320,24 +320,21 @@ void JsonView::CmDelObjectsUnion()
     QModelIndex index = currentIndex();
     JsonBaseModel* themodel = view_model();
 
-    try {
-        if(index.isValid() && themodel && themodel->isUnion(index)) {
+    if(index.isValid() && themodel && themodel->isUnion(index)) {
+        QString key, type;
+        int size;
+        themodel->dataIndex(index, key, type, size);
+        QString msg = QString("Confirm deletion of all alternatives to %1 data object union variant?").arg(key);
+        QMessageBox::StandardButton reply;
+        reply = QMessageBox::question(this, "Data objects to delete", msg, QMessageBox::Yes|QMessageBox::No);
+        if(reply == QMessageBox::Yes) {
             collapse(index);
-            //themodel->delObjectsUnion( window(), index);
+            themodel->delObjectsUnion(index);
             //update();
         }
-        else {
-            QMessageBox::information(window(), "Delete from Object", "Please, determine the objects to be deleted");
-        }
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-    catch(...) {
-        QMessageBox::critical(window(), "std::exception", "Undefined exception");
+    else {
+        QMessageBox::information(window(), "Deletion of all alternatives", "Please, determine the objects");
     }
 }
 
@@ -367,7 +364,6 @@ void JsonView::CopyFieldPath()
         uiSettings().copy(clip_text);
     }
 }
-
 
 void JsonView::CopyField()
 {

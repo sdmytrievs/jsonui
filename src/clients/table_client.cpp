@@ -162,6 +162,20 @@ void TableClientPrivate::set_from_string(const QString& str, const Selection& se
     }
 }
 
+void TableClientPrivate::set_from_string_transposed(const QString& str, const Selection& sel)
+{
+    if(str.isEmpty()) {
+        return;
+    }
+    const QStringList rows = str.split(splitRow, Qt::KeepEmptyParts);
+    for(int it=0, row=sel.fromCol; it<rows.count()&&row<=sel.toCol; it++, row++) {
+        const QStringList cells = rows[it].split(splitCol, Qt::KeepEmptyParts);
+        for(int cell=0, column=sel.fromRow; cell<cells.count()&&column<=sel.toRow; cell++,column++)  {
+            table_model()->setData(table_model()->index(row,column), cells[cell].trimmed(), Qt::EditRole);
+        }
+    }
+}
+
 void TableClientPrivate::copy_selected(const QModelIndexList &selection)
 {
     Selection sel = get_selection_range(selection, false);
@@ -178,11 +192,16 @@ void TableClientPrivate::copy_with_names(const QModelIndexList &selection)
     uiSettings().copy(clip_text);
 }
 
-void TableClientPrivate::paste_selected(const QModelIndexList &selection)
+void TableClientPrivate::paste_selected(const QModelIndexList &selection, bool transposed)
 {
     Selection sel = get_selection_range(selection, true);
     auto clip_text = uiSettings().paste();
-    set_from_string(clip_text, sel);
+    if(transposed) {
+        set_from_string_transposed(clip_text, sel);
+    }
+    else {
+        set_from_string(clip_text, sel);
+    }
 }
 
 //--------------------------------------------------------------------------
@@ -259,6 +278,13 @@ void TableClient::pasteSelected(const QModelIndexList& selection)
 {
     if(!selection.isEmpty()) {
         impl_func()->paste_selected(selection);
+    }
+}
+
+void TableClient::pasteSelectedTransposed(const QModelIndexList& selection)
+{
+    if(!selection.isEmpty()) {
+        impl_func()->paste_selected(selection, true);
     }
 }
 

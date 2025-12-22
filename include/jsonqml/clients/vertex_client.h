@@ -3,6 +3,7 @@
 
 #include <QAbstractItemModel>
 #include "jsonqml/clients/json_client.h"
+#include "jsonqml/models/db_keys_model.h"
 
 namespace jsonqml {
 
@@ -32,6 +33,7 @@ protected slots:
     void setEditorOid(std::string doc_id);
 
 public:
+    explicit VertexClient(DocumentType dtype, const QString& aschema, QObject *parent = nullptr);
     explicit VertexClient(const QString& aschema, QObject *parent = nullptr);
 
     QAbstractItemModel *keysmodel();

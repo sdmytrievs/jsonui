@@ -72,6 +72,7 @@ public:
     Q_INVOKABLE virtual void resizeArray(const QModelIndex& index, int new_size);
     Q_INVOKABLE virtual const QModelIndex cloneObject(const QModelIndex& index);
     Q_INVOKABLE virtual void removeObject(const QModelIndex& index);
+    Q_INVOKABLE virtual void delObjectsUnion(const QModelIndex&) {}
 
     Q_INVOKABLE virtual QString getFieldPath(const QModelIndex& index) const;
     Q_INVOKABLE virtual QString getFieldData(const QModelIndex& index) const;

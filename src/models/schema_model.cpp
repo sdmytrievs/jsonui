@@ -335,6 +335,38 @@ void  JsonSchemaModel::setFieldData(const QModelIndex& index, const QString& dat
     }
 }
 
+void JsonSchemaModel::delObjectsUnion(const QModelIndex& index)
+{
+    auto line = lineFromIndex(index);
+    auto parent_item = line->getParent();
+
+    try {
+        // remove rows after current
+        size_t current_next = index.row()+1;
+        if(current_next < parent_item->size())  {
+            beginRemoveRows(parent(index), current_next, parent_item->size()-1);
+            for(size_t ii=parent_item->size()-1; ii>=current_next; ii--) {
+                parent_item->getChild(ii)->remove();
+            }
+            endRemoveRows();
+        }
+        //remove rows before current
+        current_next = index.row();
+        if(current_next > 0)  {
+            beginRemoveRows(parent(index), 0, index.row()-1);
+            while(parent_item->size() > 1) {
+                parent_item->getChild(0)->remove();
+            }
+            endRemoveRows();
+        }
+    }
+    catch(std::exception& e) {
+        endRemoveRows();
+        uiSettings().setError(e.what());
+    }
+}
+
+
 QStringList JsonSchemaModel::fieldNames(const QModelIndex &index, QString& field_top_schema_name) const
 {
     int row=0;

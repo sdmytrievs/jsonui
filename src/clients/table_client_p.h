@@ -53,7 +53,7 @@ public:
 
     void copy_selected(const QModelIndexList& selection);
     void copy_with_names(const QModelIndexList& selection);
-    void paste_selected(const QModelIndexList& selection);
+    void paste_selected(const QModelIndexList& selection, bool transposed=false);
 
     virtual void read_files(const QString &) {}
     virtual void save_files(const QString &) {}
@@ -71,6 +71,7 @@ protected:
     QString create_header(const Selection& sel_box);
     QString create_string(const Selection& sel_box);
     void set_from_string(const QString& str, const Selection& sel);
+    void set_from_string_transposed(const QString &str, const Selection &sel);
 };
 
 }

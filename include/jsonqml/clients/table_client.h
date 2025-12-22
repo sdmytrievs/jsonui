@@ -31,6 +31,7 @@ public slots:
     void copySelected(const QModelIndexList& selection);
     void copyWithNames(const QModelIndexList& selection);
     void pasteSelected(const QModelIndexList& selection);
+    void pasteSelectedTransposed(const QModelIndexList &selection);
 
 public:
     explicit TableClient(SelectModel* table_model, int mode=default_table_settings, QObject *parent = nullptr);

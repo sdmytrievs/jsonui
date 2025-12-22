@@ -125,7 +125,7 @@ FORMS += \
     App/JSONUITestMainWindow.ui \
     src/forms/CalcDialog.ui \
     src/forms/GraphDialog.ui \
-    #src/forms/JsonEditWidget.ui \
+    src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \
     src/forms/ModelLineDialog.ui \
     src/forms/PreferencesUI.ui \
