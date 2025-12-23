@@ -28,7 +28,6 @@ signals:
 
 
 public slots:
-    void openRecordKey(const std::string& key_document, bool reset_in_out_query = false);
     void openRecordKey(const QModelIndex& index);
 
     // File
@@ -39,8 +38,8 @@ public slots:
 
     // Record
     void CmRead();
-    void CmUpdate() {}
-    void CmDelete() {}
+    void CmUpdate();
+    void CmDelete();
     void CmDeleteSelect() {}
     void CmDisplaySearchResult() {}
     void CmSearchQuery() {}
@@ -62,6 +61,8 @@ public slots:
 public:
     explicit VertexWidget(const QString& aschema, QWidget *parent = nullptr);
     ~VertexWidget();
+
+    void openDocument(const std::string& key_document, bool reset_in_out_query = false);
 
     /// Update query
     /// void setQueryEdited( QueryWidget* queryW  ) override;

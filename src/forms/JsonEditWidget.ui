@@ -112,10 +112,11 @@
     <property name="title">
      <string>&amp;Database</string>
     </property>
-    <addaction name="action_Create"/>
     <addaction name="action_Read"/>
     <addaction name="action_Update"/>
-    <addaction name="action_Delete"/>
+    <addaction name="separator"/>
+    <addaction name="action_Delete_list"/>
+    <addaction name="action_Backup"/>
    </widget>
    <addaction name="menu_File"/>
    <addaction name="menu_Edit"/>
@@ -355,13 +356,16 @@
     <string>Paste Field &amp;Value(s)</string>
    </property>
   </action>
-  <action name="action_Delete">
+  <action name="action_Delete_list">
    <property name="icon">
     <iconset resource="../../jsonui.qrc">
      <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Delete Current DB Record</string>
+    <string>&amp;Delete Multiple DB Records ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select and delete DB Records ...</string>
    </property>
   </action>
   <action name="action_Update">
@@ -370,10 +374,10 @@
      <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
    </property>
    <property name="text">
-    <string>&amp;Update DB Record for Current Data Object</string>
+    <string>&amp;Save/&amp;Update Record to Database</string>
    </property>
    <property name="toolTip">
-    <string>Update DB Record for Current Data Object</string>
+    <string>Save current data object to Database</string>
    </property>
   </action>
   <action name="action_Read">
@@ -391,16 +395,12 @@
     <string>Read Data Object from Another DB Record ...</string>
    </property>
   </action>
-  <action name="action_Create">
-   <property name="icon">
-    <iconset resource="../../jsonui.qrc">
-     <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
-   </property>
+  <action name="action_Backup">
    <property name="text">
-    <string>&amp;Create DB Record for Current Data Object</string>
+    <string>&amp;Backup Queried DB Records to File ...</string>
    </property>
    <property name="toolTip">
-    <string>Create DB Record for Current Data Object</string>
+    <string>Select and save records to file</string>
    </property>
   </action>
   <action name="action_Clone_Current">

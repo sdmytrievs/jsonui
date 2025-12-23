@@ -159,6 +159,13 @@ bool JsonBaseModel::dataIndex(const QModelIndex &index, QString &data, QString &
     return true;
 }
 
+void JsonBaseModel::setOid(const std::string &doc_id)
+{
+    beginResetModel();
+    current_data().set_oid(doc_id);
+    endResetModel();
+}
+
 const jsonio::JsonBase* JsonBaseModel::set_value_via_type(jsonio::JsonBase* object, const std::string& add_key,
                                        jsonio::JsonBase::Type add_type, const std::string& add_value)
 {

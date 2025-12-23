@@ -151,8 +151,7 @@ std::string VertexClientPrivate::id_from_editor()
 
 void VertexClientPrivate::id_to_editor(std::string doc_id)
 {
-    // json_tree_model->current_object().set_value_via_path("_id", doc_id);
-    //setValueViaPath("_rev", std::string(""));
+    json_tree_model->setOid(doc_id);
 }
 
 bool VertexClientPrivate::set_json(const std::string& json_string, const QString& schema_name)
@@ -259,6 +258,20 @@ std::string VertexClient::tableId(size_t row) const
         return impl_func()->keys_model->get_id(row);
     }
     return {};
+}
+
+void VertexClient::deleteRecord(QString vertex_id)
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->remove(vertex_id.toStdString());
+    }
+}
+
+void VertexClient::updateRecord()
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->save(impl_func()->get_json().dump());
+    }
 }
 
 QAbstractItemModel *VertexClient::keysmodel()

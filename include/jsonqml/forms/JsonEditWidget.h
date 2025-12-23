@@ -23,14 +23,10 @@ public slots:
     void CmExportJSON();
     void CmImportJSON();
 
-    /// Save current document to database as new
-    void CmCreateInsert();
-    /// Read new document from database
     void CmRead();
-    /// Save current document to database
     void CmUpdate();
-    /// Delete current document from database
-    void CmDelete();
+    void CmDeleteList();
+    void CmBackup();
 
 public:
     explicit JsonEditWidget(const QString& aschema_name = "",

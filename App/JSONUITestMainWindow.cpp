@@ -111,7 +111,8 @@ void TJSONUITestWin::CmNewCollection()
 {
     try {
         std::string testschema{};
-        auto lst =  jsonqml::transform2std(jsonqml::ArangoDatabase::getResourcesList());
+        //auto lst =  jsonqml::transform2std(jsonqml::ArangoDatabase::getResourcesList());
+        auto lst =  jsonqml::transform2std(jsonqml::ArangoDatabase::getSchemasList());
 
         if(!lst.empty()) {
             jsonqml::SelectDialog sel_dlg(jsonqml::single_selection,

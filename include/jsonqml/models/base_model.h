@@ -99,6 +99,9 @@ public:
         return QStringList("new_key");
     }
 
+    /// Set document-handle(_id) to document
+    Q_INVOKABLE void setOid(const std::string& doc_id);
+
 protected:
     static const QStringList type_names;
     bool use_combo_box;

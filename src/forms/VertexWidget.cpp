@@ -14,13 +14,6 @@
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/models/db_keys_model.h"
-
-#ifndef IMPEX_OFF
-#include "jsonui17/FormatImpexWidget.h"
-#include "jsonimpex/yaml_xml2file.h"
-#else
-#include "jsonio/txt2file.h"
-#endif
 #include "jsonio/dbconnect.h"
 
 namespace jsonqml {
@@ -143,16 +136,15 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     auto mode = single_selection;
     keys_table_client.reset(new TableClient(vertex_client->tablemodel(), mode, this));
     keys_view.reset(new DBKeysTable(mode, keys_table_client.get(),
-            [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
-    QObject::connect(keys_view.get(), SIGNAL(clicked(const QModelIndex&)),
-                     this, SLOT(openRecordKey(const QModelIndex&)));
+                                    [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
+    QObject::connect(keys_view.get(), &DBKeysTable::clicked,
+                     this, &VertexWidget::openRecordKey);
     keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     keys_view->horizontalHeader()->setSectionResizeMode( QHeaderView::Interactive );
     ui->horizontalLayout->addWidget(keys_view.get());
 
     set_actions();
     qDebug() << "VertexWidget construct";
-
 }
 
 VertexWidget::~VertexWidget()
@@ -165,12 +157,10 @@ VertexWidget::~VertexWidget()
 void VertexWidget::setExecuting()
 {
     if(vertex_client->queryExecuting()) {
-        // open Waiting Spinner
         ui_logger->info("VertexWidget start process");
         wait_dialog->start();
     }
     else {
-        // close Waiting Spinner
         wait_dialog->stop();
         ui_logger->info("VertexWidget finish process");
     }
@@ -186,26 +176,8 @@ void VertexWidget::openRecordKey(const QModelIndex& index)
     vertex_client->readEditorData(index.row());
 }
 
-void VertexWidget::openRecordKey(const std::string& reckey, bool)
-{
-    // vertex_client->readEditorData(index.row());
-}
-
 // Menu commands -----------------------------------------------------------
 
-/// Set default bson record
-void VertexWidget::CmNew()
-{
-    // open_document( "" );
-}
-
-/// Clone bson record (clear _id)
-void VertexWidget::CmClone()
-{
-   //  update_oid( "" );
-}
-
-/// Read document from json file fileName
 void VertexWidget::CmImportJSON()
 {
     QString file;
@@ -215,7 +187,6 @@ void VertexWidget::CmImportJSON()
     }
 }
 
-/// Write current document to json file fileName
 void VertexWidget::CmExportJSON()
 {
     auto file = vertex_client->fileSchemaExt(schema_name, "json");
@@ -226,34 +197,42 @@ void VertexWidget::CmExportJSON()
     }
 }
 
-// Read new record from DB
+void VertexWidget::CmNew()
+{
+    vertex_client->jsonmodel()->setupModelData("", schema_name);
+}
+
+void VertexWidget::CmClone()
+{
+    vertex_client->setEditorOid("");
+}
+
 void VertexWidget::CmRead()
 {
-    try  {
-        std::string testschema;
-        auto vertex_lst = jsonio::DataBase::getVertexesList();
-        if(!vertex_lst.empty()) {
-            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection, "Please, select collection to edit data", vertex_lst, ";" );
-            if(sel_dlg.exec()) {
-                testschema = vertex_lst[sel_dlg.getSelectedIndex()];
-            }
+    SelectDialog sel_dlg(single_selection, "Please, select a record to read/view",
+                         vertex_client->tablemodel(), this);
+    if(sel_dlg.exec())  {
+        auto selndx = sel_dlg.selIndex();
+        if(selndx>=0) {
+            vertex_client->readEditorData(selndx);
         }
-        if(!testschema.empty()) {
-            vertex_client->setSchema(testschema.c_str());
-        }
-
-
-        // std::string reckey = SelectKeyFrom("Please, select a record to read/view",
-        //                                    vertex_client.get(), single_selection, this);
-        // if(!reckey.empty()) {
-        //     openRecordKey(reckey);
-        // }
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e)  {
-        QMessageBox::critical( this, "std::exception", e.what() );
+}
+
+void VertexWidget::CmUpdate()
+{
+    vertex_client->updateRecord();
+}
+
+void VertexWidget::CmDelete()
+{
+    auto key = vertex_client->editorId();
+    QString msg = QString("Confirm deletion of %1 record?").arg(key);
+    QMessageBox::StandardButton reply;
+    reply = QMessageBox::question(this, "Record to delete", msg,
+                                  QMessageBox::Yes|QMessageBox::No);
+    if(reply == QMessageBox::Yes) {
+        vertex_client->deleteRecord(key);
     }
 }
 

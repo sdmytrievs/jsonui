@@ -44,6 +44,9 @@ public:
     Q_INVOKABLE QString editorId();
     std::string tableId(size_t row) const;
 
+    Q_INVOKABLE virtual void deleteRecord(QString vertex_id);
+    Q_INVOKABLE virtual void updateRecord();
+
 protected:
     VertexClientPrivate* impl_func()
     { return reinterpret_cast<VertexClientPrivate *>(impl_ptr.get()); }

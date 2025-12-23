@@ -7,6 +7,7 @@
 #include "jsonqml/forms/JsonEditWidget.h"
 #include "jsonqml/forms/json_view.h"
 #include "jsonqml/forms/FileDialogs.h"
+#include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/clients/vertex_client.h"
 #include "jsonqml/clients/settings_client.h"
 
@@ -78,7 +79,7 @@ void JsonEditWidget::CmClone()
 }
 
 // Save current record to DB file as new
-void JsonEditWidget::CmCreateInsert()
+void JsonEditWidget::CmBackup()
 {
     /*
     try {
@@ -99,30 +100,19 @@ void JsonEditWidget::CmCreateInsert()
 }
 
 
-// Read new record from DB
 void JsonEditWidget::CmRead()
-{/*
-    try {
-        if( dbcollection.get() == nullptr )
-            return;
-
-        // Select key to load
-        auto reckey = SelectKeyFrom(dbcollection.get(), this, "Please, select a record to read/view" );
-        if(!reckey.empty()) {
-            dbcollection->readDocument(reckey);
-            reset_json( dbcollection->getJson(true), "" );
-            contents_changed = false;
+{
+    VertexClient* vclient = dynamic_cast<VertexClient*>(json_client.get());
+    if(vclient) {
+        SelectDialog sel_dlg(single_selection, "Please, select a record to read/view",
+                             vclient->tablemodel(), this);
+        if(sel_dlg.exec())  {
+            auto selndx = sel_dlg.selIndex();
+            if(selndx>=0) {
+                vclient->readEditorData(selndx);
+            }
         }
     }
-    catch( jsonio::jsonio_exception& e)
-    {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical( this, "std::exception", e.what() );
-    }
- */
 }
 
 // Save current record to DB file
@@ -148,7 +138,7 @@ void JsonEditWidget::CmUpdate()
 }
 
 // Delete current record from DB
-void JsonEditWidget::CmDelete()
+void JsonEditWidget::CmDeleteList()
 { /*
     try {
         if(dbcollection.get() == nullptr)
@@ -237,8 +227,8 @@ void JsonEditWidget::set_actions()
 
     if(!collection_name.isEmpty()) {
         QObject::connect( ui->action_Update, &QAction::triggered, this, &JsonEditWidget::CmUpdate);
-        QObject::connect( ui->action_Create, &QAction::triggered, this, &JsonEditWidget::CmCreateInsert);
-        QObject::connect( ui->action_Delete, &QAction::triggered, this, &JsonEditWidget::CmDelete);
+        QObject::connect( ui->action_Backup, &QAction::triggered, this, &JsonEditWidget::CmBackup);
+        QObject::connect( ui->action_Delete_list, &QAction::triggered, this, &JsonEditWidget::CmDeleteList);
         QObject::connect( ui->action_Read, &QAction::triggered, this, &JsonEditWidget::CmRead);
     }
     else {

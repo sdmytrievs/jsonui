@@ -62,9 +62,12 @@ public:
                   const model_line_t& query_fields);
 
     Q_INVOKABLE std::string get_id(size_t row) const;
+
+    Q_INVOKABLE void read(std::string doc_id);
     Q_INVOKABLE void read(size_t row);
     Q_INVOKABLE void read_query(std::string doc_id);
     Q_INVOKABLE void save(const std::string& json_data);
+    Q_INVOKABLE void remove(std::string doc_id);
     Q_INVOKABLE void remove(size_t row);
 };
 

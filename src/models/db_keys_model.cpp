@@ -79,12 +79,16 @@ void DBKeysModel::updateFields(const QStringList &query_fields)
     updateFields(std::move(new_list));
 }
 
-void DBKeysModel::read(size_t row)
+void DBKeysModel::read(std::string doc_id)
 {
-    auto doc_id = get_id(row);
     if(!doc_id.empty()) {
         emit cmRead(doc_id);
     }
+}
+
+void DBKeysModel::read(size_t row)
+{
+    read(get_id(row));
 }
 
 void DBKeysModel::read_query(std::string doc_id)
@@ -98,6 +102,14 @@ void DBKeysModel::save(const std::string &json_data)
 {
     // reload all model after save -> undifined updated/saved row number
     emit cmUpdate(json_data);
+}
+
+void DBKeysModel::remove(std::string doc_id)
+{
+    if(!doc_id.empty()) {
+        emit cmDelete(doc_id);
+    // !!! need update model table for all open
+    }
 }
 
 void DBKeysModel::remove(size_t row)
