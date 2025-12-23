@@ -151,7 +151,8 @@ std::string VertexClientPrivate::id_from_editor()
 
 void VertexClientPrivate::id_to_editor(std::string doc_id)
 {
-   // json_tree_model->current_object().set_value_via_path("_id", doc_id);
+    // json_tree_model->current_object().set_value_via_path("_id", doc_id);
+    //setValueViaPath("_rev", std::string(""));
 }
 
 bool VertexClientPrivate::set_json(const std::string& json_string, const QString& schema_name)

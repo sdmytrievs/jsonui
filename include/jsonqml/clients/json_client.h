@@ -27,6 +27,7 @@ signals:
     void jsonModelAboutChanged();
 
 public slots:
+    void setSchema(const QString &new_schema);
     virtual void setModelSchema();
     void updateSchemaList();
 
@@ -39,7 +40,6 @@ public:
     JsonBaseModel *jsonmodel();
     const QStringList &headerNames();
 
-    Q_INVOKABLE void setSchema(const QString &new_schema);
     void setSchemaList(const QStringList &new_list);
 
     Q_INVOKABLE void readJson(const QString& path);

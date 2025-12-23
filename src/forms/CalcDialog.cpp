@@ -43,9 +43,9 @@ CalcDialog::CalcDialog(QWidget* parent):
     all_buttons->addButton(ui->pClearBtn, 15);
     ui->pAssignBtn->setChecked( true);
 
-    QObject::connect( all_buttons, &QButtonGroup::idClicked, this, &CalcDialog::setMode );
-    QObject::connect(ui->PushButton1_3, &QPushButton::clicked, this, &CalcDialog::ok );
-    QObject::connect(ui->PushButton1_2, &QPushButton::clicked, this, &QDialog::reject );
+    QObject::connect(all_buttons, &QButtonGroup::idClicked, this, &CalcDialog::setMode);
+    QObject::connect(ui->PushButton1_3, &QPushButton::clicked, this, &CalcDialog::ok);
+    QObject::connect(ui->PushButton1_2, &QPushButton::clicked, this, &QDialog::reject);
     //  QObject::connect(ui->PushButton1_2, &QPushButton::clicked, this, &CalcDialog::unaryMode);
     QObject::connect(ui->PushButton42, &QPushButton::clicked, this, &CalcDialog::help );
 }

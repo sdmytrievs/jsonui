@@ -96,11 +96,7 @@ QString DBQueryModel::lastQuery() const
 
 QStringList DBQueryModel::lastQueryFields() const
 {
-    QStringList new_list;
-    std::transform(header.begin(), header.end(),
-                   std::back_inserter(new_list),
-                   [](const std::string &v){ return QString::fromStdString(v); });
-    return new_list;
+    return transform2qt(header);
 }
 
 bool DBQueryModel::queryExecuting()

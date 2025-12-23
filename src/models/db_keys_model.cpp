@@ -75,10 +75,7 @@ void DBKeysModel::updateQuery(const QString &query)
 
 void DBKeysModel::updateFields(const QStringList &query_fields)
 {
-    std::vector<std::string> new_list;
-    std::transform(query_fields.begin(), query_fields.end(),
-                   std::back_inserter(new_list),
-                   [](const QString &v){ return v.toStdString(); });
+    std::vector<std::string> new_list = transform2std(query_fields);
     updateFields(std::move(new_list));
 }
 

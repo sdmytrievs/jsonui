@@ -18,19 +18,10 @@ class JsonEditWidget : public QMainWindow
     Q_OBJECT
 
 public slots:
-    /// Set empty or default json document
     void CmNew();
-    /// Clone json document (clear _id, _rev ... )
     void CmClone();
-
     void CmExportJSON();
     void CmImportJSON();
-#ifndef IMPEX_OFF
-    void CmExportYAML();
-    void CmImportYAML();
-    void CmExportXML();
-    void CmImportXML();
-#endif
 
     /// Save current document to database as new
     void CmCreateInsert();
@@ -43,7 +34,6 @@ public slots:
 
 public:
     explicit JsonEditWidget(const QString& aschema_name = "",
-                            const QString& collect_name = "",
                             QWidget *parent = nullptr );
     ~JsonEditWidget();
 
@@ -60,4 +50,3 @@ private:
 };
 
 } // namespace jsonui
-

@@ -407,4 +407,22 @@ void Preferences::copy(const QString& clip_text)
     QGuiApplication::clipboard()->setText(clip_text/*, QClipboard::Clipboard*/);
 }
 
+
+QStringList transform2qt(const std::vector<std::string>& std_list)
+{
+    QStringList new_list;
+    std::transform(std_list.begin(), std_list.end(),
+                   std::back_inserter(new_list),
+                   [](const std::string &v){ return QString::fromStdString(v); });
+    return new_list;
+}
+
+std::vector<std::string> transform2std(const QStringList& qt_list)
+{
+    std::vector<std::string> new_list;
+    std::transform(qt_list.begin(), qt_list.end(),
+                   std::back_inserter(new_list),
+                   [](const QString &v){ return v.toStdString(); });
+    return new_list;
+}
 }

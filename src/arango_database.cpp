@@ -371,23 +371,14 @@ jsonio::values_t ArangoDatabase::make_query_fields(std::string schema_name) cons
 QStringList ArangoDatabase::getEdgesList()
 {
     auto std_schema_list = jsonio::DataBase::getEdgesList();
-    QStringList new_list;
     //new_list.append(no_schema_name);
-    std::transform(std_schema_list.begin(), std_schema_list.end(),
-                   std::back_inserter(new_list),
-                   [](const std::string &v){ return QString::fromStdString(v); });
-    return new_list;
+    return transform2qt(std_schema_list);
 }
 
 QStringList ArangoDatabase::getVertexesList()
 {
     auto std_schema_list = jsonio::DataBase::getVertexesList();
-    QStringList new_list;
-    //new_list.append(no_schema_name);
-    std::transform(std_schema_list.begin(), std_schema_list.end(),
-                   std::back_inserter(new_list),
-                   [](const std::string &v){ return QString::fromStdString(v); });
-    return new_list;
+    return transform2qt(std_schema_list);
 }
 
 QStringList ArangoDatabase::getResourcesList()
@@ -420,7 +411,6 @@ jsonio::values_t ArangoDatabase::getCollectionList(bool with_chema)
         }
         list.push_back(name);
     }
-
     return list;
 }
 
@@ -462,9 +452,7 @@ std::string ArangoDatabase::anyVertexSchema()
     if(!list.empty()) {
         return  list.begin()->first;
     }
-    else {
-        return "";
-    }
+    return "";
 }
 
 std::string ArangoDatabase::anyEdgeSchema()
@@ -473,9 +461,7 @@ std::string ArangoDatabase::anyEdgeSchema()
     if(!list.empty()) {
         return  list.begin()->first;
     }
-    else {
-        return "";
-    }
+    return "";
 }
 
 }

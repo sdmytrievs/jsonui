@@ -28,7 +28,7 @@ public slots:
     void CmSetWorkDir() {}
     void CmNewVertex();
     void CmNewEdge() {}
-    void CmNewBson() {}
+    void CmNewJson();
     void CmNewCollection();
     void CmNewCsv();
     void CmNewImpexFormat() {}

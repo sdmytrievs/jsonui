@@ -45,7 +45,7 @@ HEADERS += \
     include/jsonqml/forms/CalcDialog.h \
     include/jsonqml/forms/FileDialogs.h \
     include/jsonqml/forms/GraphDialog.h \
-    #include/jsonqml/forms/JsonEditWidget.h \
+    include/jsonqml/forms/JsonEditWidget.h \
     include/jsonqml/forms/LegendDialog.h \
     include/jsonqml/forms/PreferencesUI.h \
     include/jsonqml/forms/SelectDialog.h \
@@ -95,7 +95,7 @@ SOURCES += \
     src/forms/CalcDialog.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
-    #src/forms/JsonEditWidget.cpp \
+    src/forms/JsonEditWidget.cpp \
     src/forms/LegendDialog.cpp \
     src/forms/ModelLineDialog.cpp \
     src/forms/PreferencesUI.cpp \

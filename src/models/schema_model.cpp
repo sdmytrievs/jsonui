@@ -12,7 +12,9 @@ JsonSchemaModel::JsonSchemaModel(const QString& schema_name,
     header_data(header_names),
     current_schema(schema_name),
     root_node(jsonio::JsonSchema::object(current_schema.toStdString()))
-{}
+{
+   // setupModelData("", schema_name);
+}
 
 JsonSchemaModel::~JsonSchemaModel() {}
 
@@ -373,12 +375,7 @@ QStringList JsonSchemaModel::fieldNames(const QModelIndex &index, QString& field
     QModelIndex pindex = parent_add(index, row);
     auto parent_item = schemajs(lineFromIndex(pindex));
     field_top_schema_name = QString::fromStdString(parent_item->getStructName());
-    auto no_used_list = parent_item->getNoUsedKeys();
-    QStringList list;
-    std::transform(no_used_list.begin(), no_used_list.end(),
-                   std::back_inserter(list),
-                   [](const std::string &v){ return QString::fromStdString(v); });
-    return list;
+    return transform2qt(parent_item->getNoUsedKeys());
 }
 
 const jsonio::FieldDef* JsonSchemaModel::field_def(const std::string &field_top_schema_name,

@@ -67,6 +67,7 @@ JsonView::JsonView(JsonClient* client, QWidget* parent):
     setIndentation(30);
 
     setModel(json_client->jsonmodel());
+    connect(json_client, &JsonClient::jsonModelChanged, this, [&](){ setModel(json_client->jsonmodel()); });
 
     connect(this, &JsonView::customContextMenuRequested, this, &JsonView::slotPopupContextMenu);
     connect(header(), &QHeaderView::sectionClicked, this, &JsonView::changeCurrent);

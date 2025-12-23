@@ -11,6 +11,9 @@ namespace jsonqml {
 
 extern std::shared_ptr<spdlog::logger> ui_logger;
 
+QStringList transform2qt(const std::vector<std::string>& std_list);
+std::vector<std::string> transform2std(const QStringList& qt_list);
+
 struct DatabaseSettings
 {
     /// Current database credentials group

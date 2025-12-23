@@ -208,34 +208,21 @@ void VertexWidget::CmClone()
 /// Read document from json file fileName
 void VertexWidget::CmImportJSON()
 {
-    try {
-        QString file;
-        if(ChooseFileOpen(this, file, "Please, select a file with JSON object", domFilters)) {
-            vertex_client->readJson(file);  // yaml, qml must be into readJson
-        }
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(this, "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(this, "std::exception", e.what());
+    QString file;
+    if(ChooseFileOpen(this, file,
+                       "Please, select a file with JSON object", domFilters)) {
+        vertex_client->readJson(file);  // yaml, html must be into readJson
     }
 }
 
 /// Write current document to json file fileName
 void VertexWidget::CmExportJSON()
 {
-    try {
-        auto file = vertex_client->fileSchemaExt(schema_name, "json");
-        if(ChooseFileSave(this, file, "Please, select a file to write the data", domFilters, file))  {
-            vertex_client->saveJson(file);  // yaml, qml must be into readJson
-        }
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical( this, "std::exception", e.what() );
+    auto file = vertex_client->fileSchemaExt(schema_name, "json");
+    if(ChooseFileSave(this, file,
+                       "Please, select a file to write the data",
+                       domFilters, file))  {
+        vertex_client->saveJson(file);  // yaml, html must be into readJson
     }
 }
 

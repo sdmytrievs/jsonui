@@ -24,11 +24,8 @@ void JsonClientPrivate::init()
 QStringList JsonClientPrivate::gen_schema_list() const
 {
     auto std_schema_list = jsonio::ioSettings().Schema().getStructs(false);
-    QStringList new_list;
-    new_list.append(no_schema_name);
-    std::transform(std_schema_list.begin(), std_schema_list.end(),
-                   std::back_inserter(new_list),
-                   [](const std::string &v){ return QString::fromStdString(v); });
+    QStringList new_list = transform2qt(std_schema_list);
+    new_list.insert(0, no_schema_name);
     return new_list;
 }
 
@@ -50,6 +47,7 @@ void JsonClientPrivate::update_jsonmodel()
         new_tree_model.reset(new JsonFreeModel(header_names));
     }
     else {
+        qDebug() << "update_jsonmodel " << current_schema_name;
         new_tree_model.reset(new JsonSchemaModel(current_schema_name, header_names));
     }
     json_tree_model.swap(new_tree_model);
@@ -153,7 +151,11 @@ void JsonClient::readJson(const QString &url)
     try {
         auto path = uiSettings().handleFileChosen(url);
         auto file_schema = schemaFromPath(path);
+#ifndef IMPEX_OFF
+        jsonio::JsonYamlXMLFile file(path.toStdString());
+#else
         jsonio::JsonFile file(path.toStdString());
+#endif
         auto json_string = file.load_json();
         impl_func()->set_json(json_string, file_schema);
     }
@@ -170,7 +172,11 @@ void JsonClient::saveJson(const QString &url)
     uiSettings().setError(QString());
     try {
         auto path = uiSettings().handleFileChosen(url);
+#ifndef IMPEX_OFF
+        jsonio::JsonYamlXMLFile file(path.toStdString());
+#else
         jsonio::JsonFile file(path.toStdString());
+#endif
         file.save(impl_func()->get_json());
     }
     catch(std::exception& e) {

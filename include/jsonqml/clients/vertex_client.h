@@ -27,8 +27,6 @@ signals:
 
 public slots:
     void setModelSchema() override;
-
-protected slots:
     void setEditorData(std::string schema_name, std::string doc_json);
     void setEditorOid(std::string doc_id);
 

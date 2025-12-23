@@ -7,6 +7,7 @@
 #include "jsonqml/forms/PreferencesUI.h"
 #include "jsonqml/forms/TableEditWindow.h"
 #include "jsonqml/forms/VertexWidget.h"
+#include "jsonqml/forms/JsonEditWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/arango_database.h"
@@ -33,7 +34,7 @@ void TJSONUITestWin::set_actions()
     connect( ui->actionSet_I_O_Files_Location, &QAction::triggered, this, &TJSONUITestWin::CmSetWorkDir);
     connect( ui->actionNewVertex, &QAction::triggered, this, &TJSONUITestWin::CmNewVertex);
     connect( ui->actionNew_Edge_Editor_Window, &QAction::triggered, this, &TJSONUITestWin::CmNewEdge);
-    connect( ui->actionNew_Bson, &QAction::triggered, this, &TJSONUITestWin::CmNewBson);
+    connect( ui->actionNew_Bson, &QAction::triggered, this, &TJSONUITestWin::CmNewJson);
     connect( ui->actionNew_Collection_Data_Editor, &QAction::triggered, this, &TJSONUITestWin::CmNewCollection);
     connect( ui->actionNew_CSV, &QAction::triggered, this, &TJSONUITestWin::CmNewCsv);
     connect( ui->actionNew_Impex, &QAction::triggered, this, &TJSONUITestWin::CmNewImpexFormat);
@@ -89,8 +90,8 @@ void TJSONUITestWin::CmNewCsv()
         if(!csv_window) {
             csv_window.reset(new jsonqml::TableEditWidget("CSV editor ",
                                                           jsonqml::TableFlag::TableIsEditable |
-                                                          jsonqml::TableFlag::GraphDataEnabled |
-                                                          jsonqml::TableFlag::RowSortingEnabled ));
+                                                              jsonqml::TableFlag::GraphDataEnabled |
+                                                              jsonqml::TableFlag::RowSortingEnabled ));
         }
         else {
             csv_window->raise();
@@ -106,41 +107,50 @@ void TJSONUITestWin::CmNewCsv()
     }
 }
 
-/// Open new JSONUIWidget window
 void TJSONUITestWin::CmNewCollection()
 {
     try {
-        std::string testcollection ="undefined";
-        auto collist = jsonqml::ArangoDatabase::getCollectionList();
+        std::string testschema{};
+        auto lst =  jsonqml::transform2std(jsonqml::ArangoDatabase::getResourcesList());
 
-        if(!collist.empty())  {
-            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection, "Please, select collection to edit data", collist, ";" );
+        if(!lst.empty()) {
+            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection,
+                                          "Please, select collection to edit data", lst, ";" );
             if(sel_dlg.exec()) {
-                testcollection = collist[sel_dlg.getSelectedIndex()];
+                testschema = lst[sel_dlg.getSelectedIndex()];
             }
         }
-        qDebug() << "Select collection" << testcollection;
-        // auto* testWidget = new jsonui17::JsonEditWidget( "", testcollection/*, this*/ );
 
-        // testWidget->setOnCloseEventFunction(onCloseEvent);
-        // testWidget->setShowWidgetFunction(showWidget);
-        // jsonuiWindows.push_back(testWidget);
-        // testWidget->show();
+        if(!testschema.empty()) {
+            jsonqml::JsonEditWidget* ptr = new jsonqml::JsonEditWidget(QString::fromStdString(testschema), this);
+            ptr->show();
+        }
     }
-    catch(jsonio::jsonio_exception& e)
-    {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
+    catch(jsonio::jsonio_exception& e) {
+        QMessageBox::critical(this, "jsonio_exception", e.what());
     }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical( this, "std::exception", e.what() );
+    catch(std::exception& e) {
+        QMessageBox::critical(this, "std::exception", e.what());
     }
 }
 
-// Open new VertexWidget window
+void TJSONUITestWin::CmNewJson()
+{
+    try {
+        jsonqml::JsonEditWidget* ptr = new jsonqml::JsonEditWidget(QString(), this);
+        ptr->show();
+    }
+    catch(jsonio::jsonio_exception& e) {
+        QMessageBox::critical(this, "jsonio_exception", e.what());
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical(this, "std::exception", e.what());
+    }
+}
+
 void TJSONUITestWin::CmNewVertex()
 {
-    try{
+    try {
         std::string testschema ="";
 
         auto vertex_lst = jsonio::DataBase::getVertexesList();
@@ -151,8 +161,8 @@ void TJSONUITestWin::CmNewVertex()
             }
         }
         if(!testschema.empty()) {
-            jsonqml::VertexWidget* prtr = new jsonqml::VertexWidget(QString::fromStdString(testschema), this);
-            prtr->show();
+            jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(QString::fromStdString(testschema), this);
+            ptr->show();
         }
     }
     catch(jsonio::jsonio_exception& e) {
@@ -162,3 +172,4 @@ void TJSONUITestWin::CmNewVertex()
         QMessageBox::critical(this, "std::exception", e.what());
     }
 }
+

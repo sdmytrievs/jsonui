@@ -65,12 +65,6 @@
     <addaction name="actionImport_Json_File"/>
     <addaction name="actionExport_Json_File"/>
     <addaction name="separator"/>
-    <addaction name="actionImport_YAML_File"/>
-    <addaction name="action_Export_YAML_File"/>
-    <addaction name="separator"/>
-    <addaction name="actionImport_XML_File"/>
-    <addaction name="actionExport_XML_File"/>
-    <addaction name="separator"/>
     <addaction name="actionE_xit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
@@ -97,7 +91,6 @@
     <addaction name="action_Resize_array"/>
     <addaction name="action_Clone_Current"/>
     <addaction name="separator"/>
-    <addaction name="action_Delete_fields"/>
     <addaction name="actionRemove_Alternatives_Union"/>
     <addaction name="separator"/>
     <addaction name="actionCopy_Field_Path"/>
@@ -203,44 +196,6 @@
    </property>
    <property name="toolTip">
     <string>Write Structured Data to JSON File ...</string>
-   </property>
-  </action>
-  <action name="actionImport_YAML_File">
-   <property name="text">
-    <string>Read Structured Data from &amp;YAML File ...</string>
-   </property>
-   <property name="iconText">
-    <string>Read Structured Data from YAML File ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Read Structured Data from YAML File ...</string>
-   </property>
-  </action>
-  <action name="action_Export_YAML_File">
-   <property name="text">
-    <string>Write &amp;Structured Data to YAML File ...</string>
-   </property>
-   <property name="iconText">
-    <string>Write Structured Data to YAML File ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Write Structured Data to YAML File ...</string>
-   </property>
-  </action>
-  <action name="actionImport_XML_File">
-   <property name="text">
-    <string>Read Structured Data from XML &amp;File ...</string>
-   </property>
-   <property name="iconText">
-    <string>Read Structured Data from XML File ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Read Structured Data from XML File ...</string>
-   </property>
-  </action>
-  <action name="actionExport_XML_File">
-   <property name="text">
-    <string>Write Sctructured &amp;Data to XML File ...</string>
    </property>
   </action>
   <action name="action_Help_About">
@@ -446,17 +401,6 @@
    </property>
    <property name="toolTip">
     <string>Create DB Record for Current Data Object</string>
-   </property>
-  </action>
-  <action name="action_Delete_fields">
-   <property name="text">
-    <string>Select and Remove Fields ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Remove Selected Data Fields</string>
-   </property>
-   <property name="shortcut">
-    <string>F8</string>
    </property>
   </action>
   <action name="action_Clone_Current">
