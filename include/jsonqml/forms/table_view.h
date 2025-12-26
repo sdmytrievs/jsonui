@@ -99,6 +99,8 @@ class DBKeysTable: public MatrixTable
 public slots:
     void CmNext();
     void CmPrevious();
+    /// Move to current id
+    void move_to_key(std::string id_key);
 
 public:
     DBKeysTable(int mode, TableClient* atable_client,
@@ -107,8 +109,6 @@ public:
         open_function(show_fn)
     {}
 
-    /// Move to current id
-    void move_to_key(std::string id_key);
 
 protected:
     ShowRecord_f open_function;

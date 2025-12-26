@@ -160,7 +160,7 @@ void ArangoDBDocumentPrivate::execute_query(const jsonio::DBQueryBase &query,
     }
 }
 
-std::string ArangoDBDocumentPrivate::read(const std::string& doc_id)
+std::string ArangoDBDocumentPrivate::read_doc(const std::string& doc_id)
 {
     if(is_dbdocument()) {
         dbdocument->readDocument(doc_id);
@@ -169,7 +169,7 @@ std::string ArangoDBDocumentPrivate::read(const std::string& doc_id)
     return "";
 }
 
-std::string ArangoDBDocumentPrivate::read_query(const std::string &doc_id)
+std::string ArangoDBDocumentPrivate::read_query_doc(const std::string &doc_id)
 {
     std::string ret_json;
     if(is_dbdocument()) {
@@ -182,7 +182,7 @@ std::string ArangoDBDocumentPrivate::read_query(const std::string &doc_id)
     return ret_json;
 }
 
-bool ArangoDBDocumentPrivate::save(const std::string &json_data, std::string& doc_id)
+bool ArangoDBDocumentPrivate::save_doc(const std::string &json_data, std::string& doc_id)
 {
     if(is_dbdocument()) {
         doc_id = dbdocument->recFromJson(json_data, false);
@@ -197,7 +197,7 @@ bool ArangoDBDocumentPrivate::save(const std::string &json_data, std::string& do
     return false;
 }
 
-void ArangoDBDocumentPrivate::remove(const std::string& doc_id)
+void ArangoDBDocumentPrivate::remove_doc(const std::string& doc_id)
 {
     if(is_dbdocument()) {
         dbdocument->deleteDocument(doc_id);
@@ -217,6 +217,8 @@ ArangoDBDocument::ArangoDBDocument(const ArangoDatabase* parent_database,
     // reset client to new database allocation
     QObject::connect(arango_database, &ArangoDatabase::dbdriveChanged, this, &ArangoDBDocument::reloadQuery);
     QObject::connect(arango_database, &ArangoDatabase::errorConnection, this, &ArangoDBDocument::resetClient);
+    QObject::connect(arango_database, &ArangoDatabase::cmReloadTable, this, &ArangoDBDocument::reloadTable);
+
 
     QObject::connect(this, &ArangoDBDocument::updatedDocument, arango_database, &ArangoDatabase::afterUpdatedDocument);
     QObject::connect(this, &ArangoDBDocument::deletedDocument, arango_database, &ArangoDatabase::afterDeletedDocument);
@@ -280,6 +282,15 @@ void ArangoDBDocument::reloadQuery()
     emit finished();
 }
 
+void ArangoDBDocument::reloadTable(std::string schema_name, std::string doc_id)
+{
+    if(impl_func()->document_schema_name == schema_name) {
+        // now reset all model
+        impl_func()->build_table();
+        emit finishedQuery();
+    }
+}
+
 void ArangoDBDocument::changeQuery(jsonio::DBQueryBase query, std::vector<std::string> query_fields)
 {
     emit started();
@@ -311,7 +322,7 @@ void ArangoDBDocument::executeQuery(jsonio::DBQueryBase query, std::vector<std::
 void ArangoDBDocument::readDocument(std::string doc_id)
 {
     try {
-        auto json_data = impl_func()->read(doc_id);
+        auto json_data = impl_func()->read_doc(doc_id);
         emit readedDocument(impl_func()->schema_from_id(doc_id), json_data);
         ui_logger->debug("read document {}", doc_id);
     }
@@ -324,7 +335,7 @@ void ArangoDBDocument::readDocumentQuery(std::string doc_id)
 {
     try {
         ui_logger->debug("read document query {}", doc_id);
-        auto json_data = impl_func()->read_query(doc_id);
+        auto json_data = impl_func()->read_query_doc(doc_id);
         emit readedDocument(impl_func()->schema_from_id(doc_id), json_data);
     }
     catch(std::exception& e) {
@@ -336,16 +347,15 @@ void ArangoDBDocument::updateDocument(std::string json_document)
 {
     try {
         std::string doc_id;
-        if(impl_func()->save(json_document, doc_id)) {
+        if(impl_func()->save_doc(json_document, doc_id)) {
             // new doc
             emit updatedOid(doc_id);
+            // !!! now reset all model, posible check only one row
+            reloadTable(impl_func()->schema_from_id(doc_id), doc_id);
         }
         else {
             emit updatedDocument(impl_func()->schema_from_id(doc_id), doc_id);
         }
-        // !!! now reset all model, posible check only one row
-        impl_func()->build_table();
-        emit finishedQuery();
         ui_logger->debug("update document {}", doc_id);
     }
     catch(std::exception& e) {
@@ -356,7 +366,7 @@ void ArangoDBDocument::updateDocument(std::string json_document)
 void ArangoDBDocument::deleteDocument(std::string doc_id)
 {
     try {
-        impl_func()->remove(doc_id);
+        impl_func()->remove_doc(doc_id);
         emit deletedDocument(impl_func()->schema_from_id(doc_id), doc_id);
         ui_logger->debug("delete document {}", doc_id);
     }

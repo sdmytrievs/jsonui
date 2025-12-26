@@ -248,14 +248,12 @@ bool ArangoDatabase::dbConnected() const
 
 void ArangoDatabase::afterUpdatedDocument(std::string schema_name, std::string doc_id)
 {
-    Q_UNUSED(schema_name);
-    Q_UNUSED(doc_id);
+    emit cmReloadTable(schema_name, doc_id);
 }
 
 void ArangoDatabase::afterDeletedDocument(std::string schema_name, std::string doc_id)
 {
-    Q_UNUSED(schema_name);
-    Q_UNUSED(doc_id);
+    emit cmReloadTable(schema_name, doc_id);
 }
 
 void ArangoDatabase::ConnectFromSettings()

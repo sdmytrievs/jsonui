@@ -38,6 +38,9 @@ signals:
 
     void dbConnectChanged();
 
+    /// Refresh current model table if schema (updateKeyList)
+    void cmReloadTable(std::string schema_name, std::string doc_id);
+
 public slots:
 
     /// Notify about updating the document (may require updating of related ones)

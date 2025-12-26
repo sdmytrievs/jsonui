@@ -65,6 +65,7 @@ void VertexWidget::set_actions()
     // Record
     QObject::connect(ui->actionNext_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmNext);
     QObject::connect(ui->actionPrevious_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmPrevious);
+    connect(vertex_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
     QObject::connect(ui->action_Update, &QAction::triggered, this, &VertexWidget::CmUpdate);
     QObject::connect(ui->action_Delete, &QAction::triggered, this, &VertexWidget::CmDelete);
     QObject::connect(ui->action_Read, &QAction::triggered, this, &VertexWidget::CmRead);

@@ -44,6 +44,8 @@ public slots:
     virtual void resetSchema(std::string aschema_name);
     /// Refresh current query data (updateKeyList)
     virtual void reloadQuery();
+    /// Refresh current query table after update_line
+    virtual void reloadTable(std::string schema_name, std::string doc_id);
     /// Update query
     virtual void changeQuery(jsonio::DBQueryBase query, std::vector<std::string> query_fields);
     /// Execute select query (do not change internal document selection)

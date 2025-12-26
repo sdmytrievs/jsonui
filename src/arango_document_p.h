@@ -28,11 +28,11 @@ public:
                        const jsonio::values_t &query_fields);
     bool clear_document();
 
-    virtual std::string read(const std::string& doc_id);
-    virtual std::string read_query(const std::string& doc_id);
+    virtual std::string read_doc(const std::string& doc_id);
+    virtual std::string read_query_doc(const std::string& doc_id);
     // true if new doc_id
-    virtual bool save(const std::string &json_data, std::string& doc_id);
-    virtual void remove(const std::string& doc_id);
+    virtual bool save_doc(const std::string &json_data, std::string& doc_id);
+    virtual void remove_doc(const std::string& doc_id);
 
 protected:
     friend class ArangoDBDocument;

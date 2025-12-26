@@ -35,8 +35,7 @@ DBKeysModel::~DBKeysModel()
 void DBKeysModel::updateKeyList()
 {
     DBQueryModel::updateKeyList();
-    // read first record after change all list
-    read(0);
+    emit updatedKeyList();
 }
 
 void DBKeysModel::updateQuery()

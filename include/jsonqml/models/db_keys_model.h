@@ -17,6 +17,8 @@ class DBKeysModel: public DBQueryModel
 
 signals:
    void updatedOid(std::string doc_id);
+   void updatedKeyList();
+
    /// Open new arango document result
    void readedDocument(std::string schema_name, std::string doc_json);
 

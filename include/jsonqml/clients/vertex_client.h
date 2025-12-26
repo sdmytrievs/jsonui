@@ -24,11 +24,13 @@ signals:
     void keysModelChanged();
     void tablePropertiesChanged();
     void executingChange();
+    void updatedKeyList(std::string doc_id);
 
 public slots:
     void setModelSchema() override;
     void setEditorData(std::string schema_name, std::string doc_json);
     void setEditorOid(std::string doc_id);
+    void updateKeyList();
 
 public:
     explicit VertexClient(DocumentType dtype, const QString& aschema, QObject *parent = nullptr);

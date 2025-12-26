@@ -175,6 +175,8 @@ VertexClient::VertexClient(const QString& aschema, VertexClientPrivate *impl, QO
                     this, &VertexClient::setEditorOid, Qt::UniqueConnection);
             connect(impl_func()->keys_model.get(), &DBKeysModel::executingChange,
                     this, &VertexClient::executingChange, Qt::UniqueConnection);
+            connect(impl_func()->keys_model.get(), &DBKeysModel::updatedKeyList,
+                    this, &VertexClient::updateKeyList, Qt::UniqueConnection);
         }
 }
 
@@ -211,6 +213,8 @@ void VertexClient::setModelSchema()
                 this, &VertexClient::setEditorOid, Qt::UniqueConnection);
         connect(impl_func()->keys_model.get(), &DBKeysModel::executingChange,
                 this, &VertexClient::executingChange, Qt::UniqueConnection);
+        connect(impl_func()->keys_model.get(), &DBKeysModel::updatedKeyList,
+                this, &VertexClient::updateKeyList, Qt::UniqueConnection);
     }
 }
 
@@ -231,6 +235,18 @@ void VertexClient::setEditorOid(std::string doc_id)
     }
     catch(std::exception& e) {
         uiSettings().setError(e.what());
+    }
+}
+
+void VertexClient::updateKeyList()
+{
+    auto editor_id = impl_func()->id_from_editor();
+    if(editor_id.empty()) {
+        readEditorData(0);
+        editor_id = impl_func()->id_from_editor();
+    }
+    if(!editor_id.empty()) {
+        emit updatedKeyList(editor_id);
     }
 }
 
