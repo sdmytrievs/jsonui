@@ -22,9 +22,9 @@ class VertexWidget : public QMainWindow
 
 signals:
     /// Emit signal, when delete record(s)
-    void vertexDeleted();
+    //void vertexDeleted();
     /// Emit signal, when loaded graph
-    void graphLoaded();
+    //void graphLoaded();
 
 
 public slots:
@@ -58,6 +58,8 @@ public slots:
     void CmFollowOutEdges() {}
 
     void setExecuting();
+    void updateViewMenu();
+
 public:
     explicit VertexWidget(const QString& aschema, QWidget *parent = nullptr);
     ~VertexWidget();
@@ -82,7 +84,6 @@ private:
 
     void set_actions();
     std::vector<std::string> select_keys_document(const QString& title);
-    void updt_view_menu();
 };
 
 } // namespace jsonui

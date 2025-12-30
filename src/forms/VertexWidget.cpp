@@ -18,7 +18,7 @@
 
 namespace jsonqml {
 
-void VertexWidget::updt_view_menu()
+void VertexWidget::updateViewMenu()
 {
     ui->action_Show_comments->setChecked(JsonSchemaModel::showComments);
     ui->action_Display_enums->setChecked(JsonSchemaModel::useEnumNames);
@@ -54,11 +54,15 @@ void VertexWidget::set_actions()
     /// QObject::connect( ui->actionLicense, &QAction::triggered, this, &VertexWidget::CmHelpLicense);
 
     // View
-    /// QObject::connect( ui->action_Show_comments, &QAction::toggled, &uiSettings(), &UIPreferences::CmShowComments);
-    /// QObject::connect( ui->action_Display_enums, &QAction::toggled, &uiSettings(), &UIPreferences::CmDisplayEnums);
-    /// QObject::connect( ui->action_Edit_id, &QAction::toggled, &uiSettings(), &UIPreferences::CmEditID);
-    /// QObject::connect( ui->actionKeep_Data_Fields_Expanded, &QAction::toggled, &uiSettings(), &UIPreferences::CmEditExpanded);
-    updt_view_menu();
+    QObject::connect(ui->action_Show_comments, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowComments", val); });
+    QObject::connect(ui->action_Display_enums, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
+    QObject::connect(ui->action_Edit_id, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
+    QObject::connect(ui->actionKeep_Data_Fields_Expanded, &QAction::toggled,
+            [](bool val){ jsonqml::uiSettings().setBoolValue("KeepExpanded", val); });
+    updateViewMenu();
     QObject::connect(ui->actionFollow_Edges, &QAction::triggered, this, &VertexWidget::CmFollowOutEdges);
     QObject::connect(ui->actionFollow_Edges_Incoming, &QAction::triggered, this, &VertexWidget::CmFollowInEdges);
 
@@ -145,6 +149,8 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     ui->horizontalLayout->addWidget(keys_view.get());
 
     set_actions();
+    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &VertexWidget::updateViewMenu);
+
     qDebug() << "VertexWidget construct";
 }
 
@@ -216,6 +222,7 @@ void VertexWidget::CmRead()
         auto selndx = sel_dlg.selIndex();
         if(selndx>=0) {
             vertex_client->readEditorData(selndx);
+            keys_view->move_to_key(vertex_client->tableId(selndx));
         }
     }
 }

@@ -8,6 +8,12 @@ namespace jsonqml {
 
 const QStringList JsonBaseModel::type_names= {"string", "bool", "int", "double", "object", "array", "null"};
 
+void JsonBaseModel::updateModel()
+{
+    beginResetModel();
+    endResetModel();
+}
+
 JsonBaseModel::JsonBaseModel(QObject *parent):
     QAbstractItemModel(parent)
 {}

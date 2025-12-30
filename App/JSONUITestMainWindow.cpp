@@ -20,6 +20,8 @@ TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
     ui->setupUi(this);
 
     set_actions();
+    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::errorChanged,
+            this, &TJSONUITestWin::showErrorMessage);
 }
 
 TJSONUITestWin::~TJSONUITestWin()
@@ -48,14 +50,17 @@ void TJSONUITestWin::set_actions()
     connect( ui->actionPreferences, &QAction::triggered, this, &TJSONUITestWin::CmSettingth);
 
     // View
-    //connect( ui->action_Show_comments, &QAction::toggled, &jsonqml::uiSettings(), &jsonui17::UIPreferences::CmShowComments);
-    //connect( ui->action_Display_enums, &QAction::toggled, &jsonqml::uiSettings(), &jsonui17::UIPreferences::CmDisplayEnums);
-    //connect( ui->action_Edit_id, &QAction::toggled, &jsonqml::uiSettings(), &jsonui17::UIPreferences::CmEditID);
+    connect(ui->action_Show_comments, &QAction::toggled,
+            [](bool val){ jsonqml::uiSettings().setBoolValue("ShowComments", val); });
+    connect( ui->action_Display_enums, &QAction::toggled,
+            [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
+    connect( ui->action_Edit_id, &QAction::toggled,
+            [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
 
     /// connect( &uiSettings(), SIGNAL(dbChanged()), this, SLOT(closeAll()));
     //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::dbChanged, this, &TJSONUITestWin::updateDB);
     //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::schemaChanged, this, &TJSONUITestWin::closeAll);
-    connect( &jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &TJSONUITestWin::updateViewMenu);
+    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &TJSONUITestWin::updateViewMenu);
     //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::modelChanged, this, &TJSONUITestWin::updateModel);
     //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::tableChanged, this, &TJSONUITestWin::updateTable);
     //connect( &jsonui17::uiSettings(), SIGNAL(errorSettings(std::string)), this, SLOT(closeAll()));
@@ -67,6 +72,14 @@ void TJSONUITestWin::updateViewMenu()
     ui->action_Show_comments->setChecked(jsonqml::JsonSchemaModel::showComments);
     ui->action_Display_enums->setChecked(jsonqml::JsonSchemaModel::useEnumNames);
     ui->action_Edit_id->setChecked(jsonqml::JsonSchemaModel::editID);
+}
+
+void TJSONUITestWin::showErrorMessage()
+{
+    auto error = jsonqml::uiSettings().lastError();
+    if(!error.isEmpty()) {
+        QMessageBox::critical(QApplication::activeWindow(), "error", error);
+    }
 }
 
 void TJSONUITestWin::CmSettingth()

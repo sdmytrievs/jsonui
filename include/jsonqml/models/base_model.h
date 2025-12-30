@@ -22,6 +22,9 @@ signals:
     void modelExpand();
     void editorChange();
 
+public slots:
+    void updateModel();
+
 public:
     JsonBaseModel(QObject* parent = nullptr);
     ~JsonBaseModel();
@@ -34,7 +37,7 @@ public:
 
     virtual bool useSchema() const
     {
-       return false;
+        return false;
     }
 
     Q_INVOKABLE virtual QString helpName(const QModelIndex& index) const
@@ -68,7 +71,7 @@ public:
     }
 
     Q_INVOKABLE virtual const QModelIndex addObject(const QModelIndex& index,
-                          const QString &field_type,  const QString &field_name);
+                                                    const QString &field_type,  const QString &field_name);
     Q_INVOKABLE virtual void resizeArray(const QModelIndex& index, int new_size);
     Q_INVOKABLE virtual const QModelIndex cloneObject(const QModelIndex& index);
     Q_INVOKABLE virtual void removeObject(const QModelIndex& index);
@@ -111,7 +114,7 @@ protected:
     virtual jsonio::JsonBase* lineFromIndex(const QModelIndex& index) const = 0;
 
     virtual const jsonio::JsonBase* set_value_via_type(jsonio::JsonBase* object, const std::string& add_key,
-                                    jsonio::JsonBase::Type add_type, const std::string& add_value);
+                                                       jsonio::JsonBase::Type add_type, const std::string& add_value);
     virtual void check_editor_type(const QModelIndex &index);
     virtual QModelIndex parent_add(const QModelIndex &index, int& row) const;
 

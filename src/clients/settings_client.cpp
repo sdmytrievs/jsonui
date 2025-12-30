@@ -5,6 +5,7 @@
 
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/models/schema_model.h"
+#include "jsonqml/forms/json_view.h"
 #include "jsonqml/arango_database.h"
 #include "jsonio/io_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -42,6 +43,7 @@ public:
     void read_other_settings();
     bool change_schemas_path(const std::string& path);
     void set_user_dir(const std::string& path);
+    void set_bool_settings(const std::string &setting_name, bool value);
 
 protected:
 
@@ -99,7 +101,7 @@ void PreferencesPrivate::apply_changes_to_static()
     JsonSchemaModel::showComments = jsonui_group.value("ShowComments", JsonSchemaModel::showComments);
     JsonSchemaModel::useEnumNames = jsonui_group.value("ShowEnumNames", JsonSchemaModel::useEnumNames);
     JsonSchemaModel::editID = jsonui_group.value("CanEdit_id", JsonSchemaModel::editID);
-    //JsonView::expandedFields = jsonui_group.value("KeepExpanded", JsonView::expandedFields);
+    JsonView::expandedFields = jsonui_group.value("KeepExpanded", JsonView::expandedFields);
     //HelpMainWindow::editHelp = jsonui_group.value("CanEditDocPages", HelpMainWindow::editHelp);
     ui_logger->debug("Applied changes to internal static values");
 }
@@ -117,6 +119,12 @@ void PreferencesPrivate::save_other_settings()
     jsonui_group.setValue("KeepExpanded", q->keep_expanded);
     jsonui_group.setValue("CanEditDocPages", q->can_edit_doc_pages);
 
+    apply_changes_to_static();
+}
+
+void PreferencesPrivate::set_bool_settings(const std::string& setting_name, bool value)
+{
+    jsonui_group.setValue(setting_name, value);
     apply_changes_to_static();
 }
 
@@ -228,6 +236,7 @@ void Preferences::applyChanges()
             emit dbdriverChanged();
         }
         emit settingsChanged();
+        emit modelChanged();
     }
     catch(std::exception& e) {
         setError(e.what());
@@ -395,6 +404,15 @@ void Preferences::setWorkPath(const QString &path)
     work_directory = flinfo.dir().path();
     impl_func()->set_user_dir(work_directory.toStdString());
     emit workDirChanged();
+}
+
+void Preferences::setBoolValue(const QString &name, bool value)
+{
+    impl_func()->set_bool_settings(name.toStdString(), value);
+    emit settingsChanged();
+    if(name=="ShowComments" || name =="ShowEnumNames") {
+        emit modelChanged();
+    }
 }
 
 QString Preferences::paste()

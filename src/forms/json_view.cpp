@@ -74,6 +74,7 @@ JsonView::JsonView(JsonClient* client, QWidget* parent):
 
     connect(model(), &QAbstractItemModel::modelAboutToBeReset, this, &JsonView::saveExpandedRows);
     connect(model(), &QAbstractItemModel::modelReset, this, &JsonView::getExpandedRows);
+    QObject::connect(&uiSettings(), &Preferences::modelChanged, header(), &QHeaderView::reset);
 }
 
 void JsonView::changeCurrent(int section)

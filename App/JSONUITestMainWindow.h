@@ -23,6 +23,7 @@ class TJSONUITestWin : public QMainWindow
     Q_OBJECT
 
 public slots:
+    void showErrorMessage();
 
     // File
     void CmSetWorkDir() {}

@@ -75,6 +75,7 @@ class Preferences : public QObject
 signals:
     void errorChanged();
     void settingsChanged();
+    void modelChanged();
     void dbConnectListChanged();
     void dbConnectChanged();
     void dbNamesListChanged();
@@ -154,6 +155,8 @@ public:
 
     void RefreshLists(const std::string &db_group);
     QString addWorkDir(const QString &path) const;
+
+    Q_INVOKABLE void setBoolValue(const QString &name, bool value);
 
 protected:
     friend Preferences& uiSettings();
