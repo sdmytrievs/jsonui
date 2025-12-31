@@ -13,8 +13,6 @@
 #include "jsonqml/clients/table_client.h"
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/models/schema_model.h"
-#include "jsonqml/models/db_keys_model.h"
-#include "jsonio/dbconnect.h"
 
 namespace jsonqml {
 

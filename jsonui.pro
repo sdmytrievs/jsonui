@@ -43,6 +43,7 @@ HEADERS += \
     include/jsonqml/clients/csv_client.h \
     include/jsonqml/clients/csv_client_p.h \
     include/jsonqml/forms/CalcDialog.h \
+    include/jsonqml/forms/EdgesWidget.h \
     include/jsonqml/forms/FileDialogs.h \
     include/jsonqml/forms/GraphDialog.h \
     include/jsonqml/forms/JsonEditWidget.h \
@@ -93,6 +94,7 @@ SOURCES += \
     src/charts/xyseries_decorator.cpp \
     src/clients/csv_client.cpp \
     src/forms/CalcDialog.cpp \
+    src/forms/EdgesWidget.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
     src/forms/JsonEditWidget.cpp \
@@ -124,6 +126,7 @@ SOURCES += \
 FORMS += \
     App/JSONUITestMainWindow.ui \
     src/forms/CalcDialog.ui \
+    src/forms/EdgesWidget.ui \
     src/forms/GraphDialog.ui \
     src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \

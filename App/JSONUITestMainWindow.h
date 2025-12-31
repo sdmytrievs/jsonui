@@ -28,7 +28,7 @@ public slots:
     // File
     void CmSetWorkDir() {}
     void CmNewVertex();
-    void CmNewEdge() {}
+    void CmNewEdge();
     void CmNewJson();
     void CmNewCollection();
     void CmNewCsv();

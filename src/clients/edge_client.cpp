@@ -137,6 +137,16 @@ QAbstractItemModel *EdgeClient::outmodel()
     return impl_func()->out_model.get();
 }
 
+DBQueryModel *EdgeClient::intablemodel()
+{
+    return impl_func()->in_model.get();
+}
+
+DBQueryModel *EdgeClient::outtablemodel()
+{
+    return impl_func()->out_model.get();
+}
+
 void jsonqml::EdgeClient::setIncomingEdges(QString vertex_id)
 {
     if(!vertex_id.isEmpty()) {

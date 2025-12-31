@@ -23,6 +23,9 @@ public:
     QAbstractItemModel* inmodel();
     QAbstractItemModel* outmodel();
 
+    DBQueryModel *intablemodel();
+    DBQueryModel *outtablemodel();
+
     Q_INVOKABLE void setIncomingEdges(QString vertex_id);
     Q_INVOKABLE void setOutgoingEdges(QString vertex_id);
 

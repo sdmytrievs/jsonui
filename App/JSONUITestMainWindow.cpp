@@ -7,6 +7,7 @@
 #include "jsonqml/forms/PreferencesUI.h"
 #include "jsonqml/forms/TableEditWindow.h"
 #include "jsonqml/forms/VertexWidget.h"
+#include "jsonqml/forms/EdgesWidget.h"
 #include "jsonqml/forms/JsonEditWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/models/schema_model.h"
@@ -22,6 +23,8 @@ TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
     set_actions();
     connect(&jsonqml::uiSettings(), &jsonqml::Preferences::errorChanged,
             this, &TJSONUITestWin::showErrorMessage);
+    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged,
+            this, &TJSONUITestWin::updateViewMenu);
 }
 
 TJSONUITestWin::~TJSONUITestWin()
@@ -56,15 +59,6 @@ void TJSONUITestWin::set_actions()
             [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
     connect( ui->action_Edit_id, &QAction::toggled,
             [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
-
-    /// connect( &uiSettings(), SIGNAL(dbChanged()), this, SLOT(closeAll()));
-    //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::dbChanged, this, &TJSONUITestWin::updateDB);
-    //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::schemaChanged, this, &TJSONUITestWin::closeAll);
-    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &TJSONUITestWin::updateViewMenu);
-    //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::modelChanged, this, &TJSONUITestWin::updateModel);
-    //connect( &jsonui17::uiSettings(), &jsonui17::UIPreferences::tableChanged, this, &TJSONUITestWin::updateTable);
-    //connect( &jsonui17::uiSettings(), SIGNAL(errorSettings(std::string)), this, SLOT(closeAll()));
-
 }
 
 void TJSONUITestWin::updateViewMenu()
@@ -187,3 +181,28 @@ void TJSONUITestWin::CmNewVertex()
     }
 }
 
+
+void TJSONUITestWin::CmNewEdge()
+{
+    try {
+        std::string testschema ="";
+
+        auto edges_lst = jsonio::DataBase::getEdgesList();
+        if(!edges_lst.empty()) {
+            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection, "Please, select collection to edit data", edges_lst, ";" );
+            if(sel_dlg.exec()) {
+                testschema = edges_lst[sel_dlg.getSelectedIndex()];
+            }
+        }
+        if(!testschema.empty()) {
+            jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(QString::fromStdString(testschema), jsonio::DBQueryBase::emptyQuery(), this);
+            ptr->show();
+        }
+    }
+    catch(jsonio::jsonio_exception& e) {
+        QMessageBox::critical(this, "jsonio_exception", e.what());
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical(this, "std::exception", e.what());
+    }
+}
