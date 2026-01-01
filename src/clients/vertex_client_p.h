@@ -12,7 +12,9 @@ class VertexClientPrivate : public JsonClientPrivate
 
 public:
 
-    explicit VertexClientPrivate(DocumentType dtype);
+    explicit VertexClientPrivate(DocumentType dtype,
+                                 const jsonio::DBQueryBase& query=jsonio::DBQueryBase::emptyQuery(),
+                                 const model_line_t& query_fields={});
     virtual ~VertexClientPrivate() {}
 
     void init() override;
@@ -43,6 +45,8 @@ protected:
     int keys_table_mode = RowSortingEnabled;
     QSharedPointer<DBKeysModel> keys_model;
     QSharedPointer<SortFilterProxyModel> sort_proxy_model;
+    jsonio::DBQueryBase init_query;
+    model_line_t init_fields;
 
     friend class VertexClient;
 };

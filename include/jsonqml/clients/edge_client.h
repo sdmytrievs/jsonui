@@ -19,6 +19,14 @@ class EdgeClient : public VertexClient
 
 public:
     explicit EdgeClient(const QString& aschema, QObject *parent = nullptr);
+    explicit EdgeClient(const QString& aschema,
+                        const jsonio::DBQueryBase& query,
+                        const model_line_t& query_fields,
+                        QObject *parent = nullptr);
+    explicit EdgeClient(const QString& aschema,
+                        bool in_edges,
+                        const QString& vertex_id,
+                        QObject *parent = nullptr);
 
     QAbstractItemModel* inmodel();
     QAbstractItemModel* outmodel();

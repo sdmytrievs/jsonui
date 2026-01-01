@@ -49,6 +49,11 @@ public:
     explicit DBKeysModel(DocumentType type, const QString& schema,
                          ArangoDatabase* db_client=&arango_db(),
                          QObject *parent = nullptr);
+    explicit DBKeysModel(DocumentType type, const QString& schema,
+                         const jsonio::DBQueryBase& query,
+                         const model_line_t& query_fields,
+                         ArangoDatabase* db_client=&arango_db(),
+                         QObject *parent = nullptr);
     /// Destroys the object and frees any allocated resources.
     virtual ~DBKeysModel();
 

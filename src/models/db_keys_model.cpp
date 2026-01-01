@@ -6,8 +6,17 @@ namespace jsonqml {
 
 DBKeysModel::DBKeysModel(DocumentType type, const QString& schema,
                          ArangoDatabase* db_client,
-                         QObject *parent)
-    :DBQueryModel(type, schema, db_client, parent)
+                         QObject *parent):
+    DBKeysModel(type, schema, jsonio::DBQueryBase::emptyQuery(),
+                {}, db_client, parent)
+{}
+
+DBKeysModel::DBKeysModel(DocumentType type, const QString &schema,
+                         const jsonio::DBQueryBase &query,
+                         const model_line_t &query_fields,
+                         ArangoDatabase *db_client,
+                         QObject *parent):
+    DBQueryModel(type, schema, db_client, parent)
 {
     // tell the editor to change Oid
     QObject::connect(dbdocument, &ArangoDBDocument::updatedOid, this, &DBKeysModel::updatedOid);
@@ -23,8 +32,7 @@ DBKeysModel::DBKeysModel(DocumentType type, const QString& schema,
     QObject::connect(this, &DBKeysModel::cmUpdate, dbdocument, &ArangoDBDocument::updateDocument);
     QObject::connect(this, &DBKeysModel::cmDelete, dbdocument, &ArangoDBDocument::deleteDocument);
 
-    // load default query
-    setQuery(jsonio::DBQueryBase::emptyQuery(), {});
+    setQuery(query, query_fields);
 }
 
 

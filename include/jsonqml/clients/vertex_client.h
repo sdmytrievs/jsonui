@@ -35,6 +35,11 @@ public slots:
 public:
     explicit VertexClient(DocumentType dtype, const QString& aschema, QObject *parent = nullptr);
     explicit VertexClient(const QString& aschema, QObject *parent = nullptr);
+    explicit VertexClient(DocumentType dtype, const QString& aschema,
+                          const jsonio::DBQueryBase& query,
+                          const model_line_t& query_fields,
+                          QObject *parent = nullptr);
+
 
     QAbstractItemModel *keysmodel();
     DBKeysModel *tablemodel();

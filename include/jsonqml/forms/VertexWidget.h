@@ -54,8 +54,8 @@ public slots:
 #endif
 
     // View
-    void CmFollowInEdges() {}
-    void CmFollowOutEdges() {}
+    void CmFollowInEdges();
+    void CmFollowOutEdges();
 
     void setExecuting();
     void updateViewMenu();

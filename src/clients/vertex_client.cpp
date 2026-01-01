@@ -10,11 +10,15 @@ namespace jsonqml {
 
 extern std::shared_ptr<spdlog::logger> ui_logger;
 
-VertexClientPrivate::VertexClientPrivate(DocumentType dtype):
+VertexClientPrivate::VertexClientPrivate(DocumentType dtype,
+                                         const jsonio::DBQueryBase& query,
+                                         const model_line_t& query_fields):
     JsonClientPrivate(),
     doc_type(dtype),
     keys_model(nullptr),
-    sort_proxy_model(nullptr)
+    sort_proxy_model(nullptr),
+    init_query(query),
+    init_fields(query_fields)
 {
 }
 
@@ -107,7 +111,7 @@ void VertexClientPrivate::update_keysmodel()
     if(keys_model.get()==nullptr) {
         // could be zero, if schema list empty
         // alloc when refresh list
-        keys_model.reset(new DBKeysModel(doc_type, current_schema_name));
+        keys_model.reset(new DBKeysModel(doc_type, current_schema_name, init_query, init_fields));
         if(sorting_enabled()) {
             sort_proxy_model.reset(new SortFilterProxyModel());
             sort_proxy_model->setSourceModel(keys_model.get());
@@ -185,6 +189,13 @@ VertexClient::VertexClient(const QString& aschema, QObject *parent):
 {
     // virtual init into JsonClient
 }
+
+VertexClient::VertexClient(DocumentType dtype, const QString &aschema,
+                           const jsonio::DBQueryBase &query,
+                           const model_line_t &query_fields,
+                           QObject *parent):
+     VertexClient(aschema, new VertexClientPrivate(dtype, query, query_fields), parent)
+{ }
 
 VertexClient::VertexClient(DocumentType dtype, const QString &aschema, QObject *parent):
     VertexClient(aschema, new VertexClientPrivate(dtype), parent)

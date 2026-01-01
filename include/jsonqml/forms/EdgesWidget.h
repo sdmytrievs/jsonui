@@ -38,6 +38,9 @@ public slots:
     void addIncoming(const QModelIndex& index) {}
     /// Add Outgoing key to edited document
     void addOutgoing(const QModelIndex& index) {}
+
+    void openIncoming(const QString& vertex_id);
+    void openOutgoing(const QString& vertex_id);
     //void openRecordKey(const QModelIndex& index, bool reset_in_out_query = false);
     //void changeKeyList();
     //void updateQuery();
@@ -68,7 +71,8 @@ public slots:
     void CmHelpContens();
 
 public:
-    explicit EdgesWidget(const QString& aschema, const jsonio::DBQueryBase& query, QWidget *parent = nullptr);
+    explicit EdgesWidget(const QString& aschema, QWidget *parent = nullptr);
+    explicit EdgesWidget(bool in_edges, const QString& vertex_id, QWidget *parent = nullptr);
     ~EdgesWidget();
 
     /// Update query
@@ -96,6 +100,7 @@ private:
     WaitingSpinnerWidget* wait_dialog = nullptr;
 
     void set_actions();
+    void define_window();
 
     //void closeEvent(QCloseEvent* e) override;
     //bool event(QEvent * e) override;

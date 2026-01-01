@@ -8,6 +8,7 @@
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
+#include "jsonqml/forms/EdgesWidget.h"
 #include "jsonqml/forms/waitingspinnerwidget.h"
 #include "jsonqml/clients/vertex_client.h"
 #include "jsonqml/clients/table_client.h"
@@ -15,95 +16,6 @@
 #include "jsonqml/models/schema_model.h"
 
 namespace jsonqml {
-
-void VertexWidget::updateViewMenu()
-{
-    ui->action_Show_comments->setChecked(JsonSchemaModel::showComments);
-    ui->action_Display_enums->setChecked(JsonSchemaModel::useEnumNames);
-    ui->action_Edit_id->setChecked(JsonSchemaModel::editID);
-    ui->actionKeep_Data_Fields_Expanded->setChecked(JsonView::expandedFields);
-}
-
-void VertexWidget::set_actions()
-{
-    // File
-    QObject::connect( ui->actionNew, &QAction::triggered, this, &VertexWidget::CmNew);
-    QObject::connect( ui->action_Clone_Structured_Data_Object, &QAction::triggered, this, &VertexWidget::CmClone);
-    QObject::connect( ui->actionE_xit, &QAction::triggered, this, &VertexWidget::close);
-    QObject::connect( ui->actionExport_Json_File, &QAction::triggered, this, &VertexWidget::CmExportJSON);
-    QObject::connect( ui->actionImport_Json_File, &QAction::triggered, this, &VertexWidget::CmImportJSON);
-
-    // Edit
-    QObject::connect(ui->actionAdd_one_field, &QAction::triggered, json_tree.get(), &JsonView::CmAddObject);
-    QObject::connect(ui->action_Clone_Current, &QAction::triggered, json_tree.get(), &JsonView::CmCloneObject);
-    QObject::connect(ui->action_Delete_field, &QAction::triggered, json_tree.get(), &JsonView::CmDelObject);
-    QObject::connect(ui->actionRemove_Alternatives_Union, &QAction::triggered, json_tree.get(), &JsonView::CmDelObjectsUnion);
-    QObject::connect(ui->actionReset_Data_to_Defaults, &QAction::triggered, json_tree.get(), &JsonView::CmResetObject);
-    QObject::connect(ui->action_Resize_array, &QAction::triggered, json_tree.get(), &JsonView::CmResizeArray);
-    QObject::connect(ui->action_Calculator, &QAction::triggered, json_tree.get(), &JsonView::CmCalc);
-    QObject::connect(ui->actionCopy_Field_Path, &QAction::triggered, json_tree.get(), &JsonView::CopyFieldPath);
-    QObject::connect(ui->actionCopy_Field, &QAction::triggered, json_tree.get(), &JsonView::CopyField);
-    QObject::connect(ui->actionPaste_Field, &QAction::triggered, json_tree.get(), &JsonView::PasteField);
-
-    // Help
-    /// QObject::connect( ui->action_Help_About, &QAction::triggered, this, &VertexWidget::CmHelpAbout);
-    /// QObject::connect( ui->actionContents, &QAction::triggered, this, &VertexWidget::CmHelpContens);
-    /// QObject::connect( ui->actionAuthors, &QAction::triggered, this, &VertexWidget::CmHelpAuthors);
-    /// QObject::connect( ui->actionLicense, &QAction::triggered, this, &VertexWidget::CmHelpLicense);
-
-    // View
-    QObject::connect(ui->action_Show_comments, &QAction::toggled,
-                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowComments", val); });
-    QObject::connect(ui->action_Display_enums, &QAction::toggled,
-                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
-    QObject::connect(ui->action_Edit_id, &QAction::toggled,
-                     [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
-    QObject::connect(ui->actionKeep_Data_Fields_Expanded, &QAction::toggled,
-            [](bool val){ jsonqml::uiSettings().setBoolValue("KeepExpanded", val); });
-    updateViewMenu();
-    QObject::connect(ui->actionFollow_Edges, &QAction::triggered, this, &VertexWidget::CmFollowOutEdges);
-    QObject::connect(ui->actionFollow_Edges_Incoming, &QAction::triggered, this, &VertexWidget::CmFollowInEdges);
-
-    // Record
-    QObject::connect(ui->actionNext_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmNext);
-    QObject::connect(ui->actionPrevious_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmPrevious);
-    connect(vertex_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
-    QObject::connect(ui->action_Update, &QAction::triggered, this, &VertexWidget::CmUpdate);
-    QObject::connect(ui->action_Delete, &QAction::triggered, this, &VertexWidget::CmDelete);
-    QObject::connect(ui->action_Read, &QAction::triggered, this, &VertexWidget::CmRead);
-#ifndef IMPEX_OFF
-    QObject::connect(ui->actionImport, &QAction::triggered, this, &VertexWidget::CmImportFormat);
-    QObject::connect(ui->actionUpdateFormat, &QAction::triggered, this, &VertexWidget::CmUpdateFormat);
-    QObject::connect(ui->actionExport, &QAction::triggered, this, &VertexWidget::CmExportFormat);
-#else
-    ui->actionImport->setVisible(false);
-    ui->actionUpdateFormat->setVisible(false);
-    ui->actionExport->setVisible(false);
-#endif
-    QObject::connect(ui->actionDeleteMultiple, &QAction::triggered, this, &VertexWidget::CmDeleteSelect);
-    QObject::connect(ui->actionSearch_Results, &QAction::triggered, this, &VertexWidget::CmDisplaySearchResult);
-    QObject::connect(ui->actionSearch, &QAction::triggered, this, &VertexWidget::CmSearchQuery);
-
-    QObject::connect(ui->actionBackup_Queried_Records_to_File, &QAction::triggered,
-                     this,  &VertexWidget::CmBackupQueriedRecordstoFile);
-    QObject::connect(ui->actionRestore_Multiple_Records_from_File, &QAction::triggered,
-                     this, &VertexWidget::CmRestoreMultipleRecordsfromFile);
-
-    QObject::connect(ui->actionBackup_Graph_to_File, &QAction::triggered,
-                     this,  &VertexWidget::CmBackupGraphtoFile);
-    QObject::connect(ui->actionRestore_Graph_from_File, &QAction::triggered,
-                     this, &VertexWidget::CmRestoreGraphfromFile);
-
-    QLineEdit* pLineTask = new QLineEdit(ui->nameToolBar);
-    pLineTask->setEnabled(true);
-    pLineTask->setFocusPolicy(Qt::ClickFocus);
-    pLineTask->setReadOnly(true);
-    pLineTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    pLineTask->setText(schema_name);
-    ui->nameToolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    ui->nameToolBar->addWidget(pLineTask); // setStretchableWidget(pLine);
-}
-
 
 VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     QMainWindow(parent),
@@ -158,7 +70,6 @@ VertexWidget::~VertexWidget()
     qDebug() << "VertexWidget destruct";
 }
 
-/// Start long database process
 void VertexWidget::setExecuting()
 {
     if(vertex_client->queryExecuting()) {
@@ -169,6 +80,14 @@ void VertexWidget::setExecuting()
         wait_dialog->stop();
         ui_logger->info("VertexWidget finish process");
     }
+}
+
+void VertexWidget::updateViewMenu()
+{
+    ui->action_Show_comments->setChecked(JsonSchemaModel::showComments);
+    ui->action_Display_enums->setChecked(JsonSchemaModel::useEnumNames);
+    ui->action_Edit_id->setChecked(JsonSchemaModel::editID);
+    ui->actionKeep_Data_Fields_Expanded->setChecked(JsonView::expandedFields);
 }
 
 std::string VertexWidget::currentKey() const
@@ -240,6 +159,104 @@ void VertexWidget::CmDelete()
     if(reply == QMessageBox::Yes) {
         vertex_client->deleteRecord(key);
     }
+}
+
+void VertexWidget::CmFollowInEdges()
+{
+    auto vertex_id = vertex_client->editorId();
+    if(!vertex_id.isEmpty()) {
+        jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(true, vertex_id);
+        ptr->show();
+    }
+}
+
+void VertexWidget::CmFollowOutEdges()
+{
+    auto vertex_id = vertex_client->editorId();
+    if(!vertex_id.isEmpty()) {
+        jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(false, vertex_id);
+        ptr->show();
+    }
+}
+
+void VertexWidget::set_actions()
+{
+    // File
+    QObject::connect( ui->actionNew, &QAction::triggered, this, &VertexWidget::CmNew);
+    QObject::connect( ui->action_Clone_Structured_Data_Object, &QAction::triggered, this, &VertexWidget::CmClone);
+    QObject::connect( ui->actionE_xit, &QAction::triggered, this, &VertexWidget::close);
+    QObject::connect( ui->actionExport_Json_File, &QAction::triggered, this, &VertexWidget::CmExportJSON);
+    QObject::connect( ui->actionImport_Json_File, &QAction::triggered, this, &VertexWidget::CmImportJSON);
+
+    // Edit
+    QObject::connect(ui->actionAdd_one_field, &QAction::triggered, json_tree.get(), &JsonView::CmAddObject);
+    QObject::connect(ui->action_Clone_Current, &QAction::triggered, json_tree.get(), &JsonView::CmCloneObject);
+    QObject::connect(ui->action_Delete_field, &QAction::triggered, json_tree.get(), &JsonView::CmDelObject);
+    QObject::connect(ui->actionRemove_Alternatives_Union, &QAction::triggered, json_tree.get(), &JsonView::CmDelObjectsUnion);
+    QObject::connect(ui->actionReset_Data_to_Defaults, &QAction::triggered, json_tree.get(), &JsonView::CmResetObject);
+    QObject::connect(ui->action_Resize_array, &QAction::triggered, json_tree.get(), &JsonView::CmResizeArray);
+    QObject::connect(ui->action_Calculator, &QAction::triggered, json_tree.get(), &JsonView::CmCalc);
+    QObject::connect(ui->actionCopy_Field_Path, &QAction::triggered, json_tree.get(), &JsonView::CopyFieldPath);
+    QObject::connect(ui->actionCopy_Field, &QAction::triggered, json_tree.get(), &JsonView::CopyField);
+    QObject::connect(ui->actionPaste_Field, &QAction::triggered, json_tree.get(), &JsonView::PasteField);
+
+    // Help
+    /// QObject::connect( ui->action_Help_About, &QAction::triggered, this, &VertexWidget::CmHelpAbout);
+    /// QObject::connect( ui->actionContents, &QAction::triggered, this, &VertexWidget::CmHelpContens);
+    /// QObject::connect( ui->actionAuthors, &QAction::triggered, this, &VertexWidget::CmHelpAuthors);
+    /// QObject::connect( ui->actionLicense, &QAction::triggered, this, &VertexWidget::CmHelpLicense);
+
+    // View
+    QObject::connect(ui->action_Show_comments, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowComments", val); });
+    QObject::connect(ui->action_Display_enums, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
+    QObject::connect(ui->action_Edit_id, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
+    QObject::connect(ui->actionKeep_Data_Fields_Expanded, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("KeepExpanded", val); });
+    updateViewMenu();
+    QObject::connect(ui->actionFollow_Edges, &QAction::triggered, this, &VertexWidget::CmFollowOutEdges);
+    QObject::connect(ui->actionFollow_Edges_Incoming, &QAction::triggered, this, &VertexWidget::CmFollowInEdges);
+
+    // Record
+    QObject::connect(ui->actionNext_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmNext);
+    QObject::connect(ui->actionPrevious_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmPrevious);
+    connect(vertex_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
+    QObject::connect(ui->action_Update, &QAction::triggered, this, &VertexWidget::CmUpdate);
+    QObject::connect(ui->action_Delete, &QAction::triggered, this, &VertexWidget::CmDelete);
+    QObject::connect(ui->action_Read, &QAction::triggered, this, &VertexWidget::CmRead);
+#ifndef IMPEX_OFF
+    QObject::connect(ui->actionImport, &QAction::triggered, this, &VertexWidget::CmImportFormat);
+    QObject::connect(ui->actionUpdateFormat, &QAction::triggered, this, &VertexWidget::CmUpdateFormat);
+    QObject::connect(ui->actionExport, &QAction::triggered, this, &VertexWidget::CmExportFormat);
+#else
+    ui->actionImport->setVisible(false);
+    ui->actionUpdateFormat->setVisible(false);
+    ui->actionExport->setVisible(false);
+#endif
+    QObject::connect(ui->actionDeleteMultiple, &QAction::triggered, this, &VertexWidget::CmDeleteSelect);
+    QObject::connect(ui->actionSearch_Results, &QAction::triggered, this, &VertexWidget::CmDisplaySearchResult);
+    QObject::connect(ui->actionSearch, &QAction::triggered, this, &VertexWidget::CmSearchQuery);
+
+    QObject::connect(ui->actionBackup_Queried_Records_to_File, &QAction::triggered,
+                     this,  &VertexWidget::CmBackupQueriedRecordstoFile);
+    QObject::connect(ui->actionRestore_Multiple_Records_from_File, &QAction::triggered,
+                     this, &VertexWidget::CmRestoreMultipleRecordsfromFile);
+
+    QObject::connect(ui->actionBackup_Graph_to_File, &QAction::triggered,
+                     this,  &VertexWidget::CmBackupGraphtoFile);
+    QObject::connect(ui->actionRestore_Graph_from_File, &QAction::triggered,
+                     this, &VertexWidget::CmRestoreGraphfromFile);
+
+    QLineEdit* pLineTask = new QLineEdit(ui->nameToolBar);
+    pLineTask->setEnabled(true);
+    pLineTask->setFocusPolicy(Qt::ClickFocus);
+    pLineTask->setReadOnly(true);
+    pLineTask->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    pLineTask->setText(schema_name);
+    ui->nameToolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    ui->nameToolBar->addWidget(pLineTask); // setStretchableWidget(pLine);
 }
 
 } // namespace jsonui

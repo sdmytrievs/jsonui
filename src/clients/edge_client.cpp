@@ -8,8 +8,13 @@
 
 namespace jsonqml {
 
-EdgeClientPrivate::EdgeClientPrivate():
-    VertexClientPrivate(Edge),
+const std::vector<std::string> all_edges_fields = {"_label", "_from", "_to", "_id"};
+const std::vector<std::string> all_vertex_fields = {"_label", "_id"};
+
+
+EdgeClientPrivate::EdgeClientPrivate(const jsonio::DBQueryBase& query,
+                                     const model_line_t& query_fields):
+    VertexClientPrivate(Edge, query, query_fields),
     in_model(nullptr),
     out_model(nullptr)
 {
@@ -45,7 +50,7 @@ void EdgeClientPrivate::init_keys(const QString &aschema)
 
 QStringList EdgeClientPrivate::gen_schema_list() const
 {
-    return ArangoDatabase::getEdgesList();;
+    return ArangoDatabase::getEdgesList();
 }
 
 void EdgeClientPrivate::update_jsonmodel()
@@ -63,7 +68,7 @@ void EdgeClientPrivate::update_jsonmodel()
 void EdgeClientPrivate::update_keysmodel()
 {
     if(keys_model.get()==nullptr) {
-        keys_model.reset(new DBKeysModel(Edge, current_schema_name));
+        keys_model.reset(new DBKeysModel(Edge, current_schema_name, init_query, init_fields));
         if(sorting_enabled()) {
             sort_proxy_model.reset(new SortFilterProxyModel());
             sort_proxy_model->setSourceModel(keys_model.get());
@@ -125,6 +130,24 @@ EdgeClient::EdgeClient(const QString& aschema, QObject *parent):
     EdgeClient(aschema, new EdgeClientPrivate(), parent)
 {
     // virtual init into JsonClient
+}
+
+EdgeClient::EdgeClient(const QString &aschema,
+                       const jsonio::DBQueryBase &query,
+                       const model_line_t &query_fields,
+                       QObject *parent):
+    EdgeClient(aschema, new EdgeClientPrivate(query, query_fields), parent)
+{
+}
+
+EdgeClient::EdgeClient(const QString &aschema, bool in_edges,
+                       const QString &vertex_id, QObject *parent):
+    EdgeClient(aschema,
+               new EdgeClientPrivate((in_edges? ArangoDBDocument::inEdgesQuery(vertex_id, ""):
+                                                ArangoDBDocument::outEdgesQuery(vertex_id, "")),
+                                      all_edges_fields),
+               parent)
+{
 }
 
 QAbstractItemModel *EdgeClient::inmodel()

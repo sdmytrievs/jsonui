@@ -17,77 +17,47 @@
 namespace jsonqml {
 
 
-EdgesWidget::EdgesWidget(const QString& aschema, const jsonio::DBQueryBase& query, QWidget *parent ):
+EdgesWidget::EdgesWidget(const QString& aschema, QWidget *parent ):
     QMainWindow(parent),
     ui(new Ui::EdgesWidget),
     edge_client(),
     json_tree(),
-    schema_name(aschema)
+    schema_name(aschema),
+    is_default_query(true)
 {
-    ui->setupUi(this);
-    ui->keySplitter->setStretchFactor(0, 1);
-    ui->mainSplitter->setStretchFactor(0, 0);
-    ui->mainSplitter->setStretchFactor(1, 0);
-    ui->mainSplitter->setStretchFactor(2, 1);
-    ui->typeBox->setEnabled(!is_default_query);
-
-    this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
-    QString title = qApp->applicationName()+" Structured Data Editor and Database Browser";
-    this->setWindowTitle(title);
-
-    ///if( current_schema_name.empty() && !edgeNames.empty() )
-    ///    current_schema_name = edgeNames[0];
-
+    auto edges_list = ArangoDatabase::getEdgesList();
+    if( schema_name.isEmpty() && !edges_list.empty()) {
+        schema_name = edges_list[0];
+    }
     wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
     wait_dialog->start();
 
     edge_client.reset(new EdgeClient(schema_name, this));
     QObject::connect(edge_client.get(), &VertexClient::executingChange, this, &EdgesWidget::setExecuting);
 
-    ui->typeBox->insertItems(0, edge_client->schemasList());
-    ui->typeBox->setCurrentText(schema_name);
+    define_window();
+}
 
-    // define edit tree view
-    QItemDelegate* deleg_schema = new JsonDelegate();
-    json_tree.reset(new JsonView(edge_client.get(), this));
-    json_tree->setItemDelegate(deleg_schema);
-    json_tree->setColumnWidth(0, 250);
-    json_tree->expandToDepth(2);
-    //ui->verticalLayout->addWidget(json_tree.get());
-    json_tree->setColumnWidth( 0, 150 );
-    json_tree->expandToDepth(1);;
-    ui->gridLayout->addWidget(json_tree.get(), 1, 0, 1, 2);
+EdgesWidget::EdgesWidget(bool in_edges, const QString &vertex_id, QWidget *parent):
+    QMainWindow(parent),
+    ui(new Ui::EdgesWidget),
+    edge_client(),
+    json_tree(),
+    schema_name(),
+    is_default_query(false)
+{
+    auto edges_list = ArangoDatabase::getEdgesList();
+    if( schema_name.isEmpty() && !edges_list.empty()) {
+        schema_name = edges_list[0];
+    }
+    wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
+    wait_dialog->start();
 
-    auto mode = single_selection;
-    keys_table_client.reset(new TableClient(edge_client->tablemodel(), mode, this));
-    keys_view.reset(new DBKeysTable(mode, keys_table_client.get(),
-                                    [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
-    QObject::connect(keys_view.get(), &DBKeysTable::clicked,
-                     this, &EdgesWidget::openRecordKey);
-    keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->keySplitter->insertWidget(0, keys_view.get());
-    ui->keySplitter->setStretchFactor(0, 4);
+    edge_client.reset(new EdgeClient(schema_name, in_edges, vertex_id, this));
+    QObject::connect(edge_client.get(), &VertexClient::executingChange, this, &EdgesWidget::setExecuting);
 
-    in_keys_table_client.reset(new TableClient(edge_client->outtablemodel(), mode, this));
-    in_keys_view.reset(new DBKeysTable(mode, in_keys_table_client.get(), [](const QModelIndex&){;}, this));
-    QObject::connect(in_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addIncoming);
-    in_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    in_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->verticalLayout_2->addWidget(in_keys_view.get());
-
-    out_keys_table_client.reset(new TableClient(edge_client->intablemodel(), mode, this));
-    out_keys_view.reset(new DBKeysTable(mode, out_keys_table_client.get(), [](const QModelIndex&){;}, this));
-    QObject::connect(out_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addOutgoing);
-    out_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
-    out_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
-    ui->verticalLayout->addWidget(out_keys_view.get());
-
-    set_actions();
-    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &EdgesWidget::updateViewMenu);
-    QObject::connect(ui->typeBox, &QComboBox::currentTextChanged, this, &EdgesWidget::typeChanged);
-
-    qDebug() << "EdgesWidget construct";
+    define_window();
+    ui->typeBox->setEnabled(false);
 }
 
 EdgesWidget::~EdgesWidget()
@@ -121,6 +91,18 @@ void EdgesWidget::typeChanged(const QString& text)
     pLineTask->setText(text);
     schema_name = text;
     edge_client->setSchema(schema_name);
+}
+
+void EdgesWidget::openIncoming(const QString &vertex_id)
+{
+    edge_client->setIncomingEdges(vertex_id);
+    edge_client->readEditorData(0);
+}
+
+void EdgesWidget::openOutgoing(const QString &vertex_id)
+{
+    edge_client->setOutgoingEdges(vertex_id);
+    edge_client->readEditorData(0);
 }
 
 std::string EdgesWidget::currentKey() const
@@ -274,6 +256,64 @@ void EdgesWidget::set_actions()
     pLineTask->setText(schema_name);
     ui->nameToolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     ui->nameToolBar->addWidget(pLineTask); // setStretchableWidget( pLine );
+}
+
+void EdgesWidget::define_window()
+{
+    ui->setupUi(this);
+    ui->keySplitter->setStretchFactor(0, 1);
+    ui->mainSplitter->setStretchFactor(0, 0);
+    ui->mainSplitter->setStretchFactor(1, 0);
+    ui->mainSplitter->setStretchFactor(2, 1);
+    ui->typeBox->setEnabled(true);
+
+    this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
+    QString title = qApp->applicationName()+" Structured Data Editor and Database Browser";
+    this->setWindowTitle(title);
+
+    ui->typeBox->insertItems(0, edge_client->schemasList());
+    ui->typeBox->setCurrentText(schema_name);
+
+    // define edit tree view
+    QItemDelegate* deleg_schema = new JsonDelegate();
+    json_tree.reset(new JsonView(edge_client.get(), this));
+    json_tree->setItemDelegate(deleg_schema);
+    json_tree->setColumnWidth(0, 250);
+    json_tree->expandToDepth(2);
+    json_tree->setColumnWidth( 0, 150 );
+    json_tree->expandToDepth(1);
+    ui->gridLayout->addWidget(json_tree.get(), 1, 0, 1, 2);
+
+    auto mode = single_selection;
+    keys_table_client.reset(new TableClient(edge_client->tablemodel(), mode, this));
+    keys_view.reset(new DBKeysTable(mode, keys_table_client.get(),
+                                    [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
+    QObject::connect(keys_view.get(), &DBKeysTable::clicked,
+                     this, &EdgesWidget::openRecordKey);
+    keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    ui->keySplitter->insertWidget(0, keys_view.get());
+    ui->keySplitter->setStretchFactor(0, 4);
+
+    in_keys_table_client.reset(new TableClient(edge_client->outtablemodel(), mode, this));
+    in_keys_view.reset(new DBKeysTable(mode, in_keys_table_client.get(), [](const QModelIndex&){;}, this));
+    QObject::connect(in_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addIncoming);
+    in_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    in_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    ui->verticalLayout_2->addWidget(in_keys_view.get());
+
+    out_keys_table_client.reset(new TableClient(edge_client->intablemodel(), mode, this));
+    out_keys_view.reset(new DBKeysTable(mode, out_keys_table_client.get(), [](const QModelIndex&){;}, this));
+    QObject::connect(out_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addOutgoing);
+    out_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
+    out_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
+    ui->verticalLayout->addWidget(out_keys_view.get());
+
+    set_actions();
+    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &EdgesWidget::updateViewMenu);
+    QObject::connect(ui->typeBox, &QComboBox::currentTextChanged, this, &EdgesWidget::typeChanged);
+
+    qDebug() << "EdgesWidget construct";
 }
 
 

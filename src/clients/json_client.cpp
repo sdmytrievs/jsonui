@@ -81,7 +81,7 @@ JsonClient::JsonClient(JsonClientPrivate* impl, QObject *parent):
 
     QObject::connect(this, &JsonClient::schemaChanged, this, &JsonClient::setModelSchema);
     QObject::connect(&uiSettings(), &Preferences::scemasPathChanged, this, &JsonClient::updateSchemaList);
-    QObject::connect(&uiSettings(), &Preferences::modelChanged, this->jsonmodel(), &JsonBaseModel::updateModel);
+    QObject::connect(&uiSettings(), &Preferences::modelChanged, jsonmodel(), &JsonBaseModel::updateModel);
 }
 
 JsonClient::JsonClient(QObject *parent):

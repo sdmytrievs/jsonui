@@ -195,7 +195,7 @@ void TJSONUITestWin::CmNewEdge()
             }
         }
         if(!testschema.empty()) {
-            jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(QString::fromStdString(testschema), jsonio::DBQueryBase::emptyQuery(), this);
+            jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(QString::fromStdString(testschema), this);
             ptr->show();
         }
     }

@@ -51,8 +51,8 @@ void DBQueryModel::updateKeyList()
 {
     std::vector<std::string> new_query_fields;
     jsonio::values_table_t new_data_table;
-
     dbdocument->lastQueryResult(data_query, new_query_fields, new_data_table);
+    qDebug() << "DBQueryModel::updateKeyList " << new_query_fields.size() << "  " << new_data_table.size();
     resetTable(std::move(new_data_table), std::move(new_query_fields));
     set_executing(false);
 }

@@ -12,7 +12,8 @@ class EdgeClientPrivate : public VertexClientPrivate
 
 public:
 
-    explicit EdgeClientPrivate();
+    explicit EdgeClientPrivate(const jsonio::DBQueryBase& query=jsonio::DBQueryBase::emptyQuery(),
+                               const model_line_t& query_fields={});
     virtual ~EdgeClientPrivate() {}
 
     void init() override;
@@ -49,8 +50,6 @@ protected:
     std::string in_vertex_id;
     std::string out_vertex_id;
 
-    const std::vector<std::string> all_edges_fields = {"_label", "_from", "_to", "_id"};
-    const std::vector<std::string> all_vertex_fields = {"_label", "_id"};
 };
 
 }

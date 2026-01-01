@@ -54,6 +54,7 @@ MatrixTable::MatrixTable(int mode, TableClient* atable_client, QWidget* parent):
 
     setSortingEnabled(table_client->sortingEnabled());
     setModel(table_client->tableModel());
+    //connect(table_client, &TableClient::keysModelChanged, this, [&](){ setModel(table_client->tableModel()); });
     setItemDelegate(new MatrixDelegate(this));
 
     setContextMenuPolicy(Qt::CustomContextMenu);
