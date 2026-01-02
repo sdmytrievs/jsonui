@@ -233,6 +233,7 @@ void VertexClient::setEditorData(std::string schema_name, std::string doc_json)
 {
     try {
         impl_func()->set_editor_data(schema_name, doc_json);
+        emit editorChanged();
     }
     catch(std::exception& e) {
         uiSettings().setError(e.what());

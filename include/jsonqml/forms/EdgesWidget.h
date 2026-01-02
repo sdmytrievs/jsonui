@@ -33,6 +33,7 @@ public slots:
     void openRecordKey(const QModelIndex& index);
     void setExecuting();
     void updateViewMenu();
+    void scrollInOut();
     void typeChanged(const QString &text);
     /// Add Incoming key to edited document
     void addIncoming(const QModelIndex& index) {}
@@ -66,8 +67,8 @@ public slots:
     void CmRestoreGraphfromFile(){}
 
     // View
-    void CmFollowInVertex() {}
-    void CmFollowOutVertex() {}
+    void CmFollowInVertex();
+    void CmFollowOutVertex();
     void CmHelpContens();
 
 public:

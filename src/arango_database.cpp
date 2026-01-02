@@ -342,14 +342,14 @@ void ArangoDatabase::resetCollectionsList()
 
 jsonio::values_t ArangoDatabase::make_query_fields(std::string schema_name) const
 {
-    jsonio::values_t key_fields = {"_label", "_id"};
+    jsonio::values_t key_fields = {"_id", "_label"};
     const jsonio::StructDef* schema_struct=jsonio::ioSettings().Schema().getStruct(schema_name);
 
     if(schema_struct != nullptr) {
         auto ids_or_names = schema_struct->getSelectedList();
         if(!ids_or_names.empty()) {
-            key_fields.clear();
-            key_fields.push_back("_label");
+            //key_fields.clear();
+            //key_fields.push_back("_label");
             for(const auto& id_or_key: ids_or_names) {
                 auto pos = id_or_key.find_first_not_of("0123456789.");
                 if(pos == std::string::npos)  {
@@ -358,7 +358,7 @@ jsonio::values_t ArangoDatabase::make_query_fields(std::string schema_name) cons
                     key_fields.push_back(the_name);
                 }
                 else  {
-                    key_fields.push_back( id_or_key );
+                    key_fields.push_back(id_or_key);
                 }
             }
         }

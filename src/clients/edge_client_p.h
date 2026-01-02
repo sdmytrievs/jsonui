@@ -38,9 +38,11 @@ public:
     void update_keysmodel() override; //?
 
     void set_edges_for(jsonio::DBQueryBase&& query);
-    jsonio::DBQueryBase make_vertex_query(std::string vertex_id) const;
-
     bool set_json(const std::string& json_string, const QString& schema_name="") override;
+
+    void set_multi_edge(bool val) {
+        multi_edge_query = val;
+    }
 
 protected:
     friend class EdgeClient;
@@ -49,7 +51,14 @@ protected:
     QSharedPointer<DBQueryModel> out_model;
     std::string in_vertex_id;
     std::string out_vertex_id;
+    bool multi_edge_query = false;
+    jsonio::DBQueryBase in_query;
+    jsonio::DBQueryBase out_query;
 
+    jsonio::DBQueryBase make_vertex_query(const std::string& vertex_id) const;
+    jsonio::DBQueryBase make_all_vertex_query(const std::string& vertex_collection) const;
+    void in_out_execute_query(std::string vertex_id, DBQueryModel *model,
+                              jsonio::DBQueryBase& old_query);
 };
 
 }

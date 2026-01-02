@@ -64,7 +64,7 @@ public:
     explicit VertexWidget(const QString& aschema, QWidget *parent = nullptr);
     ~VertexWidget();
 
-    void openDocument(const std::string& key_document, bool reset_in_out_query = false);
+    void openDocument(const QString& key_document);
 
     /// Update query
     /// void setQueryEdited( QueryWidget* queryW  ) override;

@@ -40,6 +40,7 @@ public:
     Q_INVOKABLE QString incomingVertex() const;
     Q_INVOKABLE QString outgoingVertex() const;
 
+    QString vertex_schema_from_id(const QString &key_id);
 protected:
     EdgeClientPrivate* impl_func()
     { return reinterpret_cast<EdgeClientPrivate *>(impl_ptr.get()); }

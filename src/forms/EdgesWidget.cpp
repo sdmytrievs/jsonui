@@ -8,6 +8,7 @@
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
+#include "jsonqml/forms/VertexWidget.h"
 #include "jsonqml/forms/waitingspinnerwidget.h"
 #include "jsonqml/clients/edge_client.h"
 #include "jsonqml/clients/table_client.h"
@@ -84,6 +85,12 @@ void EdgesWidget::updateViewMenu()
     ui->action_Display_enums->setChecked(JsonSchemaModel::useEnumNames);
     ui->action_Edit_id->setChecked(JsonSchemaModel::editID);
     ui->actionKeep_Data_Fields_Expanded->setChecked(JsonView::expandedFields);
+}
+
+void EdgesWidget::scrollInOut()
+{
+   in_keys_view->move_to_key(edge_client->outgoingVertex().toStdString());
+   out_keys_view->move_to_key(edge_client->incomingVertex().toStdString());
 }
 
 void EdgesWidget::typeChanged(const QString& text)
@@ -182,6 +189,28 @@ void EdgesWidget::CmDelete()
     }
 }
 
+void EdgesWidget::CmFollowInVertex()
+{
+    auto vertex = edge_client->outgoingVertex();
+    if(!vertex.isEmpty()) {
+        auto schema = edge_client->vertex_schema_from_id(vertex);
+        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema);
+        ptr->show();
+        ptr->openDocument(vertex);
+    }
+}
+
+void EdgesWidget::CmFollowOutVertex()
+{
+    auto vertex = edge_client->incomingVertex();
+    if(!vertex.isEmpty()) {
+        auto schema = edge_client->vertex_schema_from_id(vertex);
+        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema);
+        ptr->show();
+        ptr->openDocument(vertex);
+    }
+}
+
 void EdgesWidget::set_actions()
 {
     // File
@@ -229,7 +258,7 @@ void EdgesWidget::set_actions()
     QObject::connect(ui->action_Delete, &QAction::triggered, this, &EdgesWidget::CmDelete);
     QObject::connect(ui->actionDeleteMultiple, &QAction::triggered, this, &EdgesWidget::CmDeleteSelect);
     QObject::connect(ui->actionSearch_Results, &QAction::triggered, this, &EdgesWidget::CmDisplaySearchResult);
-    if(is_default_query) {
+    if(!is_default_query) {
         ui->actionSearch->setDisabled(true);
         ui->action_Read->setDisabled(true);
     }
@@ -312,6 +341,7 @@ void EdgesWidget::define_window()
     set_actions();
     connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &EdgesWidget::updateViewMenu);
     QObject::connect(ui->typeBox, &QComboBox::currentTextChanged, this, &EdgesWidget::typeChanged);
+    QObject::connect(edge_client.get(), &VertexClient::editorChanged, this, &EdgesWidget::scrollInOut);
 
     qDebug() << "EdgesWidget construct";
 }

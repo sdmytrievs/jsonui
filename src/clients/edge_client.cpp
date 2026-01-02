@@ -1,9 +1,10 @@
 
 #include "edge_client_p.h"
+#include "edge_client_p.h"
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/models/db_keys_model.h"
-#include "jsonio/io_settings.h"
+//#include "jsonio/io_settings.h"
 #include "jsonio/dbconnect.h"
 
 namespace jsonqml {
@@ -40,6 +41,8 @@ void EdgeClientPrivate::init_keys(const QString &aschema)
     update_schema(def_schema);
 
     // alloc editor model
+    in_query = jsonio::DBQueryBase::emptyQuery();
+    out_query = jsonio::DBQueryBase::emptyQuery();
     json_tree_model.reset(new JsonSchemaModel(current_schema_name, header_names));
     in_model.reset(new DBQueryModel(Vertex, ""));
     out_model.reset(new DBQueryModel(Vertex, ""));
@@ -59,6 +62,8 @@ void EdgeClientPrivate::update_jsonmodel()
         json_tree_model->setupModelData("", current_schema_name);
     }
     else {
+        in_query = jsonio::DBQueryBase::emptyQuery();
+        out_query = jsonio::DBQueryBase::emptyQuery();
         json_tree_model.reset(new JsonSchemaModel(current_schema_name, header_names));
         in_model.reset(new DBQueryModel(Vertex, ""));
         out_model.reset(new DBQueryModel(Vertex, ""));
@@ -87,9 +92,43 @@ void EdgeClientPrivate::set_edges_for(jsonio::DBQueryBase &&query)
     }
 }
 
-jsonio::DBQueryBase EdgeClientPrivate::make_vertex_query(std::string vertex_id) const
+jsonio::DBQueryBase EdgeClientPrivate::make_vertex_query(const std::string& vertex_id) const
 {
     return jsonio::DBQueryBase("RETURN DOCUMENT(\"" + vertex_id +"\")", jsonio::DBQueryBase::qAQL);
+}
+
+jsonio::DBQueryBase EdgeClientPrivate::make_all_vertex_query(const std::string& vertex_collection) const
+{
+    std::string label = vertex_collection;
+    label.pop_back();
+    std::string AQL_query = "FOR u IN " + vertex_collection;
+    AQL_query += "\nFILTER u._label == '" + label + "' ";
+    return jsonio::DBQueryBase(AQL_query, jsonio::DBQueryBase::qAQL);
+}
+
+void EdgeClientPrivate::in_out_execute_query(std::string vertex_id, DBQueryModel* model,
+                                             jsonio::DBQueryBase& old_query)
+{
+    if(model) {
+        jsonio::DBQueryBase new_query;
+        auto query_fields = all_vertex_fields;
+        std::string vertex_collection;
+        auto names = jsonio::split(vertex_id, "/");
+        if(names.size()>1) {
+            vertex_collection = names.front();
+            query_fields = ArangoDatabase::fieldsFromCollection(vertex_collection);
+        }
+        if(multi_edge_query || vertex_collection.empty()) {
+            new_query = make_vertex_query(vertex_id);
+        }
+        else {
+            new_query = make_all_vertex_query(vertex_collection);
+        }
+        if(new_query!=old_query) {
+            old_query = new_query;
+            model->executeQuery(new_query, query_fields);
+        }
+    }
 }
 
 bool EdgeClientPrivate::set_json(const std::string& json_string, const QString& schema_name)
@@ -98,26 +137,21 @@ bool EdgeClientPrivate::set_json(const std::string& json_string, const QString& 
         json_tree_model->setupModelData(json_string, schema_name);
         json_tree_model->current_object().get_value_via_path<std::string>("_to", out_vertex_id, "");
         json_tree_model->current_object().get_value_via_path<std::string>("_from", in_vertex_id, "");
-        if(in_model) {
-            auto query_fields = all_vertex_fields;
-            auto names = jsonio::split(in_vertex_id, "/");
-            if(names.size()>1) {
-                query_fields = ArangoDatabase::fieldsFromCollection(names.front());
-            }
-            in_model->executeQuery(make_vertex_query(in_vertex_id), query_fields);
-        }
-        if(out_model) {
-            auto query_fields = all_vertex_fields;
-            auto names = jsonio::split(out_vertex_id, "/");
-            if(names.size()>1) {
-                query_fields = ArangoDatabase::fieldsFromCollection(names.front());
-            }
-            out_model->executeQuery(make_vertex_query(out_vertex_id), query_fields);
-        }
+        in_out_execute_query(in_vertex_id, in_model.get(), in_query);
+        in_out_execute_query(out_vertex_id, out_model.get(), out_query);
     }
     return true;
 }
 
+QString EdgeClient::vertex_schema_from_id(const QString& key_id)
+{
+    auto names = key_id.split("/");
+    if(names.size()<=1)
+        return "";
+    auto label = names.front().toStdString();
+    label.pop_back(); // delete last "s"
+    return QString::fromStdString(jsonio::DataBase::getVertexName(label));
+}
 
 //---------------------------------------------------------------------
 
@@ -148,6 +182,7 @@ EdgeClient::EdgeClient(const QString &aschema, bool in_edges,
                                       all_edges_fields),
                parent)
 {
+    impl_func()->set_multi_edge(true);
 }
 
 QAbstractItemModel *EdgeClient::inmodel()
@@ -173,6 +208,7 @@ DBQueryModel *EdgeClient::outtablemodel()
 void jsonqml::EdgeClient::setIncomingEdges(QString vertex_id)
 {
     if(!vertex_id.isEmpty()) {
+        impl_func()->set_multi_edge(true);
         impl_func()->set_edges_for(ArangoDBDocument::inEdgesQuery(vertex_id, ""));
         emit keysModelChanged();
     }
@@ -181,6 +217,7 @@ void jsonqml::EdgeClient::setIncomingEdges(QString vertex_id)
 void jsonqml::EdgeClient::setOutgoingEdges(QString vertex_id)
 {
     if(!vertex_id.isEmpty()) {
+        impl_func()->set_multi_edge(true);
         impl_func()->set_edges_for(ArangoDBDocument::outEdgesQuery(vertex_id, ""));
         emit keysModelChanged();
     }

@@ -70,6 +70,12 @@ VertexWidget::~VertexWidget()
     qDebug() << "VertexWidget destruct";
 }
 
+void VertexWidget::openDocument(const QString &key_document)
+{
+    vertex_client->readEditorId(key_document);
+    keys_view->move_to_key(key_document.toStdString());
+}
+
 void VertexWidget::setExecuting()
 {
     if(vertex_client->queryExecuting()) {
