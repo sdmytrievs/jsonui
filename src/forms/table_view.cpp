@@ -380,6 +380,7 @@ void DBKeysTable::CmPrevious()
 
 void DBKeysTable::move_to_key(std::string id_key)
 {
+    //qDebug() << "move_to_key " << id_key.c_str();
     if(id_key.empty()) {
         return;
     }
@@ -387,12 +388,11 @@ void DBKeysTable::move_to_key(std::string id_key)
     setColumnHidden(0, false);  // ??? not hide to edges
     // search `item` text in model
     QModelIndexList items = model()->match(model()->index(0, 0), Qt::DisplayRole, QString::fromStdString(id_key));
-    setColumnHidden(0, true); // ??? not hide to edges
     if( !items.isEmpty() ) {
-        qDebug() << "move_to_key " << id_key.c_str();
         selectionModel()->select(items.first(), QItemSelectionModel::ClearAndSelect|QItemSelectionModel::Rows);
         scrollTo(items.first(), QAbstractItemView::EnsureVisible);
     }
+    setColumnHidden(0, true); // ??? not hide to edges
 }
 
 } // namespace jsonui

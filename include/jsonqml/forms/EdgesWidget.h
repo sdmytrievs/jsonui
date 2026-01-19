@@ -31,7 +31,7 @@ signals:
 
 public slots:
     void openRecordKey(const QModelIndex& index);
-    void setExecuting();
+    void setExecuting(bool exec);
     void updateViewMenu();
     void scrollInOut();
     void typeChanged(const QString &text);

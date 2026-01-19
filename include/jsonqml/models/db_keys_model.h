@@ -17,7 +17,6 @@ class DBKeysModel: public DBQueryModel
 
 signals:
    void updatedOid(std::string doc_id);
-   void updatedKeyList();
 
    /// Open new arango document result
    void readedDocument(std::string schema_name, std::string doc_json);
@@ -39,9 +38,6 @@ signals:
    void cmDelete(std::string doc_id);
 
 public slots:
-    /// Refresh  documents keys list for table
-    void updateKeyList() override;
-
     void updateQuery();
     void resetSchema(QString new_schema_name);
 

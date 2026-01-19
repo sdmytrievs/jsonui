@@ -17,7 +17,7 @@
 
 namespace jsonqml {
 
-VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
+VertexWidget::VertexWidget(const QString& aschema, const QString& document_id, QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::VertexWidget),
     vertex_client(),
@@ -37,7 +37,7 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
     wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
     wait_dialog->start();
 
-    vertex_client.reset(new VertexClient(schema_name, this));
+    vertex_client.reset(new VertexClient(schema_name, document_id, this));
     QObject::connect(vertex_client.get(), &VertexClient::executingChange, this, &VertexWidget::setExecuting);
 
     // define edit tree view
@@ -54,6 +54,7 @@ VertexWidget::VertexWidget(const QString& aschema, QWidget *parent):
                                     [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
     QObject::connect(keys_view.get(), &DBKeysTable::clicked,
                      this, &VertexWidget::openRecordKey);
+    QObject::connect(vertex_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
     keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     keys_view->horizontalHeader()->setSectionResizeMode( QHeaderView::Interactive );
     ui->horizontalLayout->addWidget(keys_view.get());
@@ -76,9 +77,9 @@ void VertexWidget::openDocument(const QString &key_document)
     keys_view->move_to_key(key_document.toStdString());
 }
 
-void VertexWidget::setExecuting()
+void VertexWidget::setExecuting(bool exec)
 {
-    if(vertex_client->queryExecuting()) {
+    if(exec) {
         ui_logger->info("VertexWidget start process");
         wait_dialog->start();
     }
@@ -228,7 +229,6 @@ void VertexWidget::set_actions()
     // Record
     QObject::connect(ui->actionNext_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmNext);
     QObject::connect(ui->actionPrevious_Record, &QAction::triggered, keys_view.get(), &DBKeysTable::CmPrevious);
-    connect(vertex_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
     QObject::connect(ui->action_Update, &QAction::triggered, this, &VertexWidget::CmUpdate);
     QObject::connect(ui->action_Delete, &QAction::triggered, this, &VertexWidget::CmDelete);
     QObject::connect(ui->action_Read, &QAction::triggered, this, &VertexWidget::CmRead);

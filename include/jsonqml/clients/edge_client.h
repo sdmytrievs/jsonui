@@ -17,6 +17,14 @@ class EdgeClient : public VertexClient
 
     Q_DISABLE_COPY(EdgeClient)
 
+signals:
+    void updatedInList(std::string doc_id);
+    void updatedOutList(std::string doc_id);
+
+public slots:
+    void updateInList();
+    void updateOutList();
+
 public:
     explicit EdgeClient(const QString& aschema, QObject *parent = nullptr);
     explicit EdgeClient(const QString& aschema,

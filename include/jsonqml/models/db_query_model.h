@@ -24,7 +24,8 @@ class DBQueryModel: public SelectModel
     Q_PROPERTY(bool queryExecuting READ queryExecuting NOTIFY executingChange)
 
 signals:
-    void executingChange();
+    void updatedKeyList();
+    void executingChange(bool exec);
     /// Execute the query \a query for the given database connection.
     void CmExecuteQuery(const jsonio::DBQueryBase& query,const std::vector<std::string>& query_fields);
 

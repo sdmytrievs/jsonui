@@ -55,6 +55,7 @@ void DBQueryModel::updateKeyList()
     qDebug() << "DBQueryModel::updateKeyList " << new_query_fields.size() << "  " << new_data_table.size();
     resetTable(std::move(new_data_table), std::move(new_query_fields));
     set_executing(false);
+    emit updatedKeyList();
 }
 
 void DBQueryModel::resetTable(model_table_t&& table_data,
@@ -76,7 +77,7 @@ void DBQueryModel::executeQuery(const jsonio::DBQueryBase& query,
 void DBQueryModel::set_executing(bool val)
 {
     query_executing = val;
-    emit executingChange();
+    emit executingChange(val);
 }
 
 const jsonio::DBQueryBase &DBQueryModel::query() const

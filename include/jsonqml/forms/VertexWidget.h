@@ -57,14 +57,16 @@ public slots:
     void CmFollowInEdges();
     void CmFollowOutEdges();
 
-    void setExecuting();
+
+protected slots:
+    void setExecuting(bool exec);
     void updateViewMenu();
+    void openDocument(const QString& key_document);
 
 public:
-    explicit VertexWidget(const QString& aschema, QWidget *parent = nullptr);
+    explicit VertexWidget(const QString& aschema, const QString& document_id="", QWidget *parent = nullptr);
     ~VertexWidget();
 
-    void openDocument(const QString& key_document);
 
     /// Update query
     /// void setQueryEdited( QueryWidget* queryW  ) override;

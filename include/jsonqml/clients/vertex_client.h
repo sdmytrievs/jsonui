@@ -23,7 +23,7 @@ class VertexClient : public JsonClient
 signals:
     void keysModelChanged();
     void tablePropertiesChanged();
-    void executingChange();
+    void executingChange(bool exec);
     void updatedKeyList(std::string doc_id);
     void editorChanged();
 
@@ -35,7 +35,7 @@ public slots:
 
 public:
     explicit VertexClient(DocumentType dtype, const QString& aschema, QObject *parent = nullptr);
-    explicit VertexClient(const QString& aschema, QObject *parent = nullptr);
+    explicit VertexClient(const QString& aschema, const QString& start_doc_id, QObject *parent = nullptr);
     explicit VertexClient(DocumentType dtype, const QString& aschema,
                           const jsonio::DBQueryBase& query,
                           const model_line_t& query_fields,
@@ -56,6 +56,8 @@ public:
     Q_INVOKABLE virtual void updateRecord();
 
 protected:
+    std::string start_doc_id;
+
     VertexClientPrivate* impl_func()
     { return reinterpret_cast<VertexClientPrivate *>(impl_ptr.get()); }
     const VertexClientPrivate* impl_func() const

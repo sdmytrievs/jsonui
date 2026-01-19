@@ -40,12 +40,6 @@ DBKeysModel::~DBKeysModel()
 {
 }
 
-void DBKeysModel::updateKeyList()
-{
-    DBQueryModel::updateKeyList();
-    emit updatedKeyList();
-}
-
 void DBKeysModel::updateQuery()
 {
     uiSettings().setError(QString());

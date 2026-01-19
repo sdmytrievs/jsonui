@@ -22,7 +22,7 @@ PreferencesUI::PreferencesUI(jsonqml::Preferences& asettings, QWidget* parent):
     ui->expandedBox->setChecked(settings.keep_expanded);
 
     ui->dbGroupBox->addItems(settings.db_connect_list);
-    ui->dbGroupBox->setEditText(settings.dbConnectCurrent());
+    ui->dbGroupBox->setCurrentText(settings.dbConnectCurrent());
     load_db_data();
 
     QObject::connect(ui->buttonBox, &QDialogButtonBox::accepted, this, &PreferencesUI::CmSave);

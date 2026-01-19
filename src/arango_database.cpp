@@ -182,7 +182,9 @@ void ArangoDatabasePrivate::update_work_database(const arangocpp::ArangoDBConnec
             return;
         }
 
-        create_collection_if_no_exist(db_driver.get());
+        if(!db_data.db_access) {
+            create_collection_if_no_exist(db_driver.get());
+        }
         if(work_database.get() == nullptr) {
             work_database.reset(new jsonio::DataBase(db_driver));
         }
@@ -448,7 +450,7 @@ std::string ArangoDatabase::anyVertexSchema()
 {
     auto list = jsonio::DataBase::usedVertexCollections();
     if(!list.empty()) {
-        return  list.begin()->first;
+        return  list.rbegin()->first;
     }
     return "";
 }
@@ -457,7 +459,7 @@ std::string ArangoDatabase::anyEdgeSchema()
 {
     auto list = jsonio::DataBase::usedEdgeCollections();
     if(!list.empty()) {
-        return  list.begin()->first;
+        return  list.rbegin()->first;
     }
     return "";
 }

@@ -184,9 +184,10 @@ VertexClient::VertexClient(const QString& aschema, VertexClientPrivate *impl, QO
         }
 }
 
-VertexClient::VertexClient(const QString& aschema, QObject *parent):
+VertexClient::VertexClient(const QString& aschema, const QString& doc_id, QObject *parent):
     VertexClient(aschema, new VertexClientPrivate(Vertex), parent)
 {
+    start_doc_id = doc_id.toStdString();
     // virtual init into JsonClient
 }
 
@@ -252,12 +253,20 @@ void VertexClient::setEditorOid(std::string doc_id)
 
 void VertexClient::updateKeyList()
 {
-    auto editor_id = impl_func()->id_from_editor();
-    if(editor_id.empty()) {
-        readEditorData(0);
+    std::string editor_id;
+    if(!start_doc_id.empty()) {
+        editor_id = start_doc_id;
+        start_doc_id = "";
+    }
+    else {
         editor_id = impl_func()->id_from_editor();
     }
+    if(editor_id.empty()) {
+        readEditorData(0);
+        editor_id = tableId(0);
+    }
     if(!editor_id.empty()) {
+        qDebug() << "VertexClient::updateKeyList " << editor_id;
         emit updatedKeyList(editor_id);
     }
 }

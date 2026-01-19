@@ -158,6 +158,19 @@ QString EdgeClient::vertex_schema_from_id(const QString& key_id)
 EdgeClient::EdgeClient(const QString& aschema, EdgeClientPrivate *impl, QObject *parent):
     VertexClient(aschema, impl, parent)
 {
+    if(impl_func()->in_model) {
+        connect(impl_func()->in_model.get(), &DBKeysModel::executingChange,
+                this, &VertexClient::executingChange, Qt::UniqueConnection);
+        connect(impl_func()->in_model.get(), &DBKeysModel::updatedKeyList,
+                this, &EdgeClient::updateInList, Qt::UniqueConnection);
+
+    }
+    if(impl_func()->out_model) {
+        connect(impl_func()->out_model.get(), &DBKeysModel::executingChange,
+                this, &VertexClient::executingChange, Qt::UniqueConnection);
+        connect(impl_func()->out_model.get(), &DBKeysModel::updatedKeyList,
+                this, &EdgeClient::updateOutList, Qt::UniqueConnection);
+    }
 }
 
 EdgeClient::EdgeClient(const QString& aschema, QObject *parent):
@@ -183,6 +196,23 @@ EdgeClient::EdgeClient(const QString &aschema, bool in_edges,
                parent)
 {
     impl_func()->set_multi_edge(true);
+}
+
+void EdgeClient::updateInList()
+{
+    auto editor_id = impl_func()->in_vertex_id;
+    qDebug() << "EdgeClient::updateInList " << editor_id;
+    if(!editor_id.empty()) {
+        emit updatedInList(editor_id);
+    }
+}
+
+void EdgeClient::updateOutList()
+{
+    auto editor_id = impl_func()->out_vertex_id;
+    if(!editor_id.empty()) {
+        emit updatedOutList(editor_id);
+    }
 }
 
 QAbstractItemModel *EdgeClient::inmodel()

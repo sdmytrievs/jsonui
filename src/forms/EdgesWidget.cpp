@@ -30,13 +30,12 @@ EdgesWidget::EdgesWidget(const QString& aschema, QWidget *parent ):
     if( schema_name.isEmpty() && !edges_list.empty()) {
         schema_name = edges_list[0];
     }
-    wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
-    wait_dialog->start();
-
     edge_client.reset(new EdgeClient(schema_name, this));
-    QObject::connect(edge_client.get(), &VertexClient::executingChange, this, &EdgesWidget::setExecuting);
 
     define_window();
+    wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
+    setExecuting(true);
+
 }
 
 EdgesWidget::EdgesWidget(bool in_edges, const QString &vertex_id, QWidget *parent):
@@ -51,14 +50,13 @@ EdgesWidget::EdgesWidget(bool in_edges, const QString &vertex_id, QWidget *paren
     if( schema_name.isEmpty() && !edges_list.empty()) {
         schema_name = edges_list[0];
     }
-    wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
-    wait_dialog->start();
-
     edge_client.reset(new EdgeClient(schema_name, in_edges, vertex_id, this));
-    QObject::connect(edge_client.get(), &VertexClient::executingChange, this, &EdgesWidget::setExecuting);
 
     define_window();
     ui->typeBox->setEnabled(false);
+    wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
+    setExecuting(true);
+
 }
 
 EdgesWidget::~EdgesWidget()
@@ -67,15 +65,23 @@ EdgesWidget::~EdgesWidget()
     qDebug() << "EdgesWidget destruct";
 }
 
-void EdgesWidget::setExecuting()
+void EdgesWidget::setExecuting(bool exec)
 {
-    if(edge_client->queryExecuting()) {
-        ui_logger->info("EdgesWidget start process");
-        wait_dialog->start();
+    static int nstart = 0;
+    if(exec) {
+
+        ui_logger->info("EdgesWidget start process {}", nstart);
+        if(!nstart) {
+            wait_dialog->start();
+        }
+        nstart++;
     }
     else {
+        nstart--;
+        if(!nstart) {
         wait_dialog->stop();
-        ui_logger->info("EdgesWidget finish process");
+        }
+        ui_logger->info("EdgesWidget finish process {}", nstart);
     }
 }
 
@@ -194,9 +200,8 @@ void EdgesWidget::CmFollowInVertex()
     auto vertex = edge_client->outgoingVertex();
     if(!vertex.isEmpty()) {
         auto schema = edge_client->vertex_schema_from_id(vertex);
-        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema);
+        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema, vertex);
         ptr->show();
-        ptr->openDocument(vertex);
     }
 }
 
@@ -205,9 +210,8 @@ void EdgesWidget::CmFollowOutVertex()
     auto vertex = edge_client->incomingVertex();
     if(!vertex.isEmpty()) {
         auto schema = edge_client->vertex_schema_from_id(vertex);
-        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema);
+        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema, vertex);
         ptr->show();
-        ptr->openDocument(vertex);
     }
 }
 
@@ -319,6 +323,7 @@ void EdgesWidget::define_window()
                                     [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
     QObject::connect(keys_view.get(), &DBKeysTable::clicked,
                      this, &EdgesWidget::openRecordKey);
+    QObject::connect(edge_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
     keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     ui->keySplitter->insertWidget(0, keys_view.get());
@@ -327,6 +332,8 @@ void EdgesWidget::define_window()
     in_keys_table_client.reset(new TableClient(edge_client->outtablemodel(), mode, this));
     in_keys_view.reset(new DBKeysTable(mode, in_keys_table_client.get(), [](const QModelIndex&){;}, this));
     QObject::connect(in_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addIncoming);
+    QObject::connect(edge_client.get(), &EdgeClient::updatedOutList, in_keys_view.get(), &DBKeysTable::move_to_key);
+
     in_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     in_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     ui->verticalLayout_2->addWidget(in_keys_view.get());
@@ -334,6 +341,7 @@ void EdgesWidget::define_window()
     out_keys_table_client.reset(new TableClient(edge_client->intablemodel(), mode, this));
     out_keys_view.reset(new DBKeysTable(mode, out_keys_table_client.get(), [](const QModelIndex&){;}, this));
     QObject::connect(out_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addOutgoing);
+    QObject::connect(edge_client.get(), &EdgeClient::updatedInList, out_keys_view.get(), &DBKeysTable::move_to_key);
     out_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     out_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     ui->verticalLayout->addWidget(out_keys_view.get());
@@ -342,6 +350,7 @@ void EdgesWidget::define_window()
     connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &EdgesWidget::updateViewMenu);
     QObject::connect(ui->typeBox, &QComboBox::currentTextChanged, this, &EdgesWidget::typeChanged);
     QObject::connect(edge_client.get(), &VertexClient::editorChanged, this, &EdgesWidget::scrollInOut);
+    QObject::connect(edge_client.get(), &VertexClient::executingChange, this, &EdgesWidget::setExecuting);
 
     qDebug() << "EdgesWidget construct";
 }

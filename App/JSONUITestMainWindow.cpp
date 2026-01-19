@@ -169,7 +169,7 @@ void TJSONUITestWin::CmNewVertex()
             }
         }
         if(!testschema.empty()) {
-            jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(QString::fromStdString(testschema), this);
+            jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(QString::fromStdString(testschema), "", this);
             ptr->show();
         }
     }

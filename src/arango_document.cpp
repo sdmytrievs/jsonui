@@ -35,7 +35,6 @@ ArangoDBDocumentPrivate::ArangoDBDocumentPrivate(DocumentType type, const QStrin
 bool ArangoDBDocumentPrivate::is_dbdocument()
 {
     if(!dbdocument && database->db_connected()) {
-        qDebug() << "is_dbdocument";
         const jsonio::DataBase& jsonio_db = database->jsonio_database(doc_type==jsonqml::Resource);
 
         switch(doc_type) {
@@ -263,8 +262,8 @@ void ArangoDBDocument::resetSchema(std::string aschema_name)
     }
     catch(std::exception& e) {
         emit isException(e.what());
+        emit finished();
     }
-    emit finished();
 }
 
 void ArangoDBDocument::reloadQuery()
@@ -278,8 +277,9 @@ void ArangoDBDocument::reloadQuery()
     }
     catch(std::exception& e) {
         emit isException(e.what());
+        emit finished();
     }
-    emit finished();
+
 }
 
 void ArangoDBDocument::reloadTable(std::string schema_name, std::string doc_id)
@@ -301,8 +301,8 @@ void ArangoDBDocument::changeQuery(jsonio::DBQueryBase query, std::vector<std::s
     }
     catch(std::exception& e) {
         emit isException(e.what());
+        emit finished();
     }
-    emit finished();
 }
 
 void ArangoDBDocument::executeQuery(jsonio::DBQueryBase query, std::vector<std::string> query_fields)
@@ -315,8 +315,8 @@ void ArangoDBDocument::executeQuery(jsonio::DBQueryBase query, std::vector<std::
     }
     catch(std::exception& e) {
         emit isException(e.what());
+        emit finished();
     }
-    emit finished();
 }
 
 void ArangoDBDocument::readDocument(std::string doc_id)
