@@ -67,6 +67,7 @@ JsonView::JsonView(JsonClient* client, QWidget* parent):
     setIndentation(30);
 
     setModel(json_client->jsonmodel());
+    expandRecursively(QModelIndex(),1);
     connect(json_client, &JsonClient::jsonModelChanged, this, [&](){ setModel(json_client->jsonmodel()); });
 
     connect(this, &JsonView::customContextMenuRequested, this, &JsonView::slotPopupContextMenu);
@@ -421,7 +422,8 @@ void JsonView::getExpandedRows()
         restore_expanded_state(expanded_rows);
     }
     else {
-        expandToDepth(1);
+        expandRecursively(QModelIndex(),1);
+        //expandToDepth(1);
     }
     header()->resizeSection(0, section_0_size);
     header()->resizeSection(1, section_1_size);

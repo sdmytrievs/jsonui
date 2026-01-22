@@ -35,7 +35,6 @@ EdgesWidget::EdgesWidget(const QString& aschema, QWidget *parent ):
     define_window();
     wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
     setExecuting(true);
-
 }
 
 EdgesWidget::EdgesWidget(bool in_edges, const QString &vertex_id, QWidget *parent):
@@ -56,7 +55,6 @@ EdgesWidget::EdgesWidget(bool in_edges, const QString &vertex_id, QWidget *paren
     ui->typeBox->setEnabled(false);
     wait_dialog = new WaitingSpinnerWidget(this, true/*Qt::ApplicationModal*/, true);
     setExecuting(true);
-
 }
 
 EdgesWidget::~EdgesWidget()
@@ -69,7 +67,6 @@ void EdgesWidget::setExecuting(bool exec)
 {
     static int nstart = 0;
     if(exec) {
-
         ui_logger->info("EdgesWidget start process {}", nstart);
         if(!nstart) {
             wait_dialog->start();
@@ -79,7 +76,7 @@ void EdgesWidget::setExecuting(bool exec)
     else {
         nstart--;
         if(!nstart) {
-        wait_dialog->stop();
+            wait_dialog->stop();
         }
         ui_logger->info("EdgesWidget finish process {}", nstart);
     }
@@ -95,8 +92,8 @@ void EdgesWidget::updateViewMenu()
 
 void EdgesWidget::scrollInOut()
 {
-   in_keys_view->move_to_key(edge_client->outgoingVertex().toStdString());
-   out_keys_view->move_to_key(edge_client->incomingVertex().toStdString());
+    in_keys_view->move_to_key(edge_client->outgoingVertex().toStdString());
+    out_keys_view->move_to_key(edge_client->incomingVertex().toStdString());
 }
 
 void EdgesWidget::typeChanged(const QString& text)
@@ -125,7 +122,7 @@ std::string EdgesWidget::currentKey() const
 
 void EdgesWidget::openRecordKey(const QModelIndex& index)
 {
-    edge_client->readEditorData(index.row());
+    edge_client->readEditorData(keys_table_client->rowIndex(index));
 }
 
 
@@ -133,7 +130,27 @@ void EdgesWidget::openRecordKey(const QModelIndex& index)
 
 void EdgesWidget::CmHelpContens()
 {
-  //  helpWin("Edges", schema_name);
+    //  helpWin("Edges", schema_name);
+}
+
+void EdgesWidget::CmFollowInVertex()
+{
+    auto vertex = edge_client->outgoingVertex();
+    if(!vertex.isEmpty()) {
+        auto schema = edge_client->vertex_schema_from_id(vertex);
+        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema, vertex);
+        ptr->show();
+    }
+}
+
+void EdgesWidget::CmFollowOutVertex()
+{
+    auto vertex = edge_client->incomingVertex();
+    if(!vertex.isEmpty()) {
+        auto schema = edge_client->vertex_schema_from_id(vertex);
+        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema, vertex);
+        ptr->show();
+    }
 }
 
 void EdgesWidget::CmImportJSON()
@@ -195,24 +212,71 @@ void EdgesWidget::CmDelete()
     }
 }
 
-void EdgesWidget::CmFollowInVertex()
+void EdgesWidget::CmBackupQueriedRecordstoFile()
 {
-    auto vertex = edge_client->outgoingVertex();
-    if(!vertex.isEmpty()) {
-        auto schema = edge_client->vertex_schema_from_id(vertex);
-        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema, vertex);
-        ptr->show();
+    auto keys = select_keys("Please, select a records to backup.");
+    if(!keys.empty()) {
+        auto file = edge_client->fileSchemaExt(schema_name, "json");
+        if(ChooseFileSave(this, file,
+                           "Please, select a file to write (document) records",
+                           domFilters, file))  {
+            edge_client->backupRecords(file, std::move(keys));
+        }
     }
 }
 
-void EdgesWidget::CmFollowOutVertex()
+void EdgesWidget::CmRestoreMultipleRecordsfromFile()
 {
-    auto vertex = edge_client->incomingVertex();
-    if(!vertex.isEmpty()) {
-        auto schema = edge_client->vertex_schema_from_id(vertex);
-        jsonqml::VertexWidget* ptr = new jsonqml::VertexWidget(schema, vertex);
-        ptr->show();
+    QString file;
+    if(ChooseFileOpen(this, file,
+                       "Please, select a file with JSON objects", domFilters)) {
+        edge_client->restoreRecords(file);
     }
+}
+
+void EdgesWidget::CmBackupGraphtoFile()
+{
+    auto keys = select_keys("Please, select a records to backup graph.");
+    if(!keys.empty()) {
+        auto file = edge_client->fileSchemaExt(schema_name, "json");
+        if(ChooseFileSave(this, file,
+                           "Please, select a file to write graph data",
+                           domFilters, file))  {
+            edge_client->backupGraph(file, std::move(keys));
+        }
+    }
+}
+
+void EdgesWidget::CmRestoreGraphfromFile()
+{
+    QString file;
+    if(ChooseFileOpen(this, file,
+                       "Please, select a file with JSON graph", domFilters)) {
+        edge_client->restoreGraph(file);
+    }
+}
+
+void EdgesWidget::CmDeleteSelect()
+{
+    auto keys = select_keys("Please select the records you would like to delete.");
+    if(!keys.empty()) {
+        edge_client->deleteRecords(std::move(keys));
+    }
+}
+
+// private -----------------------------------------------------------
+
+std::vector<std::string> EdgesWidget::select_keys(const QString& title)
+{
+    std::vector<std::string> keys;
+    SelectDialog sel_dlg(multi_selection, title, edge_client->tablemodel(), this);
+    if(sel_dlg.exec())  {
+        auto ndxs = sel_dlg.allSelected();
+        for(auto ndx: ndxs) {
+            keys.push_back(edge_client->tableId(ndx));
+        }
+    }
+    return keys;
 }
 
 void EdgesWidget::set_actions()
@@ -311,9 +375,7 @@ void EdgesWidget::define_window()
     QItemDelegate* deleg_schema = new JsonDelegate();
     json_tree.reset(new JsonView(edge_client.get(), this));
     json_tree->setItemDelegate(deleg_schema);
-    json_tree->setColumnWidth(0, 250);
-    json_tree->expandToDepth(2);
-    json_tree->setColumnWidth( 0, 150 );
+    json_tree->setColumnWidth(0, 150);
     json_tree->expandToDepth(1);
     ui->gridLayout->addWidget(json_tree.get(), 1, 0, 1, 2);
 
@@ -321,8 +383,7 @@ void EdgesWidget::define_window()
     keys_table_client.reset(new TableClient(edge_client->tablemodel(), mode, this));
     keys_view.reset(new DBKeysTable(mode, keys_table_client.get(),
                                     [&](const QModelIndex& index){ this->openRecordKey(index); }, this));
-    QObject::connect(keys_view.get(), &DBKeysTable::clicked,
-                     this, &EdgesWidget::openRecordKey);
+    QObject::connect(keys_view.get(), &DBKeysTable::clicked, this, &EdgesWidget::openRecordKey);
     QObject::connect(edge_client.get(), &VertexClient::updatedKeyList, keys_view.get(), &DBKeysTable::move_to_key);
     keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
@@ -333,7 +394,6 @@ void EdgesWidget::define_window()
     in_keys_view.reset(new DBKeysTable(mode, in_keys_table_client.get(), [](const QModelIndex&){;}, this));
     QObject::connect(in_keys_view.get(), &DBKeysTable::doubleClicked, this, &EdgesWidget::addIncoming);
     QObject::connect(edge_client.get(), &EdgeClient::updatedOutList, in_keys_view.get(), &DBKeysTable::move_to_key);
-
     in_keys_view->setSelectionBehavior(QAbstractItemView::SelectRows);
     in_keys_view->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
     ui->verticalLayout_2->addWidget(in_keys_view.get());
@@ -354,20 +414,6 @@ void EdgesWidget::define_window()
 
     qDebug() << "EdgesWidget construct";
 }
-
-
-/*
-void EdgesWidgetPrivate::reset_type_box( const QString& text )
-{
-    QObject::disconnect( qUi->typeBox, &QComboBox::currentTextChanged,
-                         this, &EdgesWidgetPrivate::type_changed);
-    qUi->typeBox->setCurrentText(text);
-    pLineTask->setText(text);
-    current_schema_name = text.toStdString();
-    QObject::connect( qUi->typeBox, &QComboBox::currentTextChanged,
-                      this, &EdgesWidgetPrivate::type_changed);
-}*/
-
 
 } // namespace jsonui
 

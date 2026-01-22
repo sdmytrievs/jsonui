@@ -20,15 +20,8 @@ class VertexWidget : public QMainWindow
 {
     Q_OBJECT
 
-signals:
-    /// Emit signal, when delete record(s)
-    //void vertexDeleted();
-    /// Emit signal, when loaded graph
-    //void graphLoaded();
-
-
 public slots:
-    void openRecordKey(const QModelIndex& index);
+    void openDocument(const QString& key_document);
 
     // File
     void CmNew();
@@ -40,13 +33,14 @@ public slots:
     void CmRead();
     void CmUpdate();
     void CmDelete();
-    void CmDeleteSelect() {}
-    void CmDisplaySearchResult() {}
-    void CmSearchQuery() {}
-    void CmBackupQueriedRecordstoFile() {}
-    void CmRestoreMultipleRecordsfromFile() {}
-    void CmBackupGraphtoFile() {}
-    void CmRestoreGraphfromFile() {}
+    void CmDeleteSelect();
+    void CmDisplaySearchResult() {} /// !!!
+    void CmSearchQuery() {} /// !!!!
+    void CmBackupQueriedRecordstoFile();
+    void CmRestoreMultipleRecordsfromFile();
+    void CmBackupGraphtoFile();
+    void CmRestoreGraphfromFile();
+
 #ifndef IMPEX_OFF
     void CmImportFormat();
     void CmUpdateFormat();
@@ -57,20 +51,17 @@ public slots:
     void CmFollowInEdges();
     void CmFollowOutEdges();
 
-
 protected slots:
     void setExecuting(bool exec);
     void updateViewMenu();
-    void openDocument(const QString& key_document);
+    void openRecordKey(const QModelIndex& index);
 
 public:
     explicit VertexWidget(const QString& aschema, const QString& document_id="", QWidget *parent = nullptr);
     ~VertexWidget();
 
-
     /// Update query
     /// void setQueryEdited( QueryWidget* queryW  ) override;
-
     std::string currentKey() const;
 
 private:
@@ -85,7 +76,7 @@ private:
     WaitingSpinnerWidget* wait_dialog = nullptr;
 
     void set_actions();
-    std::vector<std::string> select_keys_document(const QString& title);
+    std::vector<std::string> select_keys(const QString &title);
 };
 
 } // namespace jsonui

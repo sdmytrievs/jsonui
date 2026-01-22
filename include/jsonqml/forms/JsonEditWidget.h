@@ -9,6 +9,7 @@ class JsonEditWidget;
 namespace jsonqml {
 
 class JsonClient;
+class VertexClient;
 class JsonView;
 
 /// \class JsonEditWidget - window to edit/create free format json or
@@ -43,6 +44,7 @@ private:
     QString collection_name;
 
     void set_actions();
+    std::vector<std::string> select_keys(VertexClient *vclient, const QString &title);
 };
 
 } // namespace jsonui

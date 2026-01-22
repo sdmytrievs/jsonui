@@ -45,7 +45,6 @@ VertexWidget::VertexWidget(const QString& aschema, const QString& document_id, Q
     json_tree.reset(new JsonView(vertex_client.get(), this));
     json_tree->setItemDelegate(deleg_schema);
     json_tree->setColumnWidth(0, 250);
-    json_tree->expandToDepth(2);
     ui->verticalLayout->addWidget(json_tree.get());
 
     auto mode = single_selection;
@@ -104,10 +103,28 @@ std::string VertexWidget::currentKey() const
 
 void VertexWidget::openRecordKey(const QModelIndex& index)
 {
-    vertex_client->readEditorData(index.row());
+    vertex_client->readEditorData(keys_table_client->rowIndex(index));
 }
 
 // Menu commands -----------------------------------------------------------
+
+void VertexWidget::CmFollowInEdges()
+{
+    auto vertex_id = vertex_client->editorId();
+    if(!vertex_id.isEmpty()) {
+        jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(true, vertex_id);
+        ptr->show();
+    }
+}
+
+void VertexWidget::CmFollowOutEdges()
+{
+    auto vertex_id = vertex_client->editorId();
+    if(!vertex_id.isEmpty()) {
+        jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(false, vertex_id);
+        ptr->show();
+    }
+}
 
 void VertexWidget::CmImportJSON()
 {
@@ -168,22 +185,71 @@ void VertexWidget::CmDelete()
     }
 }
 
-void VertexWidget::CmFollowInEdges()
+void VertexWidget::CmBackupQueriedRecordstoFile()
 {
-    auto vertex_id = vertex_client->editorId();
-    if(!vertex_id.isEmpty()) {
-        jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(true, vertex_id);
-        ptr->show();
+    auto keys = select_keys("Please, select a records to backup.");
+    if(!keys.empty()) {
+        auto file = vertex_client->fileSchemaExt(schema_name, "json");
+        if(ChooseFileSave(this, file,
+                           "Please, select a file to write (document) records",
+                           domFilters, file))  {
+            vertex_client->backupRecords(file, std::move(keys));
+        }
     }
 }
 
-void VertexWidget::CmFollowOutEdges()
+void VertexWidget::CmRestoreMultipleRecordsfromFile()
 {
-    auto vertex_id = vertex_client->editorId();
-    if(!vertex_id.isEmpty()) {
-        jsonqml::EdgesWidget* ptr = new jsonqml::EdgesWidget(false, vertex_id);
-        ptr->show();
+    QString file;
+    if(ChooseFileOpen(this, file,
+                       "Please, select a file with JSON objects", domFilters)) {
+        vertex_client->restoreRecords(file);
     }
+}
+
+void VertexWidget::CmBackupGraphtoFile()
+{
+    auto keys = select_keys("Please, select a records to backup graph.");
+    if(!keys.empty()) {
+        auto file = vertex_client->fileSchemaExt(schema_name, "json");
+        if(ChooseFileSave(this, file,
+                           "Please, select a file to write graph data",
+                           domFilters, file))  {
+            vertex_client->backupGraph(file, std::move(keys));
+        }
+    }
+}
+
+void VertexWidget::CmRestoreGraphfromFile()
+{
+    QString file;
+    if(ChooseFileOpen(this, file,
+                       "Please, select a file with JSON graph", domFilters)) {
+        vertex_client->restoreGraph(file);
+    }
+}
+
+void VertexWidget::CmDeleteSelect()
+{
+    auto keys = select_keys("Please select the records you would like to delete.");
+    if(!keys.empty()) {
+        vertex_client->deleteRecords(std::move(keys));
+    }
+}
+
+// private -----------------------------------------------------------
+
+std::vector<std::string> VertexWidget::select_keys(const QString& title)
+{
+    std::vector<std::string> keys;
+    SelectDialog sel_dlg(multi_selection, title, vertex_client->tablemodel(), this);
+    if(sel_dlg.exec())  {
+        auto ndxs = sel_dlg.allSelected();
+        for(auto ndx: ndxs) {
+            keys.push_back(vertex_client->tableId(ndx));
+        }
+    }
+    return keys;
 }
 
 void VertexWidget::set_actions()

@@ -35,7 +35,7 @@ public slots:
 
 public:
     explicit VertexClient(DocumentType dtype, const QString& aschema, QObject *parent = nullptr);
-    explicit VertexClient(const QString& aschema, const QString& start_doc_id, QObject *parent = nullptr);
+    explicit VertexClient(const QString& aschema, const QString& doc_id, QObject *parent = nullptr);
     explicit VertexClient(DocumentType dtype, const QString& aschema,
                           const jsonio::DBQueryBase& query,
                           const model_line_t& query_fields,
@@ -54,6 +54,12 @@ public:
 
     Q_INVOKABLE virtual void deleteRecord(QString vertex_id);
     Q_INVOKABLE virtual void updateRecord();
+
+    virtual void backupRecords(QString file, std::vector<std::string>&& keys);
+    virtual void restoreRecords(QString file);
+    virtual void backupGraph(QString file, std::vector<std::string>&& keys);
+    virtual void restoreGraph(QString file);
+    virtual void deleteRecords(std::vector<std::string>&& keys);
 
 protected:
     std::string start_doc_id;

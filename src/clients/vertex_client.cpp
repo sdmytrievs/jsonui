@@ -266,7 +266,6 @@ void VertexClient::updateKeyList()
         editor_id = tableId(0);
     }
     if(!editor_id.empty()) {
-        qDebug() << "VertexClient::updateKeyList " << editor_id;
         emit updatedKeyList(editor_id);
     }
 }
@@ -308,6 +307,41 @@ void VertexClient::updateRecord()
 {
     if(impl_func()->keys_model) {
         impl_func()->keys_model->save(impl_func()->get_json().dump());
+    }
+}
+
+void VertexClient::backupRecords(QString file, std::vector<std::string> &&keys)
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->backup_records(file, std::move(keys));
+    }
+}
+
+void VertexClient::restoreRecords(QString file)
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->restore_records(file);
+    }
+}
+
+void VertexClient::backupGraph(QString file, std::vector<std::string> &&keys)
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->backup_graph(file, std::move(keys));
+    }
+}
+
+void VertexClient::restoreGraph(QString file)
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->restore_graph(file);
+    }
+}
+
+void VertexClient::deleteRecords(std::vector<std::string> &&keys)
+{
+    if(impl_func()->keys_model) {
+        impl_func()->keys_model->delete_records(std::move(keys));
     }
 }
 

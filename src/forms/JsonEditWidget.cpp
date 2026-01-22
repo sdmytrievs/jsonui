@@ -9,10 +9,8 @@
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/clients/vertex_client.h"
-#include "jsonqml/clients/settings_client.h"
 
 namespace jsonqml {
-
 
 JsonEditWidget::JsonEditWidget(const QString& aschema, QWidget *parent):
     QMainWindow(parent),
@@ -51,7 +49,7 @@ JsonEditWidget::JsonEditWidget(const QString& aschema, QWidget *parent):
     json_tree.reset(new JsonView(json_client.get(), this));
     json_tree->setItemDelegate(deleg);
     json_tree->setColumnWidth(0, 250);
-    json_tree->expandToDepth(0);
+    json_tree->expandToDepth(1);
     ui->verticalLayout->addWidget(json_tree.get());
 
     set_actions();
@@ -63,13 +61,11 @@ JsonEditWidget::~JsonEditWidget()
     qDebug() << "JsonEditWidget destruct";
 }
 
-// Set default json record
 void JsonEditWidget::CmNew()
 {
     json_client->jsonmodel()->setupModelData("", schema_name);
 }
 
-// Clone json record (clear _id)
 void JsonEditWidget::CmClone()
 {
     VertexClient* vclient = dynamic_cast<VertexClient*>(json_client.get());
@@ -77,28 +73,6 @@ void JsonEditWidget::CmClone()
         vclient->setEditorOid("");
     }
 }
-
-// Save current record to DB file as new
-void JsonEditWidget::CmBackup()
-{
-    /*
-    try {
-        if( dbcollection.get() == nullptr )
-            return;
-        std::string key = current_key();
-        std::string rid = dbcollection->createDocument( key );
-        json_tree->updateModelData(dbcollection->getJson(), schema_name );
-    }
-    catch( jsonio::jsonio_exception& e)
-    {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical( this, "std::exception", e.what() );
-    }*/
-}
-
 
 void JsonEditWidget::CmRead()
 {
@@ -115,54 +89,39 @@ void JsonEditWidget::CmRead()
     }
 }
 
-// Save current record to DB file
 void JsonEditWidget::CmUpdate()
 {
-    /*
-    try {
-        if( dbcollection.get() == nullptr )
-            return;
-        std::string key = current_key();
-        dbcollection->updateDocument( key );
-        contents_changed =  false;
+    VertexClient* vclient = dynamic_cast<VertexClient*>(json_client.get());
+    if(vclient) {
+        vclient->updateRecord();
     }
-    catch( jsonio17::jsonio_exception& e)
-    {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical( this, "std::exception", e.what() );
-    }
-   */
 }
 
-// Delete current record from DB
 void JsonEditWidget::CmDeleteList()
-{ /*
-    try {
-        if(dbcollection.get() == nullptr)
-            return;
-        // get current key
-        std::string key = current_key();
-        QString msg = QString("Confirm deletion of %1 record?").arg( key.c_str() );
-        QMessageBox::StandardButton reply;
-        reply = QMessageBox::question( this, "Record to delete", msg,
-                                      QMessageBox::Yes|QMessageBox::No);
-        if (reply == QMessageBox::No)
-            return;
-        dbcollection->deleteDocument(key);
-        contents_changed =  false;
+{
+    VertexClient* vclient = dynamic_cast<VertexClient*>(json_client.get());
+    if(vclient) {
+        auto keys = select_keys(vclient, "Please select the records you would like to delete.");
+        if(!keys.empty()) {
+            vclient->deleteRecords(std::move(keys));
+        }
     }
-    catch( jsonio::jsonio_exception& e)
-    {
-        QMessageBox::critical( this, "jsonio_exception", e.what() );
+}
+
+void JsonEditWidget::CmBackup()
+{
+    VertexClient* vclient = dynamic_cast<VertexClient*>(json_client.get());
+    if(vclient) {
+        auto keys = select_keys(vclient, "Please, select a records to backup.");
+        if(!keys.empty()) {
+            auto file = vclient->fileSchemaExt(schema_name, "json");
+            if(ChooseFileSave(this, file,
+                               "Please, select a file to write (document) records",
+                               domFilters, file))  {
+                vclient->backupRecords(file, std::move(keys));
+            }
+        }
     }
-    catch(std::exception& e)
-    {
-        QMessageBox::critical( this, "std::exception", e.what() );
-    }
-  */
 }
 
 void JsonEditWidget::CmImportJSON()
@@ -182,6 +141,19 @@ void JsonEditWidget::CmExportJSON()
                        domFilters, fileName)) {
         json_client->saveJson(fileName);
     }
+}
+
+std::vector<std::string> JsonEditWidget::select_keys(VertexClient* vclient, const QString& title)
+{
+    std::vector<std::string> keys;
+    SelectDialog sel_dlg(multi_selection, title, vclient->tablemodel(), this);
+    if(sel_dlg.exec())  {
+        auto ndxs = sel_dlg.allSelected();
+        for(auto ndx: ndxs) {
+            keys.push_back(vclient->tableId(ndx));
+        }
+    }
+    return keys;
 }
 
 void JsonEditWidget::set_actions()

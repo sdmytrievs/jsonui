@@ -201,7 +201,6 @@ EdgeClient::EdgeClient(const QString &aschema, bool in_edges,
 void EdgeClient::updateInList()
 {
     auto editor_id = impl_func()->in_vertex_id;
-    qDebug() << "EdgeClient::updateInList " << editor_id;
     if(!editor_id.empty()) {
         emit updatedInList(editor_id);
     }

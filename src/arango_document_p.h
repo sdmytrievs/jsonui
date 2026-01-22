@@ -34,6 +34,20 @@ public:
     virtual bool save_doc(const std::string &json_data, std::string& doc_id);
     virtual void remove_doc(const std::string& doc_id);
 
+    void delete_list(const std::vector<std::string> &keys);
+    void restore_records_from_file(const QString &file);
+    void backup_records_to_file(const QString &file, const std::vector<std::string> &keys);
+    void restore_graph(const QString &file);
+    void backup_graph(const QString &file, const std::vector<std::string> &keys);
+    bool is_vertex_document()
+    {
+        return  doc_type == Vertex;
+    }
+    std::string document_schema()
+    {
+        return document_schema_name;
+    }
+
 protected:
     friend class ArangoDBDocument;
 

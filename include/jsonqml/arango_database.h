@@ -46,7 +46,9 @@ public slots:
     /// Notify about updating the document (may require updating of related ones)
     virtual void afterUpdatedDocument(std::string schema_name, std::string doc_id);
     /// Notify about document deletion (may require deletion of related ones)
-    virtual void afterDeletedDocument(std::string schema_name, std::string doc_id);
+    virtual void afterDeletedDocument(bool is_vertex, std::string schema_name, std::string doc_id);
+    /// Notify about of loading graph documents (load records to different collections)
+    virtual void afterLoadedGraph();
 
     /// Restore collection descriptors after scemasPathChanged
     void resetCollectionsList();

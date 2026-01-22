@@ -33,7 +33,10 @@ signals:
     /// Notify about updating the document (may require updating of related ones)
     void updatedDocument(std::string schema_name, std::string doc_id);
     /// Notify about document deletion (may require deletion of related ones)
-    void deletedDocument(std::string schema_name, std::string doc_id);
+    void deletedDocument(bool is_vertex, std::string schema_name, std::string doc_id);
+    /// Notify about of loading graph documents
+    /// Load records to different collections (reload all open )
+    void loadedGraph();
 
 public slots:
 
@@ -58,9 +61,19 @@ public slots:
 
     /// Save json Document to database
     virtual void updateDocument(std::string json_document);
-
     /// Delete keyDocument document from database
     virtual void deleteDocument(std::string doc_id);
+
+    /// Delete documents from database
+    virtual void deleteList(std::vector<std::string> keys);
+    /// Read multiple records from file
+    virtual void restoreRecordsfromFile(QString file);
+    /// Write multiple records to file
+    virtual void backupRecordstoFile(QString file, std::vector<std::string> keys);
+    /// Write graph to file
+    void backupGraphtoFile(QString file, std::vector<std::string> keys);
+    /// Read multiple records from file
+    void restoreGraphfromFile(QString file);
 
 public:
 

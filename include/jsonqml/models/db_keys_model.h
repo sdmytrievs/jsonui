@@ -37,6 +37,17 @@ signals:
    /// Delete keyDocument document from database
    void cmDelete(std::string doc_id);
 
+   /// Delete documents from database
+   void cmDeleteList(std::vector<std::string> keys);
+   /// Read multiple records from file
+   void cmRestoreRecordsfromFile(QString file);
+   /// Write multiple records to file
+   void cmBackupRecordstoFile(QString file, std::vector<std::string> keys);
+   /// Write graph to file file
+   void cmBackupGraphtoFile(QString file, std::vector<std::string> keys);
+   /// Read multiple records from file
+   void cmRestoreGraphfromFile(QString file);
+
 public slots:
     void updateQuery();
     void resetSchema(QString new_schema_name);
@@ -72,6 +83,13 @@ public:
     Q_INVOKABLE void save(const std::string& json_data);
     Q_INVOKABLE void remove(std::string doc_id);
     Q_INVOKABLE void remove(size_t row);
+
+    void backup_records(QString file, std::vector<std::string>&& keys);
+    void restore_records(QString file);
+    void backup_graph(QString file, std::vector<std::string>&& keys);
+    void restore_graph(QString file);
+    void delete_records(std::vector<std::string>&& keys);
+
 };
 
 }

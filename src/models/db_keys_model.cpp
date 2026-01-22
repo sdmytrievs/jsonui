@@ -32,6 +32,12 @@ DBKeysModel::DBKeysModel(DocumentType type, const QString &schema,
     QObject::connect(this, &DBKeysModel::cmUpdate, dbdocument, &ArangoDBDocument::updateDocument);
     QObject::connect(this, &DBKeysModel::cmDelete, dbdocument, &ArangoDBDocument::deleteDocument);
 
+    QObject::connect(this, &DBKeysModel::cmDeleteList, dbdocument, &ArangoDBDocument::deleteList);
+    QObject::connect(this, &DBKeysModel::cmRestoreRecordsfromFile, dbdocument, &ArangoDBDocument::restoreRecordsfromFile);
+    QObject::connect(this, &DBKeysModel::cmBackupRecordstoFile, dbdocument, &ArangoDBDocument::backupRecordstoFile);
+    QObject::connect(this, &DBKeysModel::cmBackupGraphtoFile, dbdocument, &ArangoDBDocument::backupGraphtoFile);
+    QObject::connect(this, &DBKeysModel::cmRestoreGraphfromFile, dbdocument, &ArangoDBDocument::restoreGraphfromFile);
+
     setQuery(query, query_fields);
 }
 
@@ -123,6 +129,31 @@ void DBKeysModel::remove(size_t row)
         table.erase(table.begin()+row);
         endRemoveRows();
     }
+}
+
+void DBKeysModel::backup_records(QString file, std::vector<std::string> &&keys)
+{
+   emit cmBackupRecordstoFile(file, std::move(keys));
+}
+
+void DBKeysModel::restore_records(QString file)
+{
+    emit cmRestoreRecordsfromFile(file);
+}
+
+void DBKeysModel::backup_graph(QString file, std::vector<std::string> &&keys)
+{
+    emit cmBackupGraphtoFile(file, std::move(keys));
+}
+
+void DBKeysModel::restore_graph(QString file)
+{
+    emit cmRestoreGraphfromFile(file);
+}
+
+void DBKeysModel::delete_records(std::vector<std::string> &&keys)
+{
+    emit cmDeleteList(std::move(keys));
 }
 
 std::string DBKeysModel::get_id(size_t row) const

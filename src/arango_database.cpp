@@ -253,9 +253,21 @@ void ArangoDatabase::afterUpdatedDocument(std::string schema_name, std::string d
     emit cmReloadTable(schema_name, doc_id);
 }
 
-void ArangoDatabase::afterDeletedDocument(std::string schema_name, std::string doc_id)
+void ArangoDatabase::afterDeletedDocument(bool is_vertex, std::string schema_name, std::string doc_id)
 {
-    emit cmReloadTable(schema_name, doc_id);
+    if(is_vertex){
+        // need refresh edges for vertex deleting
+        emit cmReloadTable("", doc_id);
+    }
+    else  {
+        emit cmReloadTable(schema_name, doc_id);
+    }
+}
+
+void ArangoDatabase::afterLoadedGraph()
+{
+    // reload all open models
+    emit cmReloadTable("", "");
 }
 
 void ArangoDatabase::ConnectFromSettings()
