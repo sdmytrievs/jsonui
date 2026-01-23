@@ -43,10 +43,6 @@ public:
     {
         return  doc_type == Vertex;
     }
-    std::string document_schema()
-    {
-        return document_schema_name;
-    }
 
 protected:
     friend class ArangoDBDocument;

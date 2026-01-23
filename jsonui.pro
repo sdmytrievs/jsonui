@@ -49,16 +49,19 @@ HEADERS += \
     include/jsonqml/forms/JsonEditWidget.h \
     include/jsonqml/forms/LegendDialog.h \
     include/jsonqml/forms/PreferencesUI.h \
+    include/jsonqml/forms/QueryWidget.h \
     include/jsonqml/forms/SelectDialog.h \
     include/jsonqml/forms/SymbolDialog.h \
     include/jsonqml/forms/TableEditWindow.h \
     include/jsonqml/forms/VertexWidget.h \
     include/jsonqml/forms/chart_view.h \
     include/jsonqml/forms/json_view.h \
+    include/jsonqml/forms/query_view.h \
     include/jsonqml/forms/table_view.h \
     include/jsonqml/forms/waitingspinnerwidget.h \
     include/jsonqml/models/base_model.h \
     include/jsonqml/models/json_model.h \
+    include/jsonqml/models/query_model.h \
     include/jsonqml/models/schema_model.h \
     include/jsonqml/models/select_model.h \
     include/jsonqml/models/db_keys_model.h \
@@ -101,16 +104,19 @@ SOURCES += \
     src/forms/LegendDialog.cpp \
     src/forms/ModelLineDialog.cpp \
     src/forms/PreferencesUI.cpp \
+    src/forms/QueryWidget.cpp \
     src/forms/SelectDialog.cpp \
     src/forms/SymbolDialog.cpp \
     src/forms/TableEditWindow.cpp \
     src/forms/VertexWidget.cpp \
     src/forms/chart_view.cpp \
     src/forms/json_view.cpp \
+    src/forms/query_view.cpp \
     src/forms/table_view.cpp \
     src/forms/waitingspinnerwidget.cpp \
     src/models/base_model.cpp \
     src/models/json_model.cpp \
+    src/models/query_model.cpp \
     src/models/schema_model.cpp \
     src/models/select_model.cpp \
     src/models/db_query_model.cpp \
@@ -132,6 +138,7 @@ FORMS += \
     src/forms/LegendDialog.ui \
     src/forms/ModelLineDialog.ui \
     src/forms/PreferencesUI.ui \
+    src/forms/QueryWidget.ui \
     src/forms/SelectDialog.ui \
     src/forms/SymbolDialog.ui \
     src/forms/TableEditWindow.ui \

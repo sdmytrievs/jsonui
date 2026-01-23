@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QueryWidget</class>
+ <widget class="QMainWindow" name="QueryWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>919</width>
+    <height>567</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout_3">
+    <item row="0" column="2">
+     <widget class="QLineEdit" name="qName"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>Comment</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0" colspan="6">
+     <widget class="QSplitter" name="splitterSelect">
+      <property name="orientation">
+       <enum>Qt::Orientation::Horizontal</enum>
+      </property>
+      <property name="childrenCollapsible">
+       <bool>false</bool>
+      </property>
+      <widget class="QFrame" name="frameSelect">
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>4</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>4</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_3">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="text">
+           <string>Fields from which data will be collected during search </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListView" name="fieldsList"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QFrame" name="frameWhere">
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Raised</enum>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>0</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QSplitter" name="splitterWhere">
+          <property name="orientation">
+           <enum>Qt::Orientation::Vertical</enum>
+          </property>
+          <widget class="QFrame" name="frameTree">
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing">
+             <number>4</number>
+            </property>
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>Section for assembling the search filter</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QListView" name="listView"/>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QFrame" name="frameedit">
+           <property name="frameShape">
+            <enum>QFrame::Shape::StyledPanel</enum>
+           </property>
+           <property name="frameShadow">
+            <enum>QFrame::Shadow::Raised</enum>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <property name="leftMargin">
+             <number>0</number>
+            </property>
+            <property name="topMargin">
+             <number>4</number>
+            </property>
+            <property name="rightMargin">
+             <number>0</number>
+            </property>
+            <property name="bottomMargin">
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing">
+             <number>4</number>
+            </property>
+            <item row="3" column="0" colspan="2">
+             <widget class="QTextEdit" name="queryText"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="pAQL">
+              <property name="text">
+               <string> &amp;AQL-query-style</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QRadioButton" name="pTemplate">
+              <property name="text">
+               <string>Template-query-style</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QComboBox" name="qSchema"/>
+    </item>
+    <item row="0" column="0">
+     <widget class="QLabel" name="label_5">
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="3">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Schema</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="2" colspan="3">
+     <widget class="QLineEdit" name="qComment"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>919</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_File">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="action_Restore_Query"/>
+    <addaction name="action_Clone"/>
+    <addaction name="separator"/>
+    <addaction name="action_Save_Current_Query_to_File"/>
+    <addaction name="action_Load_Query_from_File"/>
+    <addaction name="separator"/>
+    <addaction name="action_Close_Cancel"/>
+   </widget>
+   <widget class="QMenu" name="menu_Menu">
+    <property name="title">
+     <string>&amp;Filter</string>
+    </property>
+    <addaction name="actionAdd_List_Fieldpaths"/>
+    <addaction name="actionAdd_Fieldpath"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_and"/>
+    <addaction name="actionAdd_or"/>
+    <addaction name="actionAdd_not"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_eq"/>
+    <addaction name="actionAdd_noteq"/>
+    <addaction name="actionAdd_gt"/>
+    <addaction name="actionAdd_gte"/>
+    <addaction name="actionAdd_lt"/>
+    <addaction name="actionAdd_lte"/>
+    <addaction name="separator"/>
+    <addaction name="actionAdd_nin"/>
+    <addaction name="actionAdd_in"/>
+    <addaction name="actionAdd_like"/>
+    <addaction name="actionAdd_regexp"/>
+    <addaction name="actionAdd_not_regexp"/>
+    <addaction name="separator"/>
+    <addaction name="actionDelete_Line"/>
+    <addaction name="separator"/>
+    <addaction name="action_Apply_from_Tree"/>
+    <addaction name="action_Clear_Tree"/>
+   </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionHelp_About"/>
+   </widget>
+   <widget class="QMenu" name="menu_Database">
+    <property name="title">
+     <string>&amp;Database</string>
+    </property>
+    <addaction name="action_Read"/>
+    <addaction name="action_Update"/>
+    <addaction name="action_DeleteList"/>
+    <addaction name="separator"/>
+   </widget>
+   <widget class="QMenu" name="menuExecute">
+    <property name="title">
+     <string>&amp;Query</string>
+    </property>
+    <addaction name="action_Execute_Current_Query"/>
+    <addaction name="action_Accept_curent_Query"/>
+    <addaction name="separator"/>
+    <addaction name="action_Select_Fieldpaths"/>
+    <addaction name="action_Add_Fieldpaths"/>
+    <addaction name="action_restote_select"/>
+    <addaction name="separator"/>
+   </widget>
+   <addaction name="menu_File"/>
+   <addaction name="menu_Database"/>
+   <addaction name="menuExecute"/>
+   <addaction name="menu_Menu"/>
+   <addaction name="menu_Help"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_Restore_Query"/>
+   <addaction name="action_Clone"/>
+   <addaction name="separator"/>
+   <addaction name="action_Load_Query_from_File"/>
+   <addaction name="action_Save_Current_Query_to_File"/>
+   <addaction name="separator"/>
+   <addaction name="action_Read"/>
+   <addaction name="action_Update"/>
+   <addaction name="action_DeleteList"/>
+   <addaction name="separator"/>
+   <addaction name="action_Apply_from_Tree"/>
+   <addaction name="action_Select_Fieldpaths"/>
+   <addaction name="action_Execute_Current_Query"/>
+  </widget>
+  <widget class="QToolBar" name="nameToolBar">
+   <property name="windowTitle">
+    <string>toolBar_2</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionHelp_About"/>
+  </widget>
+  <action name="action_Save_Current_Query_to_File">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Query to File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Save Current Query to File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Query to File ...</string>
+   </property>
+  </action>
+  <action name="action_Load_Query_from_File">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Read Query from File ...</string>
+   </property>
+   <property name="iconText">
+    <string>Load Search Query from File ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Read Query from File ...</string>
+   </property>
+  </action>
+  <action name="action_Execute_Current_Query">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/action-import.png</normaloff>:/menu/Icons/action-import.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Execute Query ...</string>
+   </property>
+   <property name="iconText">
+    <string>Execute Search Query ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Execute Search Query ...</string>
+   </property>
+  </action>
+  <action name="action_Accept_curent_Query">
+   <property name="text">
+    <string>Execute Query and &amp;Close Widget</string>
+   </property>
+  </action>
+  <action name="action_Close_Cancel">
+   <property name="text">
+    <string>&amp;Close Widget</string>
+   </property>
+  </action>
+  <action name="action_Select_Fieldpaths">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/DocumentsPileIcon24.png</normaloff>:/menu/Icons/DocumentsPileIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Select Fields to collect data from ...</string>
+   </property>
+   <property name="iconText">
+    <string>Select Fieldpaths to 'collect' Section ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select Fields for the Results Table ...</string>
+   </property>
+  </action>
+  <action name="action_Add_Fieldpaths">
+   <property name="text">
+    <string>&amp;Add additional fields to collect data from ...</string>
+   </property>
+   <property name="iconText">
+    <string>Add Fieldpaths to 'collect' Section ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Add Fieldpaths to Collect Table ...</string>
+   </property>
+  </action>
+  <action name="action_restote_select">
+   <property name="text">
+    <string>Restore Default &amp;Fields Selection</string>
+   </property>
+  </action>
+  <action name="action_Apply_from_Tree">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/action-export.png</normaloff>:/menu/Icons/action-export.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Generate Query from Filter</string>
+   </property>
+   <property name="toolTip">
+    <string>Generate FILTER</string>
+   </property>
+  </action>
+  <action name="action_Restore_Query">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Restore &amp;Default Query</string>
+   </property>
+   <property name="toolTip">
+    <string>New/Restore Default Query</string>
+   </property>
+  </action>
+  <action name="actionHelp_About">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Help &amp;About ...</string>
+   </property>
+   <property name="shortcut">
+    <string extracomment="F1">F1</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="action_Help">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open &amp;Help Viewer ...</string>
+   </property>
+   <property name="iconText">
+    <string>Open Help Viewer ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Help Viewer ...</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAdd_List_Fieldpaths">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/DetailedCSDIcon24.png</normaloff>:/menu/Icons/DetailedCSDIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Choose Fields for the Search Filter ...</string>
+   </property>
+   <property name="iconText">
+    <string>Choose the First Fieldpath ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Choose the list of Fields to be used in the search filter ...</string>
+   </property>
+  </action>
+  <action name="actionAdd_and">
+   <property name="text">
+    <string>Add '&amp;AND'</string>
+   </property>
+   <property name="toolTip">
+    <string>Add '&amp;&amp;' joined condition</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionAdd_or">
+   <property name="text">
+    <string>Add '&amp;OR'</string>
+   </property>
+   <property name="toolTip">
+    <string>Add '||' joined condition</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionAdd_Fieldpath">
+   <property name="text">
+    <string>Add the Next &amp;Fieldpath</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionAdd_noteq">
+   <property name="text">
+    <string>Add '!=' operator</string>
+   </property>
+   <property name="toolTip">
+    <string>Value inequality comparison operator</string>
+   </property>
+   <property name="shortcut">
+    <string>!</string>
+   </property>
+  </action>
+  <action name="actionAdd_not">
+   <property name="text">
+    <string>Add '&amp;NOT'</string>
+   </property>
+   <property name="toolTip">
+    <string>Add '!' condition</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionAdd_in">
+   <property name="text">
+    <string>Add 'IN'</string>
+   </property>
+   <property name="toolTip">
+    <string>Test if a value is contained in an array</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I</string>
+   </property>
+  </action>
+  <action name="actionAdd_nin">
+   <property name="text">
+    <string>Add 'NOT IN'</string>
+   </property>
+   <property name="toolTip">
+    <string>Test if a value is not contained in an array</string>
+   </property>
+  </action>
+  <action name="actionAdd_like">
+   <property name="text">
+    <string>Add '&amp;LIKE'</string>
+   </property>
+   <property name="toolTip">
+    <string>Tests if a string value matches a pattern</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionAdd_gt">
+   <property name="text">
+    <string>Add '&gt;' operator</string>
+   </property>
+   <property name="toolTip">
+    <string>Value greater than</string>
+   </property>
+   <property name="shortcut">
+    <string>&gt;</string>
+   </property>
+  </action>
+  <action name="actionAdd_gte">
+   <property name="text">
+    <string>Add '&gt;=' operator</string>
+   </property>
+   <property name="toolTip">
+    <string>Value greater than or equal to</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionAdd_lt">
+   <property name="text">
+    <string>Add '&lt;' operator</string>
+   </property>
+   <property name="toolTip">
+    <string>Value lesser than</string>
+   </property>
+   <property name="shortcut">
+    <string>&lt;</string>
+   </property>
+  </action>
+  <action name="actionAdd_lte">
+   <property name="text">
+    <string>Add '&lt;=' operator</string>
+   </property>
+   <property name="toolTip">
+    <string>Value lesser than or equal to</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionAdd_eq">
+   <property name="text">
+    <string>Add '==' operator</string>
+   </property>
+   <property name="toolTip">
+    <string>Value equality comparison operator</string>
+   </property>
+   <property name="shortcut">
+    <string>=</string>
+   </property>
+  </action>
+  <action name="actionAdd_regexp">
+   <property name="text">
+    <string>Add '=~'</string>
+   </property>
+   <property name="toolTip">
+    <string>Tests if a string value matches a regular expression</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionAdd_not_regexp">
+   <property name="text">
+    <string>Add '!~'</string>
+   </property>
+   <property name="toolTip">
+    <string>Tests if a string value does not match a regular expression</string>
+   </property>
+  </action>
+  <action name="actionDelete_Line">
+   <property name="text">
+    <string>Remove current line</string>
+   </property>
+   <property name="shortcut">
+    <string>F8</string>
+   </property>
+  </action>
+  <action name="action_Clear_Tree">
+   <property name="text">
+    <string>&amp;Clear Filter Section</string>
+   </property>
+   <property name="toolTip">
+    <string>Clear 'FILTER' Tree</string>
+   </property>
+  </action>
+  <action name="action_DeleteList">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Delete Queries from database ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete Queries from database</string>
+   </property>
+  </action>
+  <action name="action_Update">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save/Update Query to database</string>
+   </property>
+   <property name="toolTip">
+    <string>Save Query to Database</string>
+   </property>
+  </action>
+  <action name="action_Read">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Read Query from database ...</string>
+   </property>
+   <property name="iconText">
+    <string>Read Another Query from DB Record ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Read Query from Database</string>
+   </property>
+  </action>
+  <action name="action_Clone">
+   <property name="icon">
+    <iconset resource="../../jsonui.qrc">
+     <normaloff>:/menu/Icons/NewCloneRecordIcon24.png</normaloff>:/menu/Icons/NewCloneRecordIcon24.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Clone Current Query</string>
+   </property>
+   <property name="toolTip">
+    <string>Clone Query</string>
+   </property>
+  </action>
+  <action name="action_Execute_this_Search_Query">
+   <property name="text">
+    <string>&amp;Execute this Search Query ...</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../../jsonui.qrc"/>
+ </resources>
+ <connections/>
+</ui>
