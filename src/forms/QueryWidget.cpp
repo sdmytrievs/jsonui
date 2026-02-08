@@ -3,9 +3,11 @@
 #include "jsonqml/forms/QueryWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/forms/FileDialogs.h"
+#include "jsonqml/forms/FieldsSelectDialog.h"
 //#include "service/SchemaSelectDialog.h"
 #include "jsonqml/forms/query_view.h"
 #include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/clients/settings_client.h"
 #ifndef IMPEX_OFF
 #include "jsonimpex/yaml_xml2file.h"
 #endif
@@ -33,15 +35,17 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
     ui->splitterSelect->setStretchFactor(1, 2);
     ui->qSchema->insertItems(0, schemas);
 
+    query_client.reset(new VertexClient(Resource, schema_name, this));
+    //query_client->tablemodel()->updateQuery(new_schema_query());
+
     // set up select model
-    ///lstmodel = new StringVectorModel(query_description.fields(), this );
-    ///ui->fieldsList->setModel(lstmodel);
-    //ui->fieldsList->setSelectionBehavior(QAbstractItemView::SelectRows);
+    lstmodel = new QStringListModel(this);
+    ui->fieldsList->setModel(lstmodel);
     ui->fieldsList->setSelectionMode(QAbstractItemView::MultiSelection);
-    ui->fieldsList->setEditTriggers( QAbstractItemView::NoEditTriggers );
+    ui->fieldsList->setEditTriggers(QAbstractItemView::NoEditTriggers);
 
     // set up query edit mode
-    query_edit.reset(new QueryView(ui->frameTree));
+    query_edit.reset(new QueryView(schema_name, ui->frameTree));
     query_model = new QueryModel(this);
     QueryDelegate* query_deleg = new QueryDelegate();
     query_edit->setModel(query_model);
@@ -50,8 +54,8 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
     ui->gridLayout_2->addWidget(query_edit.get(), 1, 0, 1, 1);
 
     // set up where part
-    show_query();
     set_actions();
+    show_query();
 }
 
 QueryWidget::~QueryWidget()
@@ -186,45 +190,24 @@ void QueryWidget::CmAddWhereFields()
 
 void QueryWidget::CmSelectFields()
 {
-    // try {
-    //     SchemaSelectDialog dlg( this, "Please, mark data fields for the ouput table",
-    //                            schema_name, query_description.fields());
-    //     if( dlg.exec() )   {
-    //         query_description.setFields( dlg.allSelected());
-    //         lstmodel->setStringList(query_description.fields() );
-    //     }
-    // }
-    // catch( jsonio::jsonio_exception& e)
-    // {
-    //     QMessageBox::critical( this, "jsonio_exception", e.what() );
-    // }
-    // catch(std::exception& e)
-    // {
-    //     QMessageBox::critical( this, "std::exception", e.what() );
-    // }
+    SelectFieldsDialog dlg("Please, mark data fields for the ouput table",
+                           schema_name, query_description.fields(), this);
+    if(dlg.exec()) {
+        query_description.setFields( dlg.allSelected());
+        lstmodel->setStringList(transform2qt(query_description.fields()));
+    }
 }
 
 void QueryWidget::CmAddSelectFields()
 {
-    // try  {
-    //     std::vector<std::string> f_list;
-    //     SchemaSelectDialog dlg( this, "Please, mark addition data fields for the ouput table",
-    //                            schema_name, f_list);
-    //     if( dlg.exec() )
-    //     {
-    //         f_list = dlg.allSelected();
-    //         query_description.addFields(f_list);
-    //         lstmodel->setStringList(query_description.fields());
-    //     }
-    // }
-    // catch( jsonio::jsonio_exception& e)
-    // {
-    //     QMessageBox::critical( this, "jsonio_exception", e.what() );
-    // }
-    // catch(std::exception& e)
-    // {
-    //     QMessageBox::critical( this, "std::exception", e.what() );
-    // }
+    std::vector<std::string> f_list;
+    SelectFieldsDialog dlg("Please, mark addition data fields for the ouput table",
+                           schema_name, f_list, this);
+    if(dlg.exec()) {
+        f_list = dlg.allSelected();
+        query_description.addFields(f_list);
+        lstmodel->setStringList(transform2qt(query_description.fields()));
+    }
 }
 
 
@@ -271,7 +254,7 @@ void QueryWidget::schema_changed(const QString& text)
 void QueryWidget::select_restore()
 {
     query_description.setFields(default_query.fields());
-    /// lstmodel->setStringList(query_description.fields());
+    lstmodel->setStringList(transform2qt(query_description.fields()));
 }
 
 
@@ -295,7 +278,7 @@ void QueryWidget::show_query()
     }
     AQL_toggled(ui->pAQL->isChecked());
 
-    /// lstmodel->setStringList(query_description.fields());
+    lstmodel->setStringList(transform2qt(query_description.fields()));
     ui->queryText->setText(QString::fromStdString(query_description.condition()->queryString()));
 
     // clear internal
@@ -306,6 +289,8 @@ void QueryWidget::show_query()
 void QueryWidget::set_actions()
 {
     QObject::connect(ui->qSchema, &QComboBox::currentTextChanged, this, &QueryWidget::schema_changed);
+    QObject::connect(ui->qSchema, &QComboBox::currentTextChanged, query_edit.get(), &QueryView::updateSchema);
+
     QObject::connect(ui->pAQL, &QRadioButton::toggled, this, &QueryWidget::AQL_toggled);
 
     // File
@@ -427,16 +412,5 @@ jsonio::DBQueryBase QueryWidget::new_schema_query()
     }
     return jsonio::DBQueryBase(queryString, jsonio::DBQueryBase::qTemplate);
 }
-
-// bool QueryWidget::select_line( std::string& fldpath, const jsonio17::FieldDef** flddata )
-// {
-//     const auto d = impl_func();
-//     SchemaSelectDialog dlg( this, "Please, mark data fields for the query table",
-//                            d->schema_name );
-//     if( !dlg.exec() )
-//         return false;
-//     fldpath = dlg.selIndex(flddata);
-//     return !fldpath.empty();
-// }
 
 } // namespace jsonui

@@ -32,7 +32,7 @@ public slots:
     void CmNewJson();
     void CmNewCollection();
     void CmNewCsv();
-    void CmNewImpexFormat() {}
+    void CmNewImpexFormat();
 
     // Help
     void CmHelpAbout() {}

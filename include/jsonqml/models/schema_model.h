@@ -88,8 +88,11 @@ protected:
     {
         return dynamic_cast<jsonio::JsonSchema*>(base_ptr);
     }
-    void enums_to_combobox(const jsonio::EnumDef* enumdef);
 };
+
+const jsonio::EnumDef* i32_enumdef(jsonio::FieldDef::FieldType type, const std::string& enum_name);
+QList<QVariantMap> enums_to_combobox(const jsonio::EnumDef* enumdef);
+QList<QVariantMap> editor_combobox(jsonio::FieldDef::FieldType type, const std::string& enum_name);
 
 } // namespace jsonqml
 

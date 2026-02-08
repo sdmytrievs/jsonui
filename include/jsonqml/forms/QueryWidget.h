@@ -2,6 +2,7 @@
 
 #include <QMainWindow>
 #include <QLineEdit>
+#include <QStringListModel>
 #include "jsonio/dbschemadoc.h"
 
 namespace Ui {
@@ -13,7 +14,6 @@ namespace jsonqml {
 class VertexClient;
 class QueryView;
 class QueryModel;
-class StringVectorModel;
 
 /// \class QueryWidget window to insert/edit  database query
 class QueryWidget : public QMainWindow
@@ -57,7 +57,7 @@ public:
     std::string query_schema;
 
     explicit QueryWidget(const QString& title, const QStringList& schemas,
-                         const jsonio::DBQueryDef& query, QWidget *parent );
+                         const jsonio::DBQueryDef& query, QWidget *parent);
     ~QueryWidget();
 
     const jsonio::DBQueryDef& getQuery();
@@ -65,17 +65,18 @@ public:
 
 protected:
     QScopedPointer<Ui::QueryWidget> ui;
+    QScopedPointer<QLineEdit> qId;
+
     QScopedPointer<VertexClient> query_client;
     QScopedPointer<QueryView> query_edit;
-    QScopedPointer<QLineEdit> qId;
-    StringVectorModel* lstmodel = nullptr;
     QueryModel* query_model;
+
+    QStringListModel* lstmodel = nullptr;
 
     QString schema_name;
     jsonio::DBQueryDef default_query;
     jsonio::DBQueryDef query_description;
 
-    bool select_line(std::string& fldpath, const jsonio::FieldDef** flddata);
     void set_actions();
     void show_query();
     std::string to_json_node();

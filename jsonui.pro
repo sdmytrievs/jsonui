@@ -44,6 +44,7 @@ HEADERS += \
     include/jsonqml/clients/csv_client_p.h \
     include/jsonqml/forms/CalcDialog.h \
     include/jsonqml/forms/EdgesWidget.h \
+    include/jsonqml/forms/FieldsSelectDialog.h \
     include/jsonqml/forms/FileDialogs.h \
     include/jsonqml/forms/GraphDialog.h \
     include/jsonqml/forms/JsonEditWidget.h \
@@ -60,6 +61,7 @@ HEADERS += \
     include/jsonqml/forms/table_view.h \
     include/jsonqml/forms/waitingspinnerwidget.h \
     include/jsonqml/models/base_model.h \
+    include/jsonqml/models/fields_model.h \
     include/jsonqml/models/json_model.h \
     include/jsonqml/models/query_model.h \
     include/jsonqml/models/schema_model.h \
@@ -98,6 +100,7 @@ SOURCES += \
     src/clients/csv_client.cpp \
     src/forms/CalcDialog.cpp \
     src/forms/EdgesWidget.cpp \
+    src/forms/FieldsSelectDialog.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
     src/forms/JsonEditWidget.cpp \
@@ -115,6 +118,7 @@ SOURCES += \
     src/forms/table_view.cpp \
     src/forms/waitingspinnerwidget.cpp \
     src/models/base_model.cpp \
+    src/models/fields_model.cpp \
     src/models/json_model.cpp \
     src/models/query_model.cpp \
     src/models/schema_model.cpp \
@@ -133,6 +137,7 @@ FORMS += \
     App/JSONUITestMainWindow.ui \
     src/forms/CalcDialog.ui \
     src/forms/EdgesWidget.ui \
+    src/forms/FieldsSelectDialog.ui \
     src/forms/GraphDialog.ui \
     src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \

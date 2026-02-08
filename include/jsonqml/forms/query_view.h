@@ -10,23 +10,6 @@ class EnumDef;
 
 namespace jsonqml {
 
-/// \class QueryDelegate
-/// individual items in views are rendered and edited using delegates
-class QueryDelegate: public QItemDelegate
-{
-    Q_OBJECT
-
-public:
-    QueryDelegate(QObject * parent = nullptr):
-        QItemDelegate(parent)
-    {}
-    QWidget *createEditor(QWidget *parent,
-                          const QStyleOptionViewItem &option,
-                          const QModelIndex &index) const override;
-protected:
-    QWidget *enums_to_combobox(QWidget *parent, const jsonio::EnumDef *enumdef) const;
-};
-
 ///  \class QueryView implements a tree view of query structure
 /// that displays items from a TQueryModel model.
 class QueryView: public QTreeView
@@ -35,9 +18,9 @@ class QueryView: public QTreeView
 
 public slots:
     bool AQLmode(bool checked);
+    void updateSchema(const QString& schema);
+
     void ClearAll();
-    void CmAddObjects(const std::vector<std::string>& fields_list,
-                      const std::vector<const jsonio::FieldDef*>& fields_types);
     void CmAddField();
     void CmDelLine();
 
@@ -75,19 +58,34 @@ protected slots:
     void changeCurrent(int section);
 
 public:
-    QueryView(QWidget * parent = nullptr);
+    QueryView(const QString& schema, QWidget * parent = nullptr);
 
 private:
     bool AQL_mode;
-    void keyPressEvent(QKeyEvent* e) override;
+    QString schema_name;
 
+    void keyPressEvent(QKeyEvent* e) override;
     void add_object(const std::string& akey, bool isoperator = true);
     QMenu* context_menu(const QModelIndex &index );
-
     QueryModel* view_model()
     {
         return dynamic_cast<QueryModel*>(model());
     }
+};
+
+/// \class QueryDelegate
+/// individual items in views are rendered and edited using delegates
+class QueryDelegate: public QItemDelegate
+{
+    Q_OBJECT
+
+public:
+    QueryDelegate(QObject* parent = nullptr):
+        QItemDelegate(parent)
+    {}
+    QWidget *createEditor(QWidget *parent,
+                          const QStyleOptionViewItem &option,
+                          const QModelIndex &index) const override;
 };
 
 } // namespace jsonui

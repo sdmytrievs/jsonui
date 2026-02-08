@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <QMessageBox>
 #include "JSONUITestMainWindow.h"
 #include "ui_JSONUITestMainWindow.h"
@@ -10,6 +12,8 @@
 #include "jsonqml/forms/EdgesWidget.h"
 #include "jsonqml/forms/JsonEditWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
+#include "jsonqml/forms/FieldsSelectDialog.h"
+#include "jsonqml/forms/QueryWidget.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/arango_database.h"
 #include "jsonqml/clients/settings_client.h"
@@ -181,7 +185,6 @@ void TJSONUITestWin::CmNewVertex()
     }
 }
 
-
 void TJSONUITestWin::CmNewEdge()
 {
     try {
@@ -206,3 +209,39 @@ void TJSONUITestWin::CmNewEdge()
         QMessageBox::critical(this, "std::exception", e.what());
     }
 }
+
+void TJSONUITestWin::CmNewImpexFormat()
+{
+    try {
+        std::string testschema ="";
+
+        auto vertex_lst = jsonio::DataBase::getVertexesList();
+        if(!vertex_lst.empty()) {
+            jsonqml::SelectDialog sel_dlg(jsonqml::single_selection, "Please, select collection to edit data", vertex_lst, ";" );
+            if(sel_dlg.exec()) {
+                testschema = vertex_lst[sel_dlg.getSelectedIndex()];
+            }
+        }
+        std::vector<std::string> lst = { "_id", "properties.name", "properties.class_"};
+        std::shared_ptr<jsonio::DBQueryBase> query = std::make_shared<jsonio::DBQueryBase>();
+        jsonio::DBQueryDef test_query(query, lst);
+        if(!testschema.empty()) {
+            // jsonqml::SelectFieldsDialog dlg("", QString::fromStdString(testschema), lst, this);
+            // if(dlg.exec()) {
+            //     auto selected = dlg.allSelected();
+            //     for( const auto& field: selected) {
+            //         std::cout << field << std::endl; ;
+            //     }
+            // }
+            jsonqml::QueryWidget* ptr = new jsonqml::QueryWidget("", {QString::fromStdString(testschema)}, test_query, this);
+            ptr->show();
+        }
+    }
+    catch(jsonio::jsonio_exception& e) {
+        QMessageBox::critical(this, "jsonio_exception", e.what());
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical(this, "std::exception", e.what());
+    }
+}
+

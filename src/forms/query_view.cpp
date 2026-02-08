@@ -6,10 +6,9 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include "jsonio/jsonschema.h"
-// #include "jsonio17/jsondump.h"
-// #include "jsonui17/preferences.h"
-// #include "jsonui17/QueryWidget.h"
+#include "jsonqml/models/schema_model.h"
 #include "jsonqml/forms/query_view.h"
+#include "jsonqml/forms/FieldsSelectDialog.h"
 
 namespace jsonqml {
 
@@ -18,8 +17,9 @@ namespace jsonqml {
 // class TQueryView implements a tree view that displays items from a model to query.
 //-------------------------------------------------------------------------------------
 
-QueryView::QueryView(QWidget * parent):
-    QTreeView(parent)
+QueryView::QueryView(const QString& schema, QWidget * parent):
+    QTreeView(parent),
+    schema_name(schema)
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     header()->setSectionsClickable(true);
@@ -39,11 +39,65 @@ QueryView::QueryView(QWidget * parent):
             this, &QueryView::changeCurrent);
 }
 
+bool QueryView::AQLmode(bool checked)
+{
+    if(checked != AQL_mode) {
+        ClearAll();
+        AQL_mode = checked;
+        return true;
+    }
+    return false;
+}
+
+void QueryView::updateSchema(const QString &schema)
+{
+    schema_name = schema;
+}
+
 void QueryView::ClearAll()
 {
-    QueryModel* themodel =  view_model();
+    QueryModel* themodel = view_model();
     if(themodel) {
         themodel->clear_all();
+    }
+}
+
+void QueryView::CmAddField()
+{
+    QueryModel* themodel = view_model();
+
+    QModelIndex index = currentIndex();
+    if(!index.isValid() || !AQL_mode) {
+        index = rootIndex();
+    }
+    if(themodel && themodel->can_field(index, AQL_mode))  {
+        SelectFieldsDialog dlg("Please, mark addition data field for the query",
+                               schema_name, window());
+        if(dlg.exec()) {
+            const jsonio::FieldDef* flddata=nullptr;
+            auto fldpath = dlg.selIndex(&flddata);
+            QModelIndex ndx = themodel->add_field(fldpath, flddata, index);
+            selectionModel()->setCurrentIndex( ndx, QItemSelectionModel::ClearAndSelect );
+        }
+    }
+    else {
+        QMessageBox::information( window(), "Add to FILTER",
+                                 "Could not execute action." );
+    }
+}
+
+void QueryView::CmDelLine()
+{
+    QModelIndex index = currentIndex();
+    auto themodel = dynamic_cast<const QueryModel*>(index.model());
+    if(themodel) {
+        selectionModel()->clear();
+        collapse(index);
+        const_cast<QueryModel*>(themodel)->del_object(index);
+    }
+    else {
+        QMessageBox::information(window(), "Delete from Object",
+                                 "Please, determine the key-value pair to be deleted" );
     }
 }
 
@@ -247,187 +301,59 @@ void QueryView::add_object(const std::string& akey, bool isoperator)
 {
     QueryModel* themodel = view_model();
 
-    try {
-        QModelIndex index = currentIndex();
-        if(!index.isValid()) {
-            index = rootIndex();
-        }
-        if(themodel && ((!isoperator  && themodel->can_logical(index, AQL_mode) )
-                         || (isoperator  && themodel->can_operator(index, AQL_mode)))) {
-            QModelIndex ndx = themodel->add_object(akey, isoperator, index);
-            selectionModel()->setCurrentIndex( ndx, QItemSelectionModel::ClearAndSelect );
-        }
-        else
-            QMessageBox::information(window(), "Add to FILTER", "Could not execute action." );
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical( window(), "jsonio_exception", e.what() );
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical( window(), "std::exception", e.what() );
-    }
-}
-
-void QueryView::CmAddField()
-{
-    QueryModel* themodel = view_model();
-
-    try {
-        QModelIndex index = currentIndex();
-        if(!index.isValid() || !AQL_mode) {
-            index = rootIndex();
-        }
-        if(themodel && themodel->can_field(index, AQL_mode))  {
-            /// QueryWidget* parent_dlg = dynamic_cast<QueryWidget*>(window());
-            std::string fldpath;
-            const jsonio::FieldDef* flddata=nullptr;
-            /// parent_dlg->select_line(fldpath, &flddata);
-
-            QModelIndex ndx = themodel->add_field(fldpath, flddata, index);
-            selectionModel()->setCurrentIndex( ndx, QItemSelectionModel::ClearAndSelect );
-        }
-        else
-            QMessageBox::information( window(), "Add to FILTER",
-                                     "Could not execute action." );
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-}
-
-
-void QueryView::CmAddObjects(const std::vector<std::string>& fields_list,
-                             const std::vector<const jsonio::FieldDef*>& fields_types )
-{
-    QueryModel* themodel = view_model();
-
-    try {
-        QModelIndex index = rootIndex();
-        if(themodel && themodel->can_field(index, AQL_mode)) {
-            QModelIndex ndx = index;
-            for(size_t ii=0; ii<fields_list.size(); ii++)
-                ndx = themodel->add_field(fields_list[ii], fields_types[ii], index);
-            selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
-        }
-        else
-            QMessageBox::information( window(), "Add to FILTER", "Could not execute action." );
-    }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
-    }
-    catch(std::exception& e) {
-        QMessageBox::critical(window(), "std::exception", e.what());
-    }
-}
-
-void QueryView::CmDelLine()
-{
     QModelIndex index = currentIndex();
-    auto themodel = dynamic_cast<const QueryModel*>(index.model());
-    try {
-        if(themodel) {
-            selectionModel()->clear();
-            collapse(index);
-            const_cast<QueryModel*>(themodel)->del_object(index);
-        }
-        else {
-            QMessageBox::information(window(), "Delete from Object",
-                                     "Please, determine the key-value pair to be deleted" );
-        }
+    if(!index.isValid()) {
+        index = rootIndex();
     }
-    catch(jsonio::jsonio_exception& e) {
-        QMessageBox::critical(window(), "jsonio_exception", e.what());
+    if(themodel && ((!isoperator  && themodel->can_logical(index, AQL_mode) )
+                     || (isoperator  && themodel->can_operator(index, AQL_mode)))) {
+        QModelIndex ndx = themodel->add_object(akey, isoperator, index);
+        selectionModel()->setCurrentIndex( ndx, QItemSelectionModel::ClearAndSelect );
     }
-    catch(std::exception& e) {
-        QMessageBox::critical( window(), "std::exception", e.what() );
+    else {
+        QMessageBox::information(window(), "Add to FILTER", "Could not execute action." );
     }
-}
-
-bool QueryView::AQLmode(bool checked)
-{
-    if(checked != AQL_mode) {
-        ClearAll();
-        AQL_mode = checked;
-        return true;
-    }
-    return false;
 }
 
 //-------------------------------------------------------------------------------------
 // TQueryDelegate -  individual items in views are rendered and edited using delegates
 //-------------------------------------------------------------------------------------
 
-QWidget* QueryDelegate::enums_to_combobox(QWidget *parent, const jsonio::EnumDef *enumdef) const
-{
-    auto lst = enumdef->all_names();
-    QComboBox *accessComboBox = new QComboBox(parent);
-    for(size_t ii=0; ii<lst.size(); ii++) {
-        std::string itname = lst[ii];
-        accessComboBox->addItem(tr(itname.c_str()), enumdef->name2value(itname) );
-        accessComboBox->setItemData( static_cast<int>(ii), enumdef->name2description(itname).c_str(), Qt::ToolTipRole);
-    }
-    return accessComboBox;
-}
-
-// Editing QTreeView for objects in System page
-QWidget *QueryDelegate::createEditor( QWidget *parent,
+QWidget *QueryDelegate::createEditor(QWidget *parent,
                                      const QStyleOptionViewItem &option,
                                      const QModelIndex &index) const
 {
-    const QueryModel *themodel = dynamic_cast< const QueryModel *>(index.model() );
-    if( !themodel )
-        return QAbstractItemDelegate::createEditor( parent, option,  index );
-/*
-    AQLline *line =  themodel->lineFromIndex(index);
-    if( index.column() > 0 )
-    {
-        switch( line->value_type() )
-        {
-        case jsonio17::JsonBase::Bool:
-        {
-            QComboBox *accessComboBox = new QComboBox(parent);
-            accessComboBox->addItem(tr("false"), tr("false"));
-            accessComboBox->addItem(tr("true"), tr("true"));
-            return accessComboBox;
-        }
-        case jsonio17::JsonBase::Int:
-        {
-            std::string enumName = line->field_data.class_name;
-            if( !enumName.empty() )
-            {
-                const jsonio17::EnumDef* enumdef = jsonio17::ioSettings().Schema().getEnum( enumName );
-                if( enumdef != nullptr )
-                    return enums_to_combobox( parent, enumdef );
+    const QueryModel *themodel = dynamic_cast<const QueryModel *>(index.model());
+    if(themodel) {
+        auto fld_type = themodel->field_type(index);
+        auto fld_enum = themodel->field_enum_class(index);
+        auto combo_data = editor_combobox(fld_type, fld_enum);
+
+        if(combo_data.size()>0) {
+            QComboBox *combo_box = new QComboBox(parent);
+            foreach (const QVariantMap& map, combo_data) {
+                combo_box->addItem(map["text"].toString(), map["value"]);
             }
-            QLineEdit *lineEdit = new QLineEdit(parent);
-            QIntValidator *ivalid = new QIntValidator(lineEdit);
-            if( line->field_data.field_type == jsonio17::FieldDef::T_U64 )
-                ivalid->setBottom(0);
-            lineEdit->setValidator(ivalid);
-            return lineEdit;
+            return combo_box;
         }
-        case jsonio17::JsonBase::Double:
-        {
-            QLineEdit *lineEdit = new QLineEdit(parent);
-            QDoubleValidator *dvalid = new QDoubleValidator(lineEdit);
-            lineEdit->setValidator(dvalid);
-            return lineEdit;
-        }
-        case jsonio17::JsonBase::String:
-        default:
-        {
-            QLineEdit *lineEdit = new QLineEdit(parent);
-            return lineEdit;
-        }
+        else {
+            QLineEdit *line_edit = new QLineEdit(parent);
+            jsonio::JsonBase::Type json_type =  jsonio::JsonSchema::fieldtype2basetype(fld_type);
+            if(json_type==jsonio::JsonBase::Double) {
+                QDoubleValidator *dvalid = new QDoubleValidator(line_edit);
+                line_edit->setValidator(dvalid);
+            }
+            if(json_type==jsonio::JsonBase::Int) {
+                QIntValidator *dvalid = new QIntValidator(line_edit);
+                line_edit->setValidator(dvalid);
+            }
+            return line_edit;
         }
     }
-*/
-    return QAbstractItemDelegate::createEditor( parent, option,  index );
+    else {
+        return QItemDelegate::createEditor(parent, option, index);
+    }
 }
-
 
 } // namespace jsonui
 

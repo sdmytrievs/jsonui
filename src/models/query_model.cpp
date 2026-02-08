@@ -4,6 +4,7 @@
 #include "jsonqml/clients/settings_client.h"
 
 namespace jsonqml {
+
 struct SchemaFieldData
 {
     /// Thrift type of field
@@ -17,10 +18,10 @@ struct SchemaFieldData
 class AQLline
 {
     friend class QueryModel;
+
 public:
     enum fieldType
     { Top, Field, LogicalTwo, LogicalNot, Operator };
-    //{ tTop, tField, tConditionAdd, tConditionOne, tList, tObject, tString };
 
     AQLline(size_t andx, const std::string& akey, fieldType atype, AQLline* parentline);
     virtual ~AQLline();
@@ -57,6 +58,7 @@ protected:
     virtual void fromDom(const jsonio::JsonBase& object);
     /// Json value type
     jsonio::JsonBase::Type value_type();
+    int value_from_enum() const;
 
     /// Get Value from string
     /// If field is not type T, the false will be returned.
@@ -77,16 +79,15 @@ protected:
 //  the data is neaded for viewing and for writing back any changes.
 //---------------------------------------------------------------------------------------
 
-QueryModel::QueryModel( QObject* parent ):
+QueryModel::QueryModel(QObject* parent):
     QAbstractItemModel(parent), root_node(nullptr)
 {
     header << "key" << "value";
-    root_node.reset( new AQLline(0, "root", AQLline::Top, nullptr ));
-    connect(this, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-            parent,  SLOT(objectChanged()));
+    root_node.reset(new AQLline(0, "root", AQLline::Top, nullptr));
 }
 
-QueryModel::~QueryModel(){}
+QueryModel::~QueryModel()
+{}
 
 void QueryModel::clear_all()
 {
@@ -95,6 +96,36 @@ void QueryModel::clear_all()
     endResetModel();
 }
 
+bool QueryModel::can_logical(const QModelIndex &index, bool AQL_mode) const
+{
+    if(!AQL_mode) {
+        return false;
+    }
+    auto item = lineFromIndex(index);
+    return( item && ((item->children.empty() && item->type==AQLline::Top)
+                     || item->type==AQLline::LogicalTwo
+                     || (item->children.empty() && item->type==AQLline::LogicalNot)));
+}
+
+bool QueryModel::can_operator(const QModelIndex &index, bool AQL_mode) const
+{
+    if(!AQL_mode) {
+        return false;
+    }
+    auto item = lineFromIndex(index);
+    return( item && ((item->children.empty() && item->type==AQLline::Top)
+                     || item->type==AQLline::LogicalTwo
+                     || (item->children.empty() && item->type==AQLline::LogicalNot)));
+}
+
+bool QueryModel::can_field(const QModelIndex &index, bool AQL_mode) const
+{
+    if(!AQL_mode) {
+        return true;
+    }
+    auto item = lineFromIndex(index);
+    return (item && item->children.empty() && item->type==AQLline::Operator);
+}
 
 AQLline *QueryModel::lineFromIndex(const QModelIndex &index) const
 {
@@ -160,8 +191,9 @@ Qt::ItemFlags QueryModel::flags(const QModelIndex& index) const
 
 QVariant QueryModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if( role == Qt::DisplayRole  && orientation == Qt::Horizontal )
-        return header[section];
+    if(role == Qt::DisplayRole && orientation == Qt::Horizontal) {
+        return header[section];\
+    }
     return QVariant();
 }
 
@@ -183,11 +215,6 @@ QVariant QueryModel::data( const QModelIndex& index, int role ) const
         }
     }
     break;
-    case Qt::ForegroundRole:
-        if(index.column() == 0) {
-            return QVariant(QColor(Qt::darkCyan));
-        }
-        break;
     default: break;
     }
     return QVariant();
@@ -207,39 +234,9 @@ bool QueryModel::setData(const QModelIndex& index, const QVariant& value_, int r
     return false;
 }
 
-bool QueryModel::can_logical(const QModelIndex &index, bool AQL_mode) const
-{
-    if(!AQL_mode) {
-        return false;
-    }
-    auto item = lineFromIndex(index);
-    return( item && ((item->children.empty() && item->type==AQLline::Top)
-                     || item->type==AQLline::LogicalTwo
-                     || (item->children.empty() && item->type==AQLline::LogicalNot)));
-}
 
-bool QueryModel::can_operator(const QModelIndex &index, bool AQL_mode) const
-{
-    if(!AQL_mode) {
-        return false;
-    }
-    auto item = lineFromIndex(index);
-    return( item && ((item->children.empty() && item->type==AQLline::Top)
-                     || item->type==AQLline::LogicalTwo
-                     || (item->children.empty() && item->type==AQLline::LogicalNot)));
-}
-
-bool QueryModel::can_field(const QModelIndex &index, bool AQL_mode) const
-{
-    if(!AQL_mode) {
-        return true;
-    }
-    auto item = lineFromIndex( index );
-    return (item && item->children.empty() && item->type==AQLline::Operator);
-}
-
-
-const QModelIndex QueryModel::add_field(const std::string& flds_name, const jsonio::FieldDef* fld_data,
+const QModelIndex QueryModel::add_field(const std::string& flds_name,
+                                        const jsonio::FieldDef* fld_data,
                                         const QModelIndex& parent_index)
 {
     AQLline *line = lineFromIndex(parent_index);
@@ -256,7 +253,9 @@ const QModelIndex QueryModel::add_field(const std::string& flds_name, const json
     return index(row, 0, parent_index);
 }
 
-const QModelIndex QueryModel::add_object(const std::string& akey, bool isoperator, const QModelIndex& parent_index)
+const QModelIndex QueryModel::add_object(const std::string& akey,
+                                         bool isoperator,
+                                         const QModelIndex& parent_index)
 {
     AQLline *line = lineFromIndex(parent_index);
     if(!line) {
@@ -270,12 +269,9 @@ const QModelIndex QueryModel::add_object(const std::string& akey, bool isoperato
     return index(row, 0, parent_index);
 }
 
-void QueryModel::del_object( const QModelIndex& index )
+void QueryModel::del_object(const QModelIndex& index)
 {
     AQLline *line = lineFromIndex(index);
-    if(!line) {
-        return;
-    }
 
     const QModelIndex parent_index = parent(index);
     AQLline *line_parent = line->parent;
@@ -284,7 +280,20 @@ void QueryModel::del_object( const QModelIndex& index )
     endRemoveRows();
 }
 
-jsonio::DBQueryBase QueryModel::getQuery(jsonio::DBQueryBase::QType query_type, const std::string& collection)
+jsonio::FieldDef::FieldType QueryModel::field_type(const QModelIndex &index) const
+{
+    AQLline *line = lineFromIndex(index);
+    return line->field_data.field_type;
+}
+
+std::string QueryModel::field_enum_class(const QModelIndex &index) const
+{
+    AQLline *line = lineFromIndex(index);
+    return line->field_data.class_name;
+}
+
+jsonio::DBQueryBase QueryModel::getQuery(jsonio::DBQueryBase::QType query_type,
+                                         const std::string& collection)
 {
     std::string query_string;
 
@@ -354,6 +363,16 @@ jsonio::JsonBase::Type AQLline::value_type()
     return jstype;
 }
 
+int AQLline::value_from_enum() const
+{
+    int ivalue=0;
+    const jsonio::EnumDef* enumdef = jsonio::ioSettings().Schema().getEnum(field_data.class_name);
+    if(enumdef != nullptr) {
+        ivalue = enumdef->name2value(value);
+    }
+    return ivalue;
+}
+
 void AQLline::value2dom(jsonio::JsonBase& object)
 {
     std::string add_key = keyname;
@@ -365,18 +384,15 @@ void AQLline::value2dom(jsonio::JsonBase& object)
         object.getChild(keyname)->set_null();
         break;
     case jsonio::JsonBase::Bool:
-        object.set_value_via_path(keyname,  (value == "true"? true : false));
+        object.set_value_via_path(keyname, (value == "true"? true : false));
         break;
     case jsonio::JsonBase::Int: {
         int ivalue=0;
         if(!field_data.class_name.empty()) {
-            const jsonio::EnumDef* enumdef = jsonio::ioSettings().Schema().getEnum(field_data.class_name);
-            if(enumdef != nullptr) {
-                ivalue = enumdef->name2value(value);
-            }
+            ivalue = value_from_enum();
             object.set_value_via_path(keyname, ivalue);
         }
-        if(!get_value(ivalue)) {
+        else if(!get_value(ivalue)) {
             object.set_value_via_path(keyname, ivalue);
         }
     }
@@ -430,7 +446,7 @@ std::string AQLline::toTemplate()
 std::string AQLline::value2AQL(const std::string& the_operator)
 {
     auto jstype = value_type();
-    std::string filter( "u." + keyname + " " + the_operator + " ");
+    std::string filter("u." + keyname + " " + the_operator + " ");
 
     switch (jstype) {
     case jsonio::JsonBase::String:  {
@@ -440,12 +456,8 @@ std::string AQLline::value2AQL(const std::string& the_operator)
     }
     break;
     case jsonio::JsonBase::Int:  {
-        int val=0;
         if(!field_data.class_name.empty()) {
-            const jsonio::EnumDef* enumdef = jsonio::ioSettings().Schema().getEnum(field_data.class_name);
-            if(enumdef != nullptr) {
-                val = enumdef->name2value(value);
-            }
+            auto val = value_from_enum();
             filter += std::to_string(val);
         }
         else {
@@ -460,7 +472,6 @@ std::string AQLline::value2AQL(const std::string& the_operator)
     filter += " ";
     return filter;
 }
-
 
 std::string AQLline::query2AQL()
 {

@@ -13,7 +13,7 @@ JsonSchemaModel::JsonSchemaModel(const QString& schema_name,
     current_schema(schema_name),
     root_node(jsonio::JsonSchema::object(current_schema.toStdString()))
 {
-   // setupModelData("", schema_name);
+    // setupModelData("", schema_name);
 }
 
 JsonSchemaModel::~JsonSchemaModel() {}
@@ -73,7 +73,7 @@ QModelIndex JsonSchemaModel::parent(const QModelIndex& child) const
     auto* child_item = lineFromIndex(child);
     auto* parent_item = child_item->getParent();
     return parent_item != &root_node ? createIndex(parent_item->getNdx(), 0, parent_item) : QModelIndex{};
- }
+}
 
 int JsonSchemaModel::rowCount(const QModelIndex& parent) const
 {
@@ -158,7 +158,7 @@ QVariant JsonSchemaModel::data(const QModelIndex& index, int role) const
             return QVariant(QColor(Qt::darkCyan));
         }
     }
-        break;
+    break;
     default: break;
     }
     return QVariant();
@@ -173,7 +173,7 @@ bool JsonSchemaModel::setData(const QModelIndex& index, const QVariant& value, i
             auto lineschema = schemajs(item);
             lineschema->setMapKey(value.toString().toStdString());
         }
-            break;
+        break;
         case 1:
             set_value_via_type(item, "", item->type(), value.toString().toStdString());
             break;
@@ -226,12 +226,12 @@ bool JsonSchemaModel::canBeRemoved(const QModelIndex &index) const
 }
 
 const QModelIndex JsonSchemaModel::addObject(const QModelIndex &cindex,
-                    const QString &field_type, const QString &field_name)
+                                             const QString &field_type, const QString &field_name)
 {
     Q_UNUSED( field_type );
     if(field_name.isEmpty()) {
-         uiSettings().setError(" can't add empty key ");
-         return cindex;
+        uiSettings().setError(" can't add empty key ");
+        return cindex;
     }
 
     int row=0;
@@ -280,7 +280,7 @@ const QModelIndex JsonSchemaModel::cloneObject(const QModelIndex &cindex)
         auto new_object_key = std::to_string(row);
         auto used_names = parent_item->getUsedKeys();
         while(std::find(used_names.begin(), used_names.end(), new_object_key) != used_names.end()) {
-             new_object_key += "0";
+            new_object_key += "0";
         }
         beginInsertRows(parent_index, row, row);
         if(set_value_via_type(parent_item, new_object_key, item->type(), defval) && !data.empty()) {
@@ -379,7 +379,7 @@ QStringList JsonSchemaModel::fieldNames(const QModelIndex &index, QString& field
 }
 
 const jsonio::FieldDef* JsonSchemaModel::field_def(const std::string &field_top_schema_name,
-                                       const std::string &field_name)
+                                                   const std::string &field_name)
 {
     if(field_name.empty()) {
         return nullptr;
@@ -388,11 +388,11 @@ const jsonio::FieldDef* JsonSchemaModel::field_def(const std::string &field_top_
     if(!schema_def) {
         return nullptr;
     }
-    auto field_def = schema_def->getField(field_name);
-    if(!field_def) {
+    auto afield_def = schema_def->getField(field_name);
+    if(!afield_def) {
         return nullptr;
     }
-    return field_def;
+    return afield_def;
 }
 
 //-------------------------------------------------------------------------------------
@@ -428,24 +428,9 @@ const jsonio::EnumDef* JsonSchemaModel::get_map_enumdef(const QModelIndex& index
 
 const jsonio::EnumDef* JsonSchemaModel::get_i32_enumdef(jsonio::JsonSchema* item) const
 {
-    if(item->fieldType() != jsonio::FieldDef::T_I32) {
-        return nullptr;
-    }
     size_t level = 0;
-    auto field_data = item->fieldDescription(level);
-    std::string enumName = field_data->className();
-    if(!enumName.empty()) {
-        return jsonio::ioSettings().Schema().getEnum(enumName);
-    }
-    return nullptr;
-}
-
-void JsonSchemaModel::enums_to_combobox(const jsonio::EnumDef* enumdef)
-{
-    for(const auto& itname: enumdef->all_names()) {
-        editor_fields_values.push_back(QVariantMap({{QString("value"), enumdef->name2value(itname)},
-                                                    {QString("text"),  QString::fromStdString(itname)}}));
-    }
+    auto fld_def = item->fieldDescription(level);
+    return i32_enumdef(item->fieldType(), fld_def->className());
 }
 
 void JsonSchemaModel::check_editor_type(const QModelIndex &index)
@@ -454,35 +439,62 @@ void JsonSchemaModel::check_editor_type(const QModelIndex &index)
     editor_fields_values.clear();
 
     auto item = schemajs(lineFromIndex(index));
-    int type;
     // map key
     if(index.column() == 0) {
-        type = item->fieldKeyType();
         auto enumdef = get_map_enumdef(index);
         if(enumdef) {
-            enums_to_combobox(enumdef);
+            editor_fields_values = enums_to_combobox(enumdef);
         }
     }
     else {
-        type = item->fieldType();
-        if(type == jsonio::FieldDef::T_BOOL) {
-            editor_fields_values.push_back(QVariantMap({{QString("value"), true},
-                                                        {QString("text"), "true"}}));
-            editor_fields_values.push_back(QVariantMap({{QString("value"), false},
-                                                        {QString("text"), "false"}}));
-        }
-        else if(type == jsonio::FieldDef::T_I08 ||
-                type == jsonio::FieldDef::T_I16 ||
-                type == jsonio::FieldDef::T_I32) {
-
-            auto enumdef = get_i32_enumdef(item);
-            if(enumdef) {
-                enums_to_combobox(enumdef);
-            }
-        }
+        size_t level = 0;
+        auto fld_def = item->fieldDescription(level);
+        editor_fields_values = editor_combobox(item->fieldType(), fld_def->className());
     }
     use_combo_box = editor_fields_values.size()>0;
     emit editorChange();
 }
+
+const jsonio::EnumDef* i32_enumdef(jsonio::FieldDef::FieldType type, const std::string& enum_name)
+{
+    if(type == jsonio::FieldDef::T_I08
+        || type == jsonio::FieldDef::T_I16
+        || type == jsonio::FieldDef::T_I32) {
+        if(!enum_name.empty()) {
+            return jsonio::ioSettings().Schema().getEnum(enum_name);
+        }
+    }
+    return nullptr;
+}
+
+QList<QVariantMap> enums_to_combobox(const jsonio::EnumDef* enumdef)
+{
+    QList<QVariantMap> combo_values;
+    for(const auto& itname: enumdef->all_names()) {
+        combo_values.push_back(QVariantMap({{QString("value"), enumdef->name2value(itname)},
+                                            {QString("text"),  QString::fromStdString(itname)}}));
+    }
+    return combo_values;
+}
+
+QList<QVariantMap> editor_combobox(jsonio::FieldDef::FieldType type, const std::string& enum_name)
+{
+    QList<QVariantMap> combo_values;
+
+    if(type == jsonio::FieldDef::T_BOOL) {
+        combo_values.push_back(QVariantMap({{QString("value"), true},
+                                            {QString("text"), "true"}}));
+        combo_values.push_back(QVariantMap({{QString("value"), false},
+                                            {QString("text"), "false"}}));
+    }
+    else {
+        auto enumdef = i32_enumdef(type, enum_name);
+        if(enumdef) {
+            combo_values = enums_to_combobox(enumdef);
+        }
+    }
+    return combo_values;
+}
+
 
 } // namespace jsonqml

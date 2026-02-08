@@ -4,6 +4,7 @@
 #include <QTreeView>
 #include <QItemDelegate>
 #include "jsonio/dbquerybase.h"
+#include "jsonio/schema.h"
 
 namespace jsonio {
 class FieldDef;
@@ -39,7 +40,9 @@ public:
     const QModelIndex add_object(const std::string& akey, bool isoperator, const QModelIndex& index);
     const QModelIndex add_field(const std::string& flds_name, const jsonio::FieldDef* fld_data, const QModelIndex& index);
     void del_object(const QModelIndex& index);
-    AQLline* lineFromIndex(const QModelIndex& index) const;
+
+    jsonio::FieldDef::FieldType field_type(const QModelIndex& index) const;
+    std::string field_enum_class(const QModelIndex& index) const;
 
 protected:
     QStringList header;
@@ -53,6 +56,7 @@ protected:
     bool setData(const QModelIndex& index, const QVariant& value, int role) override;
     QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
     Qt::ItemFlags flags(const QModelIndex& index) const override;
+    AQLline* lineFromIndex(const QModelIndex& index) const;
 
 };
 

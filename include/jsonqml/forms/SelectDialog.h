@@ -34,7 +34,6 @@ class SelectDialog : public QDialog
     Q_OBJECT
 
 public slots:
-    void objectChanged() {}
     void CmHelp();
     void CmSelectAll();
     void CmClearAll();
