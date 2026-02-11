@@ -4,17 +4,13 @@
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/FieldsSelectDialog.h"
-//#include "service/SchemaSelectDialog.h"
 #include "jsonqml/forms/query_view.h"
 #include "jsonqml/clients/vertex_client.h"
 #include "jsonqml/clients/settings_client.h"
-#ifndef IMPEX_OFF
-#include "jsonimpex/yaml_xml2file.h"
-#endif
 
 namespace jsonqml {
 
-std::string QueryWidget::query_collection_name = "queries";
+QString QueryWidget::query_shema_name = "Query";
 
 QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
                          const jsonio::DBQueryDef& query, QWidget* parent):
@@ -27,16 +23,19 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
     query_description(query)
 {
     ui->setupUi(this);
-    //this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
+    this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
     QString title = qApp->applicationName()+atitle;
     this->setWindowTitle(title);
 
+    ui->pAQL->setChecked(true);
     ui->splitterSelect->setStretchFactor(0, 1);
     ui->splitterSelect->setStretchFactor(1, 2);
     ui->qSchema->insertItems(0, schemas);
 
-    query_client.reset(new VertexClient(Resource, schema_name, this));
-    //query_client->tablemodel()->updateQuery(new_schema_query());
+    auto collection = ArangoDatabase::collectionFromSchema(query_shema_name.toStdString());
+    auto query_fields = ArangoDatabase::fieldsFromCollection(collection);
+    //query_client.reset(new VertexClient(Resource, query_shema_name, this));
+    query_client.reset(new VertexClient(Resource, query_shema_name, new_schema_query(), {}, this));
 
     // set up select model
     lstmodel = new QStringListModel(this);
@@ -61,15 +60,28 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
 QueryWidget::~QueryWidget()
 {}
 
-std::string QueryWidget::getSchema() const
+QString QueryWidget::getSchema() const
 {
-    return ui->qSchema->currentText().toStdString();
+    return ui->qSchema->currentText();
 }
 
 const jsonio::DBQueryDef& QueryWidget::getQuery()
 {
     return get_query();
 }
+
+void QueryWidget::CmExecute()
+{
+    auto query = getQuery();
+    emit queryChanged(query);
+}
+
+void QueryWidget::CmApplay()
+{
+    CmExecute();
+    close();
+}
+
 
 void QueryWidget::CmHelp()
 {
@@ -88,15 +100,15 @@ void QueryWidget::CmLoadQuery()
                        "Please, select a file with JSON object", domFilters)) {
         query_client->readJson(file);  // yaml, html must be into readJson
     }
-    from_json_node(query_client->jsonmodel()->current_object());
+    from_json_node(query_client->jsonmodel()->current_object()); /// posible exception
 }
 
 void QueryWidget::CmSaveQuery()
 {
     std::string doc_json = to_json_node();
-    query_client->setEditorData(query_schema, doc_json);
+    query_client->setEditorData(query_shema_name.toStdString(), doc_json);
 
-    auto file = query_client->fileSchemaExt(schema_name, "json");
+    auto file = query_client->fileSchemaExt(query_shema_name, "json");
     if(ChooseFileSave(this, file,
                        "Please, select a file to write the query",
                        domFilters, file))  {
@@ -126,7 +138,7 @@ void QueryWidget::CmRead()
 void QueryWidget::CmUpdate()
 {
     std::string doc_json = to_json_node();
-    query_client->setEditorData(query_schema, doc_json);
+    query_client->setEditorData(query_shema_name.toStdString(), doc_json);
     query_client->updateRecord();
 }
 
@@ -146,7 +158,6 @@ void QueryWidget::CmDeleteList()
     }
 }
 
-
 void QueryWidget::CmWhereApply()
 {
     auto collection = ui->qSchema->currentText().toStdString();
@@ -165,35 +176,12 @@ void QueryWidget::CmWhereRestore()
     show_query();
 }
 
-void QueryWidget::CmAddWhereFields()
-{
-    // try {
-    //     std::vector<std::string> f_list;
-    //     SchemaSelectDialog dlg( this, "Please, mark data fields for the query table",
-    //                            schema_name, f_list);
-    //     if( dlg.exec() )
-    //     {
-    //         f_list = dlg.allSelected();
-    //         auto f_desc = dlg.allSelectedTypes();
-    //         query_edit->CmAddObjects(f_list, f_desc);
-    //     }
-    // }
-    // catch(jsonio::jsonio_exception& e)
-    // {
-    //     QMessageBox::critical( this, "jsonio_exception", e.what() );
-    // }
-    // catch(std::exception& e)
-    // {
-    //     QMessageBox::critical( this, "std::exception", e.what() );
-    // }
-}
-
 void QueryWidget::CmSelectFields()
 {
     SelectFieldsDialog dlg("Please, mark data fields for the ouput table",
                            schema_name, query_description.fields(), this);
     if(dlg.exec()) {
-        query_description.setFields( dlg.allSelected());
+        query_description.setFields(dlg.allSelected());
         lstmodel->setStringList(transform2qt(query_description.fields()));
     }
 }
@@ -209,7 +197,6 @@ void QueryWidget::CmAddSelectFields()
         lstmodel->setStringList(transform2qt(query_description.fields()));
     }
 }
-
 
 void QueryWidget::AQL_toggled(bool checked)
 {
@@ -229,8 +216,6 @@ void QueryWidget::AQL_toggled(bool checked)
     ui->actionAdd_like->setEnabled(checked);
     ui->actionAdd_regexp->setEnabled(checked);
     ui->actionAdd_not_regexp->setEnabled(checked);
-
-    ui->actionAdd_List_Fieldpaths->setEnabled(!checked);
 
     if(query_edit->AQLmode(checked))  { // changed mode
         if((checked && default_query.condition()->type() == jsonio::DBQueryBase::qAQL)
@@ -270,9 +255,6 @@ void QueryWidget::show_query()
     if(type == jsonio::DBQueryBase::qAQL) {
         ui->pAQL->setChecked(true);
     }
-    /* else if(type == jsonio::DBQueryBase::qEJDB) {
-            ui->pEJDB->setChecked(true);
-    }*/
     else {
         ui->pTemplate->setChecked(true);
     }
@@ -290,20 +272,19 @@ void QueryWidget::set_actions()
 {
     QObject::connect(ui->qSchema, &QComboBox::currentTextChanged, this, &QueryWidget::schema_changed);
     QObject::connect(ui->qSchema, &QComboBox::currentTextChanged, query_edit.get(), &QueryView::updateSchema);
-
     QObject::connect(ui->pAQL, &QRadioButton::toggled, this, &QueryWidget::AQL_toggled);
 
     // File
     QObject::connect(ui->action_Save_Current_Query_to_File, &QAction::triggered, this, &QueryWidget::CmSaveQuery);
     QObject::connect(ui->action_Load_Query_from_File, &QAction::triggered, this, &QueryWidget::CmLoadQuery);
-    //QObject::connect(ui->action_Execute_Current_Query, &QAction::triggered, this, &QueryWidget::CmExecute);
-    //QObject::connect(ui->action_Accept_curent_Query, &QAction::triggered, this, &QueryWidget::CmApplay);
     QObject::connect(ui->action_Close_Cancel, &QAction::triggered, this, &QueryWidget::close);
 
     // Select part
     QObject::connect(ui->action_Select_Fieldpaths, &QAction::triggered, this, &QueryWidget::CmSelectFields);
     QObject::connect(ui->action_Add_Fieldpaths, &QAction::triggered, this, &QueryWidget::CmAddSelectFields);
     QObject::connect(ui->action_restote_select, &QAction::triggered, this, &QueryWidget::select_restore);
+    QObject::connect(ui->action_Execute_Current_Query, &QAction::triggered, this, &QueryWidget::CmExecute);
+    QObject::connect(ui->action_Accept_curent_Query, &QAction::triggered, this, &QueryWidget::CmApplay);
 
     // Generate part
     QObject::connect(ui->action_Apply_from_Tree, &QAction::triggered, this, &QueryWidget::CmWhereApply);
@@ -311,7 +292,6 @@ void QueryWidget::set_actions()
     QObject::connect(ui->action_Clear_Tree, &QAction::triggered, query_edit.get(), &QueryView::ClearAll);
 
     // FILTER
-    QObject::connect(ui->actionAdd_List_Fieldpaths, &QAction::triggered, this, &QueryWidget::CmAddWhereFields);
     QObject::connect(ui->actionAdd_Fieldpath, &QAction::triggered, query_edit.get(), &QueryView::CmAddField);
     QObject::connect(ui->actionDelete_Line, &QAction::triggered, query_edit.get(), &QueryView::CmDelLine);
 
@@ -333,10 +313,10 @@ void QueryWidget::set_actions()
     QObject::connect(ui->actionAdd_not_regexp, &QAction::triggered, query_edit.get(), &QueryView::CmAddNotRegexp);
 
     // Database
-    QObject::connect(ui->action_Update, &QAction::triggered, this, &QueryWidget::CmUpdate);
     QObject::connect(ui->action_Clone, &QAction::triggered, this, &QueryWidget::CmClone);
-    QObject::connect(ui->action_DeleteList, &QAction::triggered, this, &QueryWidget::CmDeleteList);
     QObject::connect(ui->action_Read, &QAction::triggered, this, &QueryWidget::CmRead);
+    QObject::connect(ui->action_Update, &QAction::triggered, this, &QueryWidget::CmUpdate);
+    QObject::connect(ui->action_DeleteList, &QAction::triggered, this, &QueryWidget::CmDeleteList);
 
     // Help
     QObject::connect(ui->actionHelp_About, &QAction::triggered, this, &QueryWidget::CmHelpAbout);
@@ -351,7 +331,7 @@ void QueryWidget::set_actions()
     ui->nameToolBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     QLabel *aname = new QLabel("_id",ui->nameToolBar);
     ui->nameToolBar->addWidget(aname);
-    ui->nameToolBar->addWidget(qId.get()); // setStretchableWidget( pLine );
+    ui->nameToolBar->addWidget(qId.get());
 }
 
 std::string QueryWidget::to_json_node()
@@ -404,13 +384,13 @@ jsonio::DBQueryBase::QType QueryWidget::get_query_type() const
 
 jsonio::DBQueryBase QueryWidget::new_schema_query()
 {
-    std::string queryString = "";
+    auto collection = ArangoDatabase::collectionFromSchema(query_shema_name.toStdString());
+    std::string query_string = "FOR u IN " + collection;
     if(!schema_name.isEmpty()) {
-        queryString = "{ \"qschema\": \"";
-        queryString += schema_name.toStdString();
-        queryString += "\" }";
+        query_string += "\n FILTER u.qschema == '" + schema_name.toStdString()+"'";
     }
-    return jsonio::DBQueryBase(queryString, jsonio::DBQueryBase::qTemplate);
+    query_string += "\nRETURN u";
+    return jsonio::DBQueryBase(query_string, jsonio::DBQueryBase::qAQL);
 }
 
 } // namespace jsonui

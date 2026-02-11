@@ -1,6 +1,5 @@
 
 #include "edge_client_p.h"
-#include "edge_client_p.h"
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/models/db_keys_model.h"

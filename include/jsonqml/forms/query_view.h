@@ -4,10 +4,6 @@
 #include <QItemDelegate>
 #include "jsonqml/models/query_model.h"
 
-namespace jsonio {
-class EnumDef;
-}
-
 namespace jsonqml {
 
 ///  \class QueryView implements a tree view of query structure
@@ -64,8 +60,8 @@ private:
     bool AQL_mode;
     QString schema_name;
 
-    void keyPressEvent(QKeyEvent* e) override;
     void add_object(const std::string& akey, bool isoperator = true);
+    void keyPressEvent(QKeyEvent* e) override;
     QMenu* context_menu(const QModelIndex &index );
     QueryModel* view_model()
     {

@@ -77,12 +77,11 @@ void QueryView::CmAddField()
             const jsonio::FieldDef* flddata=nullptr;
             auto fldpath = dlg.selIndex(&flddata);
             QModelIndex ndx = themodel->add_field(fldpath, flddata, index);
-            selectionModel()->setCurrentIndex( ndx, QItemSelectionModel::ClearAndSelect );
+            selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
         }
     }
     else {
-        QMessageBox::information( window(), "Add to FILTER",
-                                 "Could not execute action." );
+        QMessageBox::information(window(), "Add to FILTER", "Could not execute action.");
     }
 }
 
@@ -97,7 +96,7 @@ void QueryView::CmDelLine()
     }
     else {
         QMessageBox::information(window(), "Delete from Object",
-                                 "Please, determine the key-value pair to be deleted" );
+                                 "Please, determine the key-value pair to be deleted");
     }
 }
 
@@ -308,10 +307,10 @@ void QueryView::add_object(const std::string& akey, bool isoperator)
     if(themodel && ((!isoperator  && themodel->can_logical(index, AQL_mode) )
                      || (isoperator  && themodel->can_operator(index, AQL_mode)))) {
         QModelIndex ndx = themodel->add_object(akey, isoperator, index);
-        selectionModel()->setCurrentIndex( ndx, QItemSelectionModel::ClearAndSelect );
+        selectionModel()->setCurrentIndex(ndx, QItemSelectionModel::ClearAndSelect);
     }
     else {
-        QMessageBox::information(window(), "Add to FILTER", "Could not execute action." );
+        QMessageBox::information(window(), "Add to FILTER", "Could not execute action.");
     }
 }
 

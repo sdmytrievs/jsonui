@@ -226,9 +226,6 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="action_Restore_Query"/>
-    <addaction name="action_Clone"/>
-    <addaction name="separator"/>
     <addaction name="action_Save_Current_Query_to_File"/>
     <addaction name="action_Load_Query_from_File"/>
     <addaction name="separator"/>
@@ -238,7 +235,6 @@
     <property name="title">
      <string>&amp;Filter</string>
     </property>
-    <addaction name="actionAdd_List_Fieldpaths"/>
     <addaction name="actionAdd_Fieldpath"/>
     <addaction name="separator"/>
     <addaction name="actionAdd_and"/>
@@ -273,6 +269,7 @@
     <property name="title">
      <string>&amp;Database</string>
     </property>
+    <addaction name="action_Clone"/>
     <addaction name="action_Read"/>
     <addaction name="action_Update"/>
     <addaction name="action_DeleteList"/>
@@ -282,6 +279,7 @@
     <property name="title">
      <string>&amp;Query</string>
     </property>
+    <addaction name="action_Restore_Query"/>
     <addaction name="action_Execute_Current_Query"/>
     <addaction name="action_Accept_curent_Query"/>
     <addaction name="separator"/>
@@ -474,21 +472,6 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
-   </property>
-  </action>
-  <action name="actionAdd_List_Fieldpaths">
-   <property name="icon">
-    <iconset resource="../../jsonui.qrc">
-     <normaloff>:/menu/Icons/DetailedCSDIcon24.png</normaloff>:/menu/Icons/DetailedCSDIcon24.png</iconset>
-   </property>
-   <property name="text">
-    <string>Choose Fields for the Search Filter ...</string>
-   </property>
-   <property name="iconText">
-    <string>Choose the First Fieldpath ...</string>
-   </property>
-   <property name="toolTip">
-    <string>Choose the list of Fields to be used in the search filter ...</string>
    </property>
   </action>
   <action name="actionAdd_and">

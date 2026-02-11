@@ -190,24 +190,26 @@ FieldLine *SelectFieldsModel::lineFromIndex(const QModelIndex &index) const
 
 QModelIndex SelectFieldsModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(!root_node) {
-        return QModelIndex();
+    if(!hasIndex(row, column, parent)) {
+        return QModelIndex{};
     }
-    FieldLine *parent_item = lineFromIndex(parent);
-    return createIndex(row, column, parent_item->children[row].get());
+    auto* parent_item = lineFromIndex(parent);
+    if(parent_item->children.size()>row) {
+        return createIndex(row, column, parent_item->children[row].get());
+    }
+    else {
+        return QModelIndex{};
+    }
 }
 
 QModelIndex SelectFieldsModel::parent(const QModelIndex& child) const
 {
     if(!child.isValid()) {
-        return QModelIndex();
+        return QModelIndex{};
     }
-    FieldLine *child_item = lineFromIndex(child);
-    FieldLine *parent_item = child_item->parent;
-    if(parent_item == root_node.get()) {
-        return QModelIndex();
-    }
-    return createIndex(parent_item->ndx_in_parent, 0, parent_item);
+    auto* child_item = lineFromIndex(child);
+    auto* parent_item = child_item->parent;
+    return parent_item != root_node.get() ? createIndex(parent_item->ndx_in_parent, 0, parent_item) : QModelIndex{};
 }
 
 int SelectFieldsModel::rowCount( const QModelIndex& parent ) const
@@ -222,8 +224,9 @@ int SelectFieldsModel::rowCount( const QModelIndex& parent ) const
     return parent_item->children.size();
 }
 
-int SelectFieldsModel::columnCount(const QModelIndex& /*parent*/) const
+int SelectFieldsModel::columnCount(const QModelIndex& parent) const
 {
+    Q_UNUSED(parent);
     if(JsonSchemaModel::showComments) {
         return 3;
     }
@@ -235,8 +238,7 @@ Qt::ItemFlags SelectFieldsModel::flags(const QModelIndex& index) const
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     FieldLine *item = lineFromIndex(index);
     if(index.column() == 1 && (item->fld_type > 0)) {
-        flags |= Qt::ItemIsEditable;
-        return flags;
+        return (flags | Qt::ItemIsEditable);
     }
     else {
         return (flags & ~Qt::ItemIsEditable);
@@ -283,6 +285,7 @@ bool SelectFieldsModel::setData(const QModelIndex& index, const QVariant& value,
         if(index.column()<line->fld_value.size()) {
             line->fld_value[index.column()] = value.toString();
         }
+        emit dataChanged(index, index);
         return true;
     }
     return false;

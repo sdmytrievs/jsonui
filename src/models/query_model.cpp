@@ -1,7 +1,7 @@
 #include "jsonio/jsonschema.h"
 #include "jsonio/jsondump.h"
+#include "jsonio/io_settings.h"
 #include "jsonqml/models/query_model.h"
-#include "jsonqml/clients/settings_client.h"
 
 namespace jsonqml {
 
@@ -138,43 +138,39 @@ AQLline *QueryModel::lineFromIndex(const QModelIndex &index) const
 
 QModelIndex QueryModel::index(int row, int column, const QModelIndex &parent) const
 {
-    if(!root_node) {
-        return QModelIndex();
+    if(!hasIndex(row, column, parent)) {
+        return QModelIndex{};
     }
-    AQLline *parentItem = lineFromIndex(parent);
-    if(parentItem->children.size() > 0) {
-        return createIndex(row, column, parentItem->children[row].get());
+    auto* parent_item = lineFromIndex(parent);
+    if(parent_item->children.size()>row) {
+        return createIndex(row, column, parent_item->children[row].get());
     }
     else {
-        return QModelIndex();
+        return QModelIndex{};
     }
 }
 
 QModelIndex QueryModel::parent(const QModelIndex& child) const
 {
     if(!child.isValid()) {
-        return QModelIndex();
+        return QModelIndex{};
     }
-
-    AQLline *child_item = lineFromIndex(child);
-    AQLline *parent_item = child_item->parent;
-    if(parent_item == root_node.get()) {
-        return QModelIndex();
-    }
-    return createIndex(parent_item->ndx_in_parent, 0, parent_item);
+    auto* child_item = lineFromIndex(child);
+    auto* parent_item = child_item->parent;
+    return parent_item != root_node.get() ? createIndex(parent_item->ndx_in_parent, 0, parent_item) : QModelIndex{};
 }
 
 int QueryModel::rowCount( const QModelIndex& parent ) const
 {
-    if(!root_node) {
+   if(parent.column()> 0) {
         return 0;
     }
-    AQLline *parent_item = lineFromIndex(parent);
-    return static_cast<int>(parent_item->children.size());
+    return lineFromIndex(parent)->children.size();
 }	
 
-int QueryModel::columnCount(const QModelIndex& /*parent*/) const
+int QueryModel::columnCount(const QModelIndex& parent) const
 {
+    Q_UNUSED(parent);
     return 2;
 }	
 
@@ -183,8 +179,7 @@ Qt::ItemFlags QueryModel::flags(const QModelIndex& index) const
     Qt::ItemFlags flags = QAbstractItemModel::flags(index);
     AQLline *item = lineFromIndex(index);
     if( index.column() == 1 && item && item->type == AQLline::Field) {
-        flags |= Qt::ItemIsEditable;
-        return flags;
+        return (flags | Qt::ItemIsEditable);
     }
     return (flags & ~Qt::ItemIsEditable);
 }
@@ -197,7 +192,7 @@ QVariant QueryModel::headerData(int section, Qt::Orientation orientation, int ro
     return QVariant();
 }
 
-QVariant QueryModel::data( const QModelIndex& index, int role ) const
+QVariant QueryModel::data(const QModelIndex& index, int role) const
 {
     if(!index.isValid()) {
         return QVariant();
@@ -220,15 +215,16 @@ QVariant QueryModel::data( const QModelIndex& index, int role ) const
     return QVariant();
 }
 
-bool QueryModel::setData(const QModelIndex& index, const QVariant& value_, int role)
+bool QueryModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
     if(index.isValid() && role == Qt::EditRole) {
         if(index.column()== 1) {
             AQLline *line = lineFromIndex(index);
             if(line) {
-                line->value = value_.toString().toStdString();
+                line->value = value.toString().toStdString();
             }
         }
+        emit dataChanged(index, index);
         return true;
     }
     return false;

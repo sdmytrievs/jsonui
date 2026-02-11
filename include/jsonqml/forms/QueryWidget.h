@@ -3,7 +3,7 @@
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QStringListModel>
-#include "jsonio/dbschemadoc.h"
+#include "jsonio/dbquerybase.h"
 
 namespace Ui {
 class QueryWidget;
@@ -20,27 +20,29 @@ class QueryWidget : public QMainWindow
 {
     Q_OBJECT
 
+signals:
+    void queryChanged(jsonio::DBQueryDef query);
+
 public slots:
     // Files
     void CmSaveQuery();
     void CmLoadQuery();
-    //void CmExecute();
-    //void CmApplay();
-
-    // Select part
-    void CmSelectFields();
-    void CmAddSelectFields();
-
-    // Where part
-    void CmWhereApply();
-    void CmWhereRestore();
-    void CmAddWhereFields();
 
     // Record
     void CmClone();
     void CmRead();
     void CmUpdate();
     void CmDeleteList();
+
+    // Where part
+    void CmWhereApply();
+    void CmWhereRestore();
+
+    // Select part
+    void CmSelectFields();
+    void CmAddSelectFields();
+    void CmExecute();
+    void CmApplay();
 
     // Help
     void CmHelp();
@@ -52,16 +54,15 @@ protected slots:
     void select_restore();
 
 public:
-    /// Extern impex collection name ( default "queries" )
-    static std::string query_collection_name;
-    std::string query_schema;
+    /// Extern query document schema name ( default "Query" )
+    static QString query_shema_name;
 
     explicit QueryWidget(const QString& title, const QStringList& schemas,
                          const jsonio::DBQueryDef& query, QWidget *parent);
     ~QueryWidget();
 
     const jsonio::DBQueryDef& getQuery();
-    std::string getSchema() const;
+    QString getSchema() const;
 
 protected:
     QScopedPointer<Ui::QueryWidget> ui;
