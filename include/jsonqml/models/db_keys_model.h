@@ -83,6 +83,7 @@ public:
     Q_INVOKABLE void save(const std::string& json_data);
     Q_INVOKABLE void remove(std::string doc_id);
     Q_INVOKABLE void remove(size_t row);
+    Q_INVOKABLE std::string read_query_doc(std::string doc_id);
 
     void backup_records(QString file, std::vector<std::string>&& keys);
     void restore_records(QString file);

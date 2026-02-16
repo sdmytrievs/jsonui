@@ -35,10 +35,10 @@ public slots:
     void CmNewImpexFormat();
 
     // Help
-    void CmHelpAbout() {}
-    void CmHelpAuthors() {}
-    void CmHelpLicense() {}
-    void CmHelpContens() {}
+    void CmHelpAbout();
+    void CmHelpAuthors();
+    void CmHelpLicense();
+    void CmHelpContens();
 
     // update after change preferences
     void updateViewMenu();
@@ -71,7 +71,7 @@ private:
 
     // Work functions
     void set_actions();
-    //void closeEvent(QCloseEvent* e);
+    void closeEvent(QCloseEvent* e);
 
 };
 

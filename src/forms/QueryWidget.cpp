@@ -32,9 +32,6 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
     ui->splitterSelect->setStretchFactor(1, 2);
     ui->qSchema->insertItems(0, schemas);
 
-    auto collection = ArangoDatabase::collectionFromSchema(query_shema_name.toStdString());
-    auto query_fields = ArangoDatabase::fieldsFromCollection(collection);
-    //query_client.reset(new VertexClient(Resource, query_shema_name, this));
     query_client.reset(new VertexClient(Resource, query_shema_name, new_schema_query(), {}, this));
 
     // set up select model

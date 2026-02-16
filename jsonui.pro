@@ -47,6 +47,7 @@ HEADERS += \
     include/jsonqml/forms/FieldsSelectDialog.h \
     include/jsonqml/forms/FileDialogs.h \
     include/jsonqml/forms/GraphDialog.h \
+    include/jsonqml/forms/HelpMainWindow.h \
     include/jsonqml/forms/JsonEditWidget.h \
     include/jsonqml/forms/LegendDialog.h \
     include/jsonqml/forms/PreferencesUI.h \
@@ -79,6 +80,7 @@ HEADERS += \
     src/arango_document_p.h \
     src/charts/markershapes.h \
     src/clients/csv_client_p.h \
+    include/jsonqml/clients/help_client.h \
     src/clients/json_client_p.h \
     src/clients/vertex_client_p.h \
     src/clients/edge_client_p.h \
@@ -98,11 +100,13 @@ SOURCES += \
     src/charts/markershapes.cpp \
     src/charts/xyseries_decorator.cpp \
     src/clients/csv_client.cpp \
+    src/clients/help_client.cpp \
     src/forms/CalcDialog.cpp \
     src/forms/EdgesWidget.cpp \
     src/forms/FieldsSelectDialog.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
+    src/forms/HelpMainWindow.cpp \
     src/forms/JsonEditWidget.cpp \
     src/forms/LegendDialog.cpp \
     src/forms/ModelLineDialog.cpp \
@@ -139,6 +143,7 @@ FORMS += \
     src/forms/EdgesWidget.ui \
     src/forms/FieldsSelectDialog.ui \
     src/forms/GraphDialog.ui \
+    src/forms/HelpMainWindow.ui \
     src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \
     src/forms/ModelLineDialog.ui \

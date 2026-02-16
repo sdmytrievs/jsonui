@@ -414,6 +414,18 @@ void ArangoDBDocument::readDocumentQuery(std::string doc_id)
     }
 }
 
+std::string ArangoDBDocument::returnDocumentQuery(std::string doc_id)
+{
+    try {
+        ui_logger->debug("load document query {}", doc_id);
+        return impl_func()->read_query_doc(doc_id);
+    }
+    catch(std::exception& e) {
+        emit isException(e.what());
+    }
+    return {};
+}
+
 void ArangoDBDocument::updateDocument(std::string json_document)
 {
     try {

@@ -12,8 +12,8 @@
 #include "jsonqml/forms/EdgesWidget.h"
 #include "jsonqml/forms/JsonEditWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
-#include "jsonqml/forms/FieldsSelectDialog.h"
 #include "jsonqml/forms/QueryWidget.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 #include "jsonqml/models/schema_model.h"
 #include "jsonqml/arango_database.h"
 #include "jsonqml/clients/settings_client.h"
@@ -29,6 +29,9 @@ TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
             this, &TJSONUITestWin::showErrorMessage);
     connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged,
             this, &TJSONUITestWin::updateViewMenu);
+
+    // init help window
+    new jsonqml::HelpMainWindow(nullptr);
 }
 
 TJSONUITestWin::~TJSONUITestWin()
@@ -63,6 +66,26 @@ void TJSONUITestWin::set_actions()
             [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
     connect( ui->action_Edit_id, &QAction::toggled,
             [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
+}
+
+void TJSONUITestWin::CmHelpContens()
+{
+    jsonqml::helpWin("jsonui-test", "");
+}
+
+void TJSONUITestWin::CmHelpAbout()
+{
+    jsonqml::helpWin("AboutJsonui", "");
+}
+
+void TJSONUITestWin::CmHelpAuthors()
+{
+    jsonqml::helpWin("AuthorsJsonui", "");
+}
+
+void TJSONUITestWin::CmHelpLicense()
+{
+    jsonqml::helpWin("LicenseJsonui", "");
 }
 
 void TJSONUITestWin::updateViewMenu()
@@ -243,5 +266,14 @@ void TJSONUITestWin::CmNewImpexFormat()
     catch(std::exception& e) {
         QMessageBox::critical(this, "std::exception", e.what());
     }
+}
+
+void TJSONUITestWin::closeEvent(QCloseEvent *e)
+{
+    if(jsonqml::HelpMainWindow::pDia) {
+        jsonqml::HelpMainWindow::pDia->close();
+        delete jsonqml::HelpMainWindow::pDia;
+    }
+    QWidget::closeEvent(e);
 }
 
