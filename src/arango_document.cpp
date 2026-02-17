@@ -414,11 +414,13 @@ void ArangoDBDocument::readDocumentQuery(std::string doc_id)
     }
 }
 
-std::string ArangoDBDocument::returnDocumentQuery(std::string doc_id)
+QString ArangoDBDocument::returnDocumentQuery(QString docid)
 {
     try {
+        std::string doc_id = docid.toStdString();
         ui_logger->debug("load document query {}", doc_id);
-        return impl_func()->read_query_doc(doc_id);
+        auto doc_json = impl_func()->read_query_doc(doc_id);
+        return QString::fromStdString(doc_json);
     }
     catch(std::exception& e) {
         emit isException(e.what());

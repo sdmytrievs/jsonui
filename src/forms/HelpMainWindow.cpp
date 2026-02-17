@@ -5,6 +5,7 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include "ui_HelpMainWindow.h"
+#include "HelpEditDialog.h"
 #include "jsonqml/forms/HelpMainWindow.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/clients/help_client.h"
@@ -29,10 +30,8 @@ HelpMainWindow::HelpMainWindow(QWidget* parent):
     help_client()
 {
     ui->setupUi(this);
-    ui->indexWidget->hide();
-    ui->splitter->setStretchFactor(1, 500);
-
-    setWindowTitle(" Help Viewer ");
+    ui->splitter->setStretchFactor(0, 500);
+    setWindowTitle(" Help Viewer");
     pDia = this;
 
     help_client.reset(new HelpClient(this));
@@ -48,11 +47,12 @@ HelpMainWindow::~HelpMainWindow()
 void HelpMainWindow::showHelp(const QString &name, const QString &item)
 {
     QString doc_url = name+".md";
-    if(!item.isEmpty()) {
-        doc_url +="#"+item;
-    }
+    // if(!item.isEmpty()) {
+    //     doc_url +="#"+item;
+    // }
     help_view->setSource(doc_url);
-
+    help_view->scrollToAnchor("#"+item);
+    ui->actionCreate_Update_Docpage_into_DB->setEnabled(false);
 }
 
 void HelpMainWindow::helpAbout()
@@ -62,7 +62,7 @@ void HelpMainWindow::helpAbout()
 
 void HelpMainWindow::helpOnHelp()
 {
-    showHelp("helpOnHelp", "");
+    showHelp("helpOnHelp", "how-to-use-gem-selektor-application");
 }
 
 void HelpMainWindow::helpVersion()
@@ -90,17 +90,16 @@ void HelpMainWindow::CmEdit()
     if(!help_client->canEdit()) {
         return;
     }
+    auto old_text = help_view->toMarkdown();
+    HelpEditDialog dlg(help_client.get(), old_text, this);
+    QObject::connect(&dlg, &HelpEditDialog::updateMarkdown, this, &HelpMainWindow::updateDocPage);
 
-    //auto old_text = md_text;
-    // HelpEditDialog dlg(help_client.get(), md_text, this);
-    // QObject::connect(&dlg, &HelpEditDialog::updateMarkdown, this, &HelpMainWindow::updateDocPage);
-
-    // if(dlg.exec()) {
-    //     ui->actionCreate_Update_Docpage_into_DB->setEnabled(true);
-    // }
-    // else {
-    //     emit updateDocPage(old_text);
-    // }
+    if(dlg.exec()) {
+        ui->actionCreate_Update_Docpage_into_DB->setEnabled(true);
+    }
+    else {
+        updateDocPage(old_text);
+    }
 }
 
 void HelpMainWindow::CmRead()
@@ -113,7 +112,13 @@ void HelpMainWindow::CmRead()
     if(sel_dlg.exec())  {
         auto selndx = sel_dlg.selIndex();
         if(selndx>=0) {
-            help_client->showDocument(selndx);
+            auto doc_id = help_client->tableId(selndx);
+            int type=0;
+            auto url = help_client->urlfromOid(doc_id, type);
+            if(type==0) {
+                help_view->setSource(url);
+                ui->actionCreate_Update_Docpage_into_DB->setEnabled(false);
+            }
         }
     }
 }
@@ -123,16 +128,8 @@ void HelpMainWindow::CmUpdate()
     if(!help_client->canEdit()) {
         return;
     }
-    // DocPagesData data;
-    // data.setMarkdownRecord(adress_line->text().toStdString(), md_text.toStdString());
-    // auto object = jsonio::JsonFree::object();
-    // data.toJsonNode(object);
-    // std::string jsondocpage = object.toString(true);
-    // ui->actionCreate_Update_Docpage_into_DB->setEnabled(false);
-
-    // std::string doc_json = object.toString(true);
-    // help_client->setEditorData(help_schema_name.toStdString(), doc_json);
-    // help_client->updateRecord();
+    help_client->saveMarkdownDocument(adress_line->text(), help_view->toMarkdown());
+    ui->actionCreate_Update_Docpage_into_DB->setEnabled(false);
 }
 
 void HelpMainWindow::CmDeleteList()
@@ -175,6 +172,11 @@ void HelpMainWindow::action_find_previous()
         }
         help_view->find(find_line->text(), flg);
     }
+}
+
+void HelpMainWindow::updateDocPage(const QString &mdtext)
+{
+    help_view->setMarkdown(mdtext);
 }
 
 void HelpMainWindow::set_actions()
@@ -232,24 +234,22 @@ void HelpMainWindow::set_actions()
         adress_line->setReadOnly(true);
         adress_line->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         ui->toolAddress->addWidget(adress_line.get());
+        QObject::connect(help_client.get(), &HelpClient::currentIdChanged, adress_line.get(), &QLineEdit::setText);
     }
 }
 
 QVariant HelpTextBrowser::loadResource(int type, const QUrl &name)
 {
-    qDebug() << "loadResource " << name << "  " << type;
-    return  help_client->readResource(name);
-    //return QTextBrowser::loadResource(type, name);
+    ui_logger->info("loadResource {} {}", type, name.toString().toStdString());
+    return  help_client->readResource(type, name);
 }
 
 void HelpTextBrowser::doSetSource(const QUrl &url, QTextDocument::ResourceType type)
 {
-    qDebug() << "doSetSource " << url << "  " << type;
     if(!url.isRelative() && url.scheme() != QString("qrc") && url.scheme() != QString("file")) {
         QDesktopServices::openUrl(url);
     }
     else {
-        ui_logger->info("setSource {}", url.toString().toStdString());
         QTextBrowser::doSetSource(url, type);
     }
 }
@@ -259,8 +259,8 @@ void HelpTextBrowser::helpPrint()
     QPrinter printer(QPrinter::PrinterResolution/*QPrinter::HighResolution*/);
     QPrintDialog dlg(&printer, this);
     dlg.setWindowTitle(tr("Print Help Page"));
-    if( dlg.exec() ) {
-        print( &printer ) ;
+    if(dlg.exec()) {
+        print(&printer);
     }
 }
 

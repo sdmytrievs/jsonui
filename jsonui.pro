@@ -85,6 +85,8 @@ HEADERS += \
     src/clients/vertex_client_p.h \
     src/clients/edge_client_p.h \
     src/clients/table_client_p.h \
+    src/forms/HelpEditDialog.h \
+    src/forms/HelpFileDialog.h \
     src/forms/ModelLineDialog.h
 
 SOURCES += \
@@ -106,6 +108,8 @@ SOURCES += \
     src/forms/FieldsSelectDialog.cpp \
     src/forms/FileDialogs.cpp \
     src/forms/GraphDialog.cpp \
+    src/forms/HelpEditDialog.cpp \
+    src/forms/HelpFileDialog.cpp \
     src/forms/HelpMainWindow.cpp \
     src/forms/JsonEditWidget.cpp \
     src/forms/LegendDialog.cpp \
@@ -143,6 +147,8 @@ FORMS += \
     src/forms/EdgesWidget.ui \
     src/forms/FieldsSelectDialog.ui \
     src/forms/GraphDialog.ui \
+    src/forms/HelpEditDialog.ui \
+    src/forms/HelpFileDialog.ui \
     src/forms/HelpMainWindow.ui \
     src/forms/JsonEditWidget.ui \
     src/forms/LegendDialog.ui \

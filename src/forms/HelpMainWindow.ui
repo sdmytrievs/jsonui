@@ -3,7 +3,7 @@
  <class>HelpWindowData</class>
  <widget class="QMainWindow" name="HelpWindowData">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -27,23 +27,8 @@
     <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
-       <enum>Qt::Horizontal</enum>
+       <enum>Qt::Orientation::Horizontal</enum>
       </property>
-      <widget class="QTabWidget" name="indexWidget">
-       <property name="currentIndex">
-        <number>1</number>
-       </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>Tab 1</string>
-        </attribute>
-       </widget>
-       <widget class="QWidget" name="tabIndexes">
-        <attribute name="title">
-         <string>Indexes</string>
-        </attribute>
-       </widget>
-      </widget>
       <widget class="QWidget" name="helpWidget" native="true">
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">

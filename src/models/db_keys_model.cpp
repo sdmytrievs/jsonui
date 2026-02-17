@@ -133,11 +133,13 @@ void DBKeysModel::remove(size_t row)
 
 std::string DBKeysModel::read_query_doc(std::string doc_id)
 {
-    std::string doc_json;
-    //QMetaObject::invokeMethod(dbdocument, [&]() {
-        doc_json = dbdocument->returnDocumentQuery(doc_id);
-    //});
-    return doc_json;
+    QString doc_json, docid;
+    docid = QString::fromStdString(doc_id);
+    QMetaObject::invokeMethod(dbdocument, "returnDocumentQuery",
+                              Qt::DirectConnection,
+                              qReturnArg(doc_json),
+                              docid);
+    return doc_json.toStdString();
 }
 
 void DBKeysModel::backup_records(QString file, std::vector<std::string> &&keys)

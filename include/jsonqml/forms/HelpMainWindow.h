@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QTextBrowser>
 
+// Not implemented scroll to unchor
+
 namespace Ui {
 class HelpWindowData;
 }
@@ -54,6 +56,7 @@ protected slots:
 
     void action_find_next();
     void action_find_previous();
+    void updateDocPage(const QString& mdtext);
 
 public:
     static HelpMainWindow* pDia;

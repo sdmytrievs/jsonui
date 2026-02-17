@@ -31,16 +31,17 @@ struct DocPagesData {
     /// Last modified
     QDateTime last_modif;
 
-    QString fileName() const;
-
+    int docType(const std::string& ext) const;
     void setRecordKey(const std::string& akey);
     void setMarkdownRecord(const std::string& akey, const QString& mdtext);
 
-    void toJsonNode(jsonio::JsonBase& object) const;
-    void fromJsonNode(const jsonio::JsonBase& object);
+    QString fileName() const;
+
+    std::string to_json_node(const std::string& doc_id);
+    void from_json_node(const jsonio::JsonBase &object);
 
     void setFileInfo(const QString& file, bool test_modif = true);
-    void readFile(int atype, const QString& fileName);
+    void readFile(int atype, const QString& file);
     void saveFile(const QString& help_dir);
     void deleteFile(const QString& help_dir);
 };
@@ -52,15 +53,10 @@ class HelpClient : public VertexClient
     Q_DISABLE_COPY(HelpClient)
 
     Q_PROPERTY(bool canEdit READ canEdit CONSTANT)
-    Q_PROPERTY(QString markdown READ markdown WRITE setMarkdown NOTIFY markdownChanged)
+    Q_PROPERTY(QString currentId READ currentId WRITE setCurrentId NOTIFY currentIdChanged)
 
 signals:
-    void markdownChanged();
-    void updatedMarkdown(const QString &makdown, const QString &anchor);
-
-public slots:
-    void setMarkdown(const QString &md_doc);
-    void updateHelpData();
+    void currentIdChanged(QString id);
 
 public:
     /// Extern flag to edit docpages
@@ -71,19 +67,21 @@ public:
     explicit HelpClient(QObject *parent = nullptr);
 
     bool canEdit() const;
-    const QString &markdown() const;
+    QString currentId() const;
+    void setCurrentId(QString doc_key);
 
     Q_INVOKABLE std::string recordKey(const std::string& name, const std::string& ext) const;
-    Q_INVOKABLE void showHelp(const QString &name, const QString &item);
-    Q_INVOKABLE void showDocument(int ndx);
+    Q_INVOKABLE QString urlfromOid(const std::string &doc_id, int& type);
+    Q_INVOKABLE QString linktoOid(const std::string &doc_id);
 
-    Q_INVOKABLE QVariant readResource(const QUrl& url);
+    Q_INVOKABLE void addFileDocument(int type, const QString &name, const QString &path);
+    Q_INVOKABLE void saveMarkdownDocument(const QString& akey, const QString& mdtext);
+
+    Q_INVOKABLE QVariant readResource(int type, const QUrl& url);
 
 protected:
     std::string help_collection_name;
-    QString anchor_item = "";
-    DocPagesData doc_page;
-
+    QString last_readed_md_id;
 };
 
 }

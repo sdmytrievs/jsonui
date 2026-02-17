@@ -89,7 +89,7 @@ public:
     /// Generate the incoming edges query ( edge_collections - comma-separated edges collections list ).
     static jsonio::DBQueryBase inEdgesQuery(const QString& id_vertex, const QString& edge_collections = "");
 
-    Q_INVOKABLE std::string returnDocumentQuery(std::string doc_id);
+    Q_INVOKABLE QString returnDocumentQuery(QString doc_id);
 
 protected:
 
