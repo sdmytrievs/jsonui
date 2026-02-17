@@ -33,6 +33,8 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
     ui->qSchema->insertItems(0, schemas);
 
     query_client.reset(new VertexClient(Resource, query_shema_name, new_schema_query(), {}, this));
+    connect(query_client.get(), &VertexClient::editorChanged,
+            this, &QueryWidget::editor_changed);
 
     // set up select model
     lstmodel = new QStringListModel(this);
@@ -127,7 +129,6 @@ void QueryWidget::CmRead()
         auto selndx = sel_dlg.selIndex();
         if(selndx>=0) {
             query_client->readEditorData(selndx);
-            from_json_node(query_client->jsonmodel()->current_object());  /// posible exception
         }
     }
 }
@@ -237,6 +238,11 @@ void QueryWidget::select_restore()
 {
     query_description.setFields(default_query.fields());
     lstmodel->setStringList(transform2qt(query_description.fields()));
+}
+
+void QueryWidget::editor_changed()
+{
+    from_json_node(query_client->jsonmodel()->current_object());
 }
 
 

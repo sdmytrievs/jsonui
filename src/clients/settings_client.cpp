@@ -4,8 +4,8 @@
 #include <QtGui/QGuiApplication>
 
 #include "jsonqml/clients/settings_client.h"
+#include "jsonqml/clients/help_client.h"
 #include "jsonqml/models/schema_model.h"
-#include "jsonqml/forms/json_view.h"
 #include "jsonqml/arango_database.h"
 #include "jsonio/io_settings.h"
 #include <spdlog/sinks/stdout_color_sinks.h>
@@ -101,8 +101,8 @@ void PreferencesPrivate::apply_changes_to_static()
     JsonSchemaModel::showComments = jsonui_group.value("ShowComments", JsonSchemaModel::showComments);
     JsonSchemaModel::useEnumNames = jsonui_group.value("ShowEnumNames", JsonSchemaModel::useEnumNames);
     JsonSchemaModel::editID = jsonui_group.value("CanEdit_id", JsonSchemaModel::editID);
-    JsonView::expandedFields = jsonui_group.value("KeepExpanded", JsonView::expandedFields);
-    //HelpMainWindow::editHelp = jsonui_group.value("CanEditDocPages", HelpMainWindow::editHelp);
+    JsonClient::expanded_fields = jsonui_group.value("KeepExpanded", JsonClient::expanded_fields);
+    HelpClient::edit_help = jsonui_group.value("CanEditDocPages", HelpClient::edit_help);
     ui_logger->debug("Applied changes to internal static values");
 }
 
@@ -143,8 +143,8 @@ void PreferencesPrivate::read_other_settings()
     q->show_comments = jsonui_group.value("ShowComments", JsonSchemaModel::showComments);
     q->show_enumnames = jsonui_group.value("ShowEnumNames", JsonSchemaModel::useEnumNames);
     q->can_edit_id = jsonui_group.value("CanEdit_id", JsonSchemaModel::editID);
-    q->keep_expanded = jsonui_group.value("KeepExpanded", true); // JsonView::expandedFields
-    q->can_edit_doc_pages = jsonui_group.value("CanEditDocPages", false); // HelpMainWindow::editHelp
+    q->keep_expanded = jsonui_group.value("KeepExpanded", JsonClient::expanded_fields);
+    q->can_edit_doc_pages = jsonui_group.value("CanEditDocPages", HelpClient::edit_help);
 
     apply_changes_to_static();
 }

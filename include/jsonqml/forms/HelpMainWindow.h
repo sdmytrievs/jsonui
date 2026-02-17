@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QTextBrowser>
 
-// Not implemented scroll to unchor
+// Not implemented scroll to anchor
 
 namespace Ui {
 class HelpWindowData;

@@ -52,6 +52,7 @@ protected slots:
     void AQL_toggled(bool checked);
     void schema_changed(const QString& text);
     void select_restore();
+    void editor_changed();
 
 public:
     /// Extern query document schema name ( default "Query" )

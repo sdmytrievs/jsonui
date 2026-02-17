@@ -16,7 +16,8 @@ class JsonClient : public QObject
     Q_PROPERTY(QStringList schemasList READ schemasList WRITE setSchemaList NOTIFY listChanged)
 
     Q_PROPERTY(JsonBaseModel* jsonmodel READ jsonmodel NOTIFY jsonModelChanged)
-    Q_PROPERTY(QStringList headerNames READ headerNames)
+    Q_PROPERTY(QStringList headerNames READ headerNames CONSTANT)
+    Q_PROPERTY(bool expandedFields READ expandedFields CONSTANT)
 
     Q_DISABLE_COPY(JsonClient)
 
@@ -25,13 +26,19 @@ signals:
     void schemaChanged();
     void jsonModelChanged();
     void jsonModelAboutChanged();
+    void editorChanged();
 
 public slots:
     void setSchema(const QString &new_schema);
     virtual void setModelSchema();
     void updateSchemaList();
+    void setEditorData(std::string schema_name, std::string doc_json);
 
 public:
+    /// Extern flag to keep data fields expanded
+    static bool expanded_fields;
+    static bool expandedFields();
+
     explicit JsonClient(QObject *parent = nullptr);
     ~JsonClient();
 

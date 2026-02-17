@@ -46,6 +46,7 @@ HEADERS += \
     include/jsonqml/forms/EdgesWidget.h \
     include/jsonqml/forms/FieldsSelectDialog.h \
     include/jsonqml/forms/FileDialogs.h \
+    include/jsonqml/forms/FormatImpexWidget.h \
     include/jsonqml/forms/GraphDialog.h \
     include/jsonqml/forms/HelpMainWindow.h \
     include/jsonqml/forms/JsonEditWidget.h \
@@ -107,6 +108,7 @@ SOURCES += \
     src/forms/EdgesWidget.cpp \
     src/forms/FieldsSelectDialog.cpp \
     src/forms/FileDialogs.cpp \
+    src/forms/FormatImpexWidget.cpp \
     src/forms/GraphDialog.cpp \
     src/forms/HelpEditDialog.cpp \
     src/forms/HelpFileDialog.cpp \
@@ -146,6 +148,7 @@ FORMS += \
     src/forms/CalcDialog.ui \
     src/forms/EdgesWidget.ui \
     src/forms/FieldsSelectDialog.ui \
+    src/forms/FormatImpexWidget.ui \
     src/forms/GraphDialog.ui \
     src/forms/HelpEditDialog.ui \
     src/forms/HelpFileDialog.ui \

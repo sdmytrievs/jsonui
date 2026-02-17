@@ -30,6 +30,7 @@ public:
     virtual bool update_schema(QString new_schema);
     virtual void update_jsonmodel();
 
+    void set_editor_data(std::string schema_name, std::string doc_json);
     virtual bool set_json(const std::string& json_string, const QString& schema_name="");
     virtual const jsonio::JsonBase& get_json(const QString& schema_name="") const;
 

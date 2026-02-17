@@ -25,11 +25,11 @@ signals:
     void tablePropertiesChanged();
     void executingChange(bool exec);
     void updatedKeyList(std::string doc_id);
-    void editorChanged();
+    //void editorChanged();
 
 public slots:
     void setModelSchema() override;
-    void setEditorData(std::string schema_name, std::string doc_json);
+    //void setEditorData(std::string schema_name, std::string doc_json);
     void setEditorOid(std::string doc_id);
     void updateKeyList();
 

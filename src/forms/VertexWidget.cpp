@@ -93,7 +93,7 @@ void VertexWidget::updateViewMenu()
     ui->action_Show_comments->setChecked(JsonSchemaModel::showComments);
     ui->action_Display_enums->setChecked(JsonSchemaModel::useEnumNames);
     ui->action_Edit_id->setChecked(JsonSchemaModel::editID);
-    ui->actionKeep_Data_Fields_Expanded->setChecked(JsonView::expandedFields);
+    ui->actionKeep_Data_Fields_Expanded->setChecked(JsonClient::expanded_fields);
 }
 
 std::string VertexWidget::currentKey() const

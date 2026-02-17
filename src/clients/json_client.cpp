@@ -7,6 +7,7 @@
 
 namespace jsonqml {
 
+bool JsonClient::expanded_fields = true;
 const QString JsonClientPrivate::no_schema_name = "None";
 
 JsonClientPrivate::JsonClientPrivate():
@@ -71,6 +72,11 @@ bool JsonClientPrivate::set_json(const std::string& json_string, const QString& 
     return true;
 }
 
+void JsonClientPrivate::set_editor_data(std::string schema_name, std::string doc_json)
+{
+    set_json(doc_json, QString::fromStdString(schema_name));
+}
+
 //--------------------------------------------------------------------------
 
 JsonClient::JsonClient(JsonClientPrivate* impl, QObject *parent):
@@ -90,6 +96,11 @@ JsonClient::JsonClient(QObject *parent):
 }
 
 JsonClient::~JsonClient() {}
+
+bool JsonClient::expandedFields()
+{
+    return expanded_fields;
+}
 
 const QString &JsonClient::schema()
 {
@@ -140,6 +151,17 @@ void JsonClient::setSchemaList(const QStringList &new_list)
         emit listChanged();
         // set up no schema selected
         setSchema(impl_func()->new_list_default_schema());
+    }
+}
+
+void JsonClient::setEditorData(std::string schema_name, std::string doc_json)
+{
+    try {
+        impl_func()->set_editor_data(schema_name, doc_json);
+        emit editorChanged();
+    }
+    catch(std::exception& e) {
+        uiSettings().setError(e.what());
     }
 }
 

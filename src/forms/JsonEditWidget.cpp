@@ -198,10 +198,10 @@ void JsonEditWidget::set_actions()
     */
 
     if(!collection_name.isEmpty()) {
-        QObject::connect( ui->action_Update, &QAction::triggered, this, &JsonEditWidget::CmUpdate);
-        QObject::connect( ui->action_Backup, &QAction::triggered, this, &JsonEditWidget::CmBackup);
-        QObject::connect( ui->action_Delete_list, &QAction::triggered, this, &JsonEditWidget::CmDeleteList);
-        QObject::connect( ui->action_Read, &QAction::triggered, this, &JsonEditWidget::CmRead);
+        QObject::connect(ui->action_Update, &QAction::triggered, this, &JsonEditWidget::CmUpdate);
+        QObject::connect(ui->action_Backup, &QAction::triggered, this, &JsonEditWidget::CmBackup);
+        QObject::connect(ui->action_Delete_list, &QAction::triggered, this, &JsonEditWidget::CmDeleteList);
+        QObject::connect(ui->action_Read, &QAction::triggered, this, &JsonEditWidget::CmRead);
     }
     else {
         ui->menu_Database->menuAction()->setVisible(false);

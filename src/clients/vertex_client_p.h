@@ -34,7 +34,7 @@ public:
     virtual void update_keysmodel();
 
     virtual void read_editor_data(int row);
-    void set_editor_data(std::string schema_name, std::string doc_json);
+    //void set_editor_data(std::string schema_name, std::string doc_json);
     std::string id_from_editor();
     void id_to_editor(std::string doc_id);
 

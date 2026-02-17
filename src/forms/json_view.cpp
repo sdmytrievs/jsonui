@@ -15,8 +15,6 @@
 
 namespace jsonqml {
 
-bool JsonView::expandedFields = true;
-
 /// Internal structure to save expanded fields
 class ExpandedLevelLine
 {
@@ -418,7 +416,7 @@ void JsonView::saveExpandedRows()
 
 void JsonView::getExpandedRows()
 {
-    if(expandedFields) {
+    if(json_client->expandedFields()) {
         restore_expanded_state(expanded_rows);
     }
     else {

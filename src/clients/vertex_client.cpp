@@ -139,10 +139,10 @@ void VertexClientPrivate::read_editor_data(int row)
     }
 }
 
-void VertexClientPrivate::set_editor_data(std::string schema_name, std::string doc_json)
-{
-    set_json(doc_json, QString::fromStdString(schema_name));
-}
+// void VertexClientPrivate::set_editor_data(std::string schema_name, std::string doc_json)
+// {
+//     set_json(doc_json, QString::fromStdString(schema_name));
+// }
 
 std::string VertexClientPrivate::id_from_editor()
 {
@@ -230,16 +230,16 @@ void VertexClient::setModelSchema()
     }
 }
 
-void VertexClient::setEditorData(std::string schema_name, std::string doc_json)
-{
-    try {
-        impl_func()->set_editor_data(schema_name, doc_json);
-        emit editorChanged();
-    }
-    catch(std::exception& e) {
-        uiSettings().setError(e.what());
-    }
-}
+// void VertexClient::setEditorData(std::string schema_name, std::string doc_json)
+// {
+//     try {
+//         impl_func()->set_editor_data(schema_name, doc_json);
+//         emit editorChanged();
+//     }
+//     catch(std::exception& e) {
+//         uiSettings().setError(e.what());
+//     }
+// }
 
 void VertexClient::setEditorOid(std::string doc_id)
 {
