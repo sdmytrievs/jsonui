@@ -5,9 +5,9 @@
 list(APPEND CMAKE_PREFIX_PATH $ENV{CONDA_PREFIX})
 
 # Include the cmake targets of the project if they have not been yet.
-if(NOT TARGET jsonqml::jsonqml)
-    include("@PACKAGE_JSONQML_INSTALL_CONFIGDIR@/jsonqmlTargets.cmake")
+if(NOT TARGET jsonui::jsonui)
+    include("@PACKAGE_JSONUI_INSTALL_CONFIGDIR@/jsonuiTargets.cmake")
 endif()
 
 # Recommended check at the end of a cmake config file.
-check_required_components(jsonqml)
+check_required_components(jsonui)

@@ -2,9 +2,7 @@
 #define ARANGODB_H
 
 #include <map>
-#include <string>
 #include <QObject>
-#include <QQmlEngine>
 #include "jsonio/dbquerybase.h"
 
 namespace jsonqml {

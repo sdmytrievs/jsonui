@@ -2,7 +2,7 @@
 
 #include <QObject>
 #include <QColor>
-#include <QQuickImageProvider>
+//#include <QQuickImageProvider>
 
 #ifndef NO_JSONIO
 namespace jsonio {
@@ -142,16 +142,16 @@ private:
     int xcolumn;
 };
 
-class ChartImageProvider : public QQuickImageProvider
-{
-public:
-    ChartImageProvider()
-        : QQuickImageProvider(QQuickImageProvider::Pixmap)
-    {}
+// class ChartImageProvider : public QQuickImageProvider
+// {
+// public:
+//     ChartImageProvider()
+//         : QQuickImageProvider(QQuickImageProvider::Pixmap)
+//     {}
 
-    QPixmap requestPixmap(const QString &id, QSize *size,
-                          const QSize &requestedSize) override;
-};
+//     QPixmap requestPixmap(const QString &id, QSize *size,
+//                           const QSize &requestedSize) override;
+// };
 
 } // namespace jsonqml
 

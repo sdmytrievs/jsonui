@@ -15,7 +15,7 @@
 #include "jsonqml/forms/SymbolDialog.h"
 #include "jsonqml/forms/chart_view.h"
 #include "jsonqml/forms/FileDialogs.h"
-#include "src/charts/markershapes.h"
+#include "../charts/markershapes.h"
 
 namespace jsonqml {
 

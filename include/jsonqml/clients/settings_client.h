@@ -1,10 +1,9 @@
 ﻿#ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <string>
 #include <QObject>
-#include <QQmlEngine>
-
+#include <QUrl>
+#include <QDebug>
 #include "jsonio/io_settings.h"
 
 namespace jsonqml {

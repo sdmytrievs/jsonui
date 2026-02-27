@@ -3,7 +3,7 @@
 #include <QRadioButton>
 #include "ui_SymbolDialog.h"
 #include "jsonqml/forms/SymbolDialog.h"
-#include "src/charts/markershapes.h"
+#include "../charts/markershapes.h"
 
 namespace jsonqml {
 

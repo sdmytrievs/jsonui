@@ -1,8 +1,8 @@
 # Require a certain version of cmake
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.16..4.2)
 
 # Set the name of the project
-project(jsonqml VERSION 1.0.0 LANGUAGES CXX)
+project(jsonui VERSION 1.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,8 +24,8 @@ include(CondaAware)
 # Define which types of libraries to build
 option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_STATIC_LIBS "Build static libraries" ON)
-option(BuildTools "Build BuildTools" ON)
-option(BuildTests "Build test suite" ON)
+option(BUILD_APP "Build application." ON)
+option(DEPLOY_APP "Deploy application." ON)
 
 # Used into conda only
 if(DEFINED ENV{CONDA_PREFIX})
@@ -36,25 +36,94 @@ endif()
 
 # Set the default build type to Release
 if(NOT CMAKE_BUILD_TYPE)
-    message(STATUS "Setting build type to 'Release' as none was specified.")
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    # The build type selection for the project
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the build type for ${PROJECT_NAME}." FORCE)
+    # The build type options for the project
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release MinSizeRel RelWithDebInfo)
 endif()
 
 # Currently is not setup to produce a dynamic library using MSVC, only static
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
     set(BUILD_SHARED_LIBS OFF)
+else()
+#    set(BUILD_STATIC_LIBS OFF)
+endif()
+
+if(BUILD_APP)
+   set(BUILD_STATIC_LIBS ON)
 endif()
 
 # Set libraries to be compiled with position independent code mode (i.e., fPIC option in GNU compilers)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-# Find Qt dependencies
-find_package(Qt6 6.2 COMPONENTS Gui Quick Charts Concurrent Svg PrintSupport Test REQUIRED)
-qt_standard_project_setup(REQUIRES 6.8)
-
 # Find other dependencies
-include(jsonqmlFindDeps)
+include(jsonuiFindDeps)
+
+# Find Qt dependencies
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets Charts Concurrent PrintSupport Svg Sql)
+qt_standard_project_setup()
+
+# Versioning
+set(JSONUI_VERSION "${PROJECT_VERSION}")
+find_package(Git)
+if(GIT_FOUND)
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE JSONUI_VERSION_HASH
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+  execute_process(
+    COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    OUTPUT_VARIABLE JSONUI_GIT_BRANCH
+    ERROR_QUIET
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    if(NOT JSONUI_VERSION_HASH)
+        set(JSONUI_VERSION_HASH "---")
+    endif()
+    if(NOT JSONUI_GIT_BRANCH)
+        set(JSONUI_GIT_BRANCH "---")
+    endif()
+else()
+  set(JSONUI_VERSION_HASH "<unknown>")
+  set(JSONUI_GIT_BRANCH "<unknown>")
+endif()
+
+set(JSONUI_OSX "${CMAKE_SYSTEM_NAME}")
+set(JSONUI_COMPILER_ID "${CMAKE_CXX_COMPILER_ID}")
+set(JSONUI_COMPILER_VERSION "${CMAKE_CXX_COMPILER_VERSION}")
+set(JSONUI_QT_VERSION "${Qt6_VERSION}")
+
+configure_file(
+  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/jsonui_version.h.in"
+  "${CMAKE_CURRENT_SOURCE_DIR}/src/jsonui_version.h"
+  @ONLY
+  )
+
+# Set the list of compiler flags for Clang compiler
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
+    add_compile_options(-Wall -Wno-ignored-attributes -Wno-pedantic -Wno-variadic-macros -Wno-deprecated)
+endif()
+
+# Set the list of compiler flags for Intel compiler
+if(${CMAKE_CXX_COMPILER_ID} MATCHES "Intel")
+    add_compile_options(-Wall -Wno-stringop-truncation -Wno-array-bounds -Wno-stringop-overflow)
+endif()
+
+# Set the list of compiler flags for MSVC compiler
+if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
+    add_compile_options(
+        /D_SCL_SECURE_NO_WARNINGS
+        /D_CRT_SECURE_NO_WARNINGS=1
+        /MP4
+        /EHsc
+        /D_SILENCE_TR1_NAMESPACE_DEPRECATION_WARNING
+        /DNOMINMAX
+    )
+endif()
 
 if(${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")
    include_directories("/usr/local/include")
@@ -65,26 +134,24 @@ if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
    link_directories("c:/usr/local/lib")
 endif()
 
-# Set the jsonqml header directory path
-set(JSONQML_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
-set(JSONQML_HEADER_DIR ${CMAKE_SOURCE_DIR}/include)
+# Set some necessary definitions
+add_definitions(-DIMPEX_OFF)
+
+# Set the jsonui header directory path
+set(JSONUI_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
+set(JSONUI_HEADER_DIR ${CMAKE_SOURCE_DIR}/include)
 
 # Set the include directories
-include_directories(${JSONQML_HEADER_DIR})
+include_directories(${JSONUI_HEADER_DIR})
 
-# Build jsonqml library
+# Build jsonui library
 add_subdirectory(src)
 
-# Build the examples
-if(BuildTools)
-    add_subdirectory(tools)
+# Build the application
+if(BUILD_APP)
+    add_subdirectory(App)
 endif()
 
-# Run the tests
-if(BuildTests)
-    add_subdirectory(tests)
-endif()
-
-# Install the cmake config files that permit users to use find_package(jsonqml)
-include(jsonqmlInstallCMakeConfigFiles)
+# Install the cmake config files that permit users to use find_package(jsonui)
+include(jsonuiInstallCMakeConfigFiles)
 

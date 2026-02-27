@@ -101,18 +101,18 @@ void SeriesLineData::fromJsonObject(const QJsonObject& json)
     line_name = json["gnm"].toString("");
 }
 
-QPixmap ChartImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
-{
-    //qDebug() << " id " << id;
-    QStringList data = id.split("/", Qt::KeepEmptyParts);
-    SeriesLineData line_data("", data[0].toInt(), 8, data[1].toInt(), 1, 0, data[2]);
-    if(size) {
-        *size = QSize(32, 32);
-    }
-    QSize asize(requestedSize.width() > 0 ? requestedSize.width() : 32,
-                   requestedSize.height() > 0 ? requestedSize.height() : 32);
-    return markerShapePixmap(line_data, asize);
-}
+// QPixmap ChartImageProvider::requestPixmap(const QString &id, QSize *size, const QSize &requestedSize)
+// {
+//     //qDebug() << " id " << id;
+//     QStringList data = id.split("/", Qt::KeepEmptyParts);
+//     SeriesLineData line_data("", data[0].toInt(), 8, data[1].toInt(), 1, 0, data[2]);
+//     if(size) {
+//         *size = QSize(32, 32);
+//     }
+//     QSize asize(requestedSize.width() > 0 ? requestedSize.width() : 32,
+//                    requestedSize.height() > 0 ? requestedSize.height() : 32);
+//     return markerShapePixmap(line_data, asize);
+// }
 
 } // namespace jsonqml
 

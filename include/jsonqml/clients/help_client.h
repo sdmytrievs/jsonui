@@ -1,6 +1,7 @@
 #ifndef HELPCLIENT_H
 #define HELPCLIENT_H
 
+#include <QDateTime>
 #include "jsonqml/clients/vertex_client.h"
 
 namespace jsonqml {
