@@ -9,7 +9,7 @@ file(GLOB_RECURSE HEADER_FILES  *.h )
 # Recursively collect all source files from the current directory
 file(GLOB_RECURSE SOURCE_FILES  *.cpp )
 
-file(GLOB QRC_FILES ../*.qrc)
+file(GLOB QRC_FILES *.qrc)
 qt_add_resources(JSONUI_SRCS ${QRC_FILES})
 
 
@@ -20,7 +20,7 @@ if(BUILD_SHARED_LIBS)
 
    qt_add_library(jsonui SHARED
         ${SOURCE_FILES} ${HEADER_FILES_TOP} 
-        ${HEADER_FILES} ${JSONUI_SRCS} 
+        ${HEADER_FILES} ${JSONUI_SRCS}
    )
     
 

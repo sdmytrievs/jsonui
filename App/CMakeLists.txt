@@ -45,9 +45,9 @@ target_sources(jsonui-app
 )
 
 if(${CMAKE_CXX_COMPILER_ID} STREQUAL MSVC)
-  target_link_libraries (jsonui-app PRIVATE jsonui-static jsonio::jsonio)
+  target_link_libraries (jsonui-app PRIVATE jsonui jsonio::jsonio)
 else()
-  target_link_libraries (jsonui-app PRIVATE jsonui-static jsonio::jsonio)
+  target_link_libraries (jsonui-app PRIVATE jsonui jsonio::jsonio)
 endif()
 
 install(TARGETS jsonui-app

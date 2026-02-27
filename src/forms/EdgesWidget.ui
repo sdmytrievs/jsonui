@@ -311,7 +311,7 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -326,7 +326,7 @@
   </action>
   <action name="action_Read">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
    </property>
    <property name="text">
@@ -341,7 +341,7 @@
   </action>
   <action name="action_Update">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
    </property>
    <property name="text">
@@ -353,7 +353,7 @@
   </action>
   <action name="action_Delete">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -362,7 +362,7 @@
   </action>
   <action name="actionImport_Json_File">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
    </property>
    <property name="text">
@@ -377,7 +377,7 @@
   </action>
   <action name="actionExport_Json_File">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -454,7 +454,7 @@
   </action>
   <action name="actionContents">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -479,7 +479,7 @@
   </action>
   <action name="actionSearch">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -499,7 +499,7 @@
   </action>
   <action name="actionSearch_Results">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/ShowGEMResultsIcon24.png</normaloff>:/menu/Icons/ShowGEMResultsIcon24.png</iconset>
    </property>
    <property name="text">
@@ -580,7 +580,7 @@
   </action>
   <action name="actionNext_Record">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DisplayNextRecordIcon24.png</normaloff>:/menu/Icons/DisplayNextRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -592,7 +592,7 @@
   </action>
   <action name="actionPrevious_Record">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DisplayPrevRecordIcon24.png</normaloff>:/menu/Icons/DisplayPrevRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -623,7 +623,7 @@
   </action>
   <action name="action_Clone_Structured_Data_Object">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCloneRecordIcon24.png</normaloff>:/menu/Icons/NewCloneRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -653,7 +653,7 @@
   </action>
   <action name="actionFollow_In_Vertex">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/Incoming24.png</normaloff>:/menu/Icons/Incoming24.png</iconset>
    </property>
    <property name="text">
@@ -668,7 +668,7 @@
   </action>
   <action name="actionFollow_Out_Vertex">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/outgoing24.png</normaloff>:/menu/Icons/outgoing24.png</iconset>
    </property>
    <property name="text">
@@ -705,7 +705,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../jsonui.qrc"/>
+  <include location="../jsonui.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -354,7 +354,7 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -369,7 +369,7 @@
   </action>
   <action name="actionImport_File">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
    </property>
    <property name="text">
@@ -384,7 +384,7 @@
   </action>
   <action name="actionExport_File">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</normaloff>:/menu/Icons/SaveCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -472,7 +472,7 @@
   </action>
   <action name="actionContents">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -528,7 +528,7 @@
   </action>
   <action name="actionClone">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCloneRecordIcon24.png</normaloff>:/menu/Icons/NewCloneRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -555,7 +555,7 @@
   </action>
   <action name="action_Delete">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -564,7 +564,7 @@
   </action>
   <action name="action_Update">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
    </property>
    <property name="text">
@@ -576,7 +576,7 @@
   </action>
   <action name="action_Read">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
    </property>
    <property name="text">
@@ -591,7 +591,7 @@
   </action>
   <action name="actionSelect_Data_File">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/Imp-exp-foreign.png</normaloff>:/menu/Icons/Imp-exp-foreign.png</iconset>
    </property>
    <property name="text">
@@ -606,7 +606,7 @@
   </action>
   <action name="action_Run_script">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/action-import.png</normaloff>:/menu/Icons/action-import.png</iconset>
    </property>
    <property name="text">
@@ -618,7 +618,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/action-export.png</normaloff>:/menu/Icons/action-export.png</iconset>
    </property>
    <property name="text">
@@ -644,7 +644,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../jsonui.qrc"/>
+  <include location="../jsonui.qrc"/>
  </resources>
  <connections/>
 </ui>

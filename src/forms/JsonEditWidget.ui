@@ -164,7 +164,7 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCreateRecordIcon24.png</normaloff>:/menu/Icons/NewCreateRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -272,7 +272,7 @@
   </action>
   <action name="actionContents">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -328,7 +328,7 @@
   </action>
   <action name="action_Clone_Structured_Data_Object">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/NewCloneRecordIcon24.png</normaloff>:/menu/Icons/NewCloneRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -358,7 +358,7 @@
   </action>
   <action name="action_Delete_list">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -370,7 +370,7 @@
   </action>
   <action name="action_Update">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
    </property>
    <property name="text">
@@ -382,7 +382,7 @@
   </action>
   <action name="action_Read">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
    </property>
    <property name="text">
@@ -414,7 +414,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../../jsonui.qrc"/>
+  <include location="../jsonui.qrc"/>
  </resources>
  <connections/>
 </ui>

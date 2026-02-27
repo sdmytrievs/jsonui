@@ -245,7 +245,7 @@
   </action>
   <action name="actionPlot_Results">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/PlotDataOnGraphIcon24.png</normaloff>:/menu/Icons/PlotDataOnGraphIcon24.png</iconset>
    </property>
    <property name="text">
@@ -260,7 +260,7 @@
   </action>
   <action name="action_Help">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -269,7 +269,7 @@
   </action>
  </widget>
  <resources>
-  <include location="../../jsonui.qrc"/>
+  <include location="../jsonui.qrc"/>
  </resources>
  <connections/>
 </ui>

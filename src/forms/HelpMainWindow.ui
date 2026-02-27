@@ -191,7 +191,7 @@
   </widget>
   <action name="actionHome">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/HomeInHelpMenu24.png</normaloff>:/menu/Icons/HomeInHelpMenu24.png</iconset>
    </property>
    <property name="text">
@@ -200,7 +200,7 @@
   </action>
   <action name="actionBack">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DisplayPrevRecordIcon24.png</normaloff>:/menu/Icons/DisplayPrevRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -209,7 +209,7 @@
   </action>
   <action name="actionForward">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DisplayNextRecordIcon24.png</normaloff>:/menu/Icons/DisplayNextRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -223,7 +223,7 @@
   </action>
   <action name="action_Print">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/PrintDataToFileIcon24.png</normaloff>:/menu/Icons/PrintDataToFileIcon24.png</iconset>
    </property>
    <property name="text">
@@ -242,7 +242,7 @@
   </action>
   <action name="actionFind_Next">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/SearchForwardIcon24.png</normaloff>:/menu/Icons/SearchForwardIcon24.png</iconset>
    </property>
    <property name="text">
@@ -254,7 +254,7 @@
   </action>
   <action name="actionFind_Previous">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/SearchBackwardIcon24.png</normaloff>:/menu/Icons/SearchBackwardIcon24.png</iconset>
    </property>
    <property name="text">
@@ -306,7 +306,7 @@
   </action>
   <action name="actionHelp_on_Help">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -315,7 +315,7 @@
   </action>
   <action name="action_Read_another_Docpage_from_DB">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/load_db.png</normaloff>:/menu/Icons/load_db.png</iconset>
    </property>
    <property name="text">
@@ -324,7 +324,7 @@
   </action>
   <action name="action_Edit_DocPage">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/RemakeRecordIcon24.png</normaloff>:/menu/Icons/RemakeRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -339,7 +339,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/save_db.png</normaloff>:/menu/Icons/save_db.png</iconset>
    </property>
    <property name="text">
@@ -348,7 +348,7 @@
   </action>
   <action name="action_Delete_Docpages_from_DB">
    <property name="icon">
-    <iconset resource="../../jsonui.qrc">
+    <iconset resource="../jsonui.qrc">
      <normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</normaloff>:/menu/Icons/DeleteCurrentRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -360,7 +360,7 @@
   </action>
  </widget>
  <resources>
-  <include location="../../jsonui.qrc"/>
+  <include location="../jsonui.qrc"/>
  </resources>
  <connections>
   <connection>

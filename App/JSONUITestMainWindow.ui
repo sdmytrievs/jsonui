@@ -92,7 +92,7 @@
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAdd_schema_file">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/DetailedCSDIcon24.png</normaloff>:/menu/Icons/DetailedCSDIcon24.png</iconset>
    </property>
    <property name="text">
@@ -109,7 +109,7 @@
   </action>
   <action name="actionNewVertex">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/DocumentDatabaseIcon24.png</normaloff>:/menu/Icons/DocumentDatabaseIcon24.png</iconset>
    </property>
    <property name="text">
@@ -124,7 +124,7 @@
   </action>
   <action name="actionPreferences">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/SetKeyTemplateIcon24.png</normaloff>:/menu/Icons/SetKeyTemplateIcon24.png</iconset>
    </property>
    <property name="text">
@@ -139,7 +139,7 @@
   </action>
   <action name="action_Help_About">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -164,7 +164,7 @@
   </action>
   <action name="actionContents">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/QuestionMessageIcon24.png</normaloff>:/menu/Icons/QuestionMessageIcon24.png</iconset>
    </property>
    <property name="text">
@@ -189,7 +189,7 @@
   </action>
   <action name="actionSet_I_O_Files_Location">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
    </property>
    <property name="text">
@@ -204,7 +204,7 @@
   </action>
   <action name="actionSet_Database_Location">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/DatabaseModeIcon24.png</normaloff>:/menu/Icons/DatabaseModeIcon24.png</iconset>
    </property>
    <property name="text">
@@ -221,7 +221,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/CancelIcon24.png</normaloff>:/menu/Icons/CancelIcon24.png</iconset>
    </property>
    <property name="text">
@@ -230,7 +230,7 @@
   </action>
   <action name="actionNew_Edge_Editor_Window">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/DualThModuleIcon24.png</normaloff>:/menu/Icons/DualThModuleIcon24.png</iconset>
    </property>
    <property name="text">
@@ -245,7 +245,7 @@
   </action>
   <action name="actionNew_Bson">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/DetailedCSDIcon24.png</normaloff>:/menu/Icons/DetailedCSDIcon24.png</iconset>
    </property>
    <property name="text">
@@ -260,7 +260,7 @@
   </action>
   <action name="actionNew_CSV">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</normaloff>:/menu/Icons/SelectDisplayRecordIcon24.png</iconset>
    </property>
    <property name="text">
@@ -275,7 +275,7 @@
   </action>
   <action name="actionNew_Impex">
    <property name="icon">
-    <iconset resource="../jsonui.qrc">
+    <iconset resource="../src/jsonui.qrc">
      <normaloff>:/menu/Icons/ShowFilesIcon24.png</normaloff>:/menu/Icons/ShowFilesIcon24.png</iconset>
    </property>
    <property name="text">
@@ -301,7 +301,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../jsonui.qrc"/>
+  <include location="../src/jsonui.qrc"/>
  </resources>
  <connections/>
 </ui>

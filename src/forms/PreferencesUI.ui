@@ -14,7 +14,7 @@
    <string>Preferences</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../jsonui.qrc">
+   <iconset resource="../jsonui.qrc">
     <normaloff>:/menu/Icons/RemakeRecordIcon24.png</normaloff>:/menu/Icons/RemakeRecordIcon24.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -232,7 +232,7 @@
   <tabstop>idBox</tabstop>
  </tabstops>
  <resources>
-  <include location="../../jsonui.qrc"/>
+  <include location="../jsonui.qrc"/>
  </resources>
  <connections>
   <connection>

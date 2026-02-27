@@ -1,7 +1,7 @@
 #pragma once
 
 #define JSONUI_VERSION "1.0.0"
-#define JSONUI_VERSION_HASH "a3b7a1c"
+#define JSONUI_VERSION_HASH "274cd3d"
 #define JSONUI_GIT_BRANCH "main"
 #define JSONUI_OSX "Linux"
 #define JSONUI_COMPILER_ID "GNU"

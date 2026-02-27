@@ -175,7 +175,7 @@ OBJECTS_DIR   = obj
 MOC_DIR = tmp
 UI_DIR  = $$MOC_DIR
 
-RESOURCES += jsonui.qrc
+RESOURCES += src/jsonui.qrc
 
 
 include($$JSONIO_DIR/jsonio.pri)
