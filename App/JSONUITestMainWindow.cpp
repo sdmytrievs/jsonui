@@ -31,12 +31,12 @@ TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
             this, &TJSONUITestWin::updateViewMenu);
 
     // init help window
-    try {
+    //try {
         new jsonqml::HelpMainWindow(nullptr);
-    }
-    catch(std::exception& e)  {
-        jsonqml::ui_logger->warn("std exception when open help {}", e.what());
-    }
+    //}
+    //catch(std::exception& e)  {
+    //    jsonqml::ui_logger->warn("std exception when open help {}", e.what());
+    //}
 }
 
 TJSONUITestWin::~TJSONUITestWin()
@@ -270,10 +270,10 @@ void TJSONUITestWin::CmNewImpexFormat()
 
 void TJSONUITestWin::closeEvent(QCloseEvent *e)
 {
-    // if(jsonqml::HelpMainWindow::pDia) {
-    //     jsonqml::HelpMainWindow::pDia->close();
-    //     delete jsonqml::HelpMainWindow::pDia;
-    // }
+    if(jsonqml::HelpMainWindow::pDia) {
+        jsonqml::HelpMainWindow::pDia->close();
+        delete jsonqml::HelpMainWindow::pDia;
+    }
     QWidget::closeEvent(e);
 }
 

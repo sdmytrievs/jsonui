@@ -87,7 +87,10 @@ JsonClient::JsonClient(JsonClientPrivate* impl, QObject *parent):
 
     QObject::connect(this, &JsonClient::schemaChanged, this, &JsonClient::setModelSchema);
     QObject::connect(&uiSettings(), &Preferences::scemasPathChanged, this, &JsonClient::updateSchemaList);
-    QObject::connect(&uiSettings(), &Preferences::modelChanged, jsonmodel(), &JsonBaseModel::updateModel);
+    if(jsonmodel()) {
+        QObject::connect(&uiSettings(), &Preferences::modelChanged,
+                         jsonmodel(), &JsonBaseModel::updateModel, Qt::UniqueConnection);
+    }
 }
 
 JsonClient::JsonClient(QObject *parent):
@@ -150,7 +153,12 @@ void JsonClient::setSchemaList(const QStringList &new_list)
         impl_func()->schema_names_list = new_list;
         emit listChanged();
         // set up no schema selected
-        setSchema(impl_func()->new_list_default_schema());
+        if(!new_list.contains(impl_func()->current_schema_name)) {
+            setSchema(impl_func()->new_list_default_schema());
+        }
+    }
+    else if(!impl_func()->json_tree_model) {
+       emit schemaChanged();
     }
 }
 

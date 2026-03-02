@@ -88,7 +88,8 @@ HEADERS += \
     src/clients/table_client_p.h \
     src/forms/HelpEditDialog.h \
     src/forms/HelpFileDialog.h \
-    src/forms/ModelLineDialog.h
+    src/forms/ModelLineDialog.h \
+    src/jsonui_version.h
 
 SOURCES += \
     #main.cpp \

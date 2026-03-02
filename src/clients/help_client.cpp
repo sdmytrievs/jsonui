@@ -5,7 +5,7 @@
 
 namespace jsonqml {
 
-bool HelpClient::edit_help = true;
+bool HelpClient::edit_help = false;
 QString HelpClient::help_schema_name = "DocPages";
 
 HelpClient::HelpClient(QObject *parent):

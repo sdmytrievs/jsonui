@@ -1,5 +1,7 @@
 # options
 message(STATUS "Building jsonui-app examples: ${JSONUI_APPLICATION}")
+file(COPY "${CMAKE_SOURCE_DIR}/resources" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/")
+file(COPY "${CMAKE_SOURCE_DIR}/resources/jsonui-config.json" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/")
 
 if (WIN32)
 #! [appicon_windows]

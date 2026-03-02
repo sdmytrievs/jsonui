@@ -37,7 +37,7 @@
      },
      "common" :   {
           "WorkDirectoryPath" :   ".",
-          "SchemasDirectory" :   "schemas",
-          "ResourcesDirectory" :   ""
+          "SchemasDirectory" :   "resources/data/schemas",
+          "ResourcesDirectory" :   "resources"
      }
 }

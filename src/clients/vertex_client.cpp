@@ -25,8 +25,8 @@ VertexClientPrivate::VertexClientPrivate(DocumentType dtype,
 void VertexClientPrivate::init()
 {
     uiSettings();
-    qDebug() << "VertexClientPrivate::init";
     schema_names_list = gen_schema_list();
+    qDebug() << "VertexClientPrivate::init " << schema_names_list;
 }
 
 void VertexClientPrivate::init_keys(const QString& aschema)
@@ -42,11 +42,19 @@ void VertexClientPrivate::init_keys(const QString& aschema)
         def_schema = new_list_default_schema();
     }
     update_schema(def_schema);
+    try {
     // alloc editor model
     json_tree_model.reset(new JsonSchemaModel(current_schema_name, header_names));
 
     // define keys model and start query
     update_keysmodel();
+    }
+    catch(std::exception& e) {
+        json_tree_model.reset();
+        json_tree_model.reset();
+        sort_proxy_model.reset();
+        uiSettings().setError(e.what());
+    }
 }
 
 QStringList VertexClientPrivate::gen_schema_list() const
@@ -172,6 +180,10 @@ VertexClient::VertexClient(const QString& aschema, VertexClientPrivate *impl, QO
     JsonClient(impl, parent)
 {
     impl_func()->init_keys(aschema);
+    if(jsonmodel()) {
+        QObject::connect(&uiSettings(), &Preferences::modelChanged,
+                         jsonmodel(), &JsonBaseModel::updateModel, Qt::UniqueConnection);
+    }
     if(impl_func()->keys_model) {
             connect(impl_func()->keys_model.get(), &DBKeysModel::readedDocument,
                     this, &VertexClient::setEditorData, Qt::UniqueConnection);
@@ -214,6 +226,10 @@ void VertexClient::setModelSchema()
 {
     impl_func()->update_jsonmodel();
     emit jsonModelChanged();
+    if(jsonmodel()) {
+        QObject::connect(&uiSettings(), &Preferences::modelChanged,
+                         jsonmodel(), &JsonBaseModel::updateModel, Qt::UniqueConnection);
+    }
 
     impl_func()->update_keysmodel();
     emit keysModelChanged();

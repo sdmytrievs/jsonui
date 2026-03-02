@@ -10,6 +10,7 @@
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/clients/help_client.h"
 #include "jsonqml/clients/settings_client.h"
+#include "../jsonui_version.h"
 
 namespace jsonqml {
 
@@ -67,22 +68,13 @@ void HelpMainWindow::helpOnHelp()
 
 void HelpMainWindow::helpVersion()
 {
-    QMessageBox::information(this,
-#ifdef __unix
-#ifdef __APPLE__
-                             tr("Title"), ("GEMS4.2 (MacOS X >10.6 64 clang)\n\n")+
-#else
-                             "GEMS4.2 (Linux 32/64 gcc4.7 Qt5)",
-#endif
-#else
-                             "GEMS4.2 (Windows 7 MinGW 32 gcc4.7",
-#endif
-                                 tr("\nThis is GEM-Selektor code package\n\n")+
-                                 //   _GEMS_version_stamp  +  "\n\nusing " +
-                                 //   _GEMIPM_version_stamp  +
-                                 "\n\n\nFor GEMS R&D community\n\n"
-                                 "(c) 2013, GEMS Development Team\n\n"
-                                 "          PSI-UH-ETHZ"  );
+    QMessageBox::information(this,  QString("JSONUI v.") + JSONUI_VERSION,
+                             QString("\nThis is jsonui code package v.") + JSONUI_VERSION +
+                                 "\n\nusing Qt6 framework v." + JSONUI_QT_VERSION +
+                                 "\n\nOS " + JSONUI_OSX  + " compiler  " + JSONUI_COMPILER_ID + " " + JSONUI_COMPILER_VERSION +
+                                 "\n\nFor GEMS R&D community, GPL v.3\n\n"
+                                 "(c) 2026,  GEMS Development Team\n\n"
+                                 "      Paul Scherrer Institute" );
 }
 
 void HelpMainWindow::CmEdit()
