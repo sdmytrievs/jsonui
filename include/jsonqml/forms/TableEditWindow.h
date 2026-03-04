@@ -22,7 +22,7 @@ public slots:
     void CmImportCSV();
     void CmExportCSV();
     void CmPlotTable();
-    void CmHelp() {}
+    void CmHelp();
 
 protected slots:
     void slotPopupContextMenu(const QPoint &pos);
@@ -34,6 +34,9 @@ public:
     explicit TableEditWidget(const QString& title, int mode = TableFlag::TableIsEditable, QWidget *parent = nullptr);
     /// Destructor
     ~TableEditWidget();
+
+    void resetTable(std::vector<std::vector<std::string>>&& table_data,
+                    const std::vector<std::string>& header_data);
 
 private:
     QScopedPointer<Ui::TableEditWidget> ui;

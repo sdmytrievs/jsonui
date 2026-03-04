@@ -47,7 +47,7 @@ void DBQueryModel::reset_dbclient(DocumentType type, const QString& schema,
     }
 }
 
-void DBQueryModel::updateKeyList()
+void DBQueryModel::updateKeyList(std::string query_string)
 {
     std::vector<std::string> new_query_fields;
     jsonio::values_table_t new_data_table;
@@ -55,7 +55,7 @@ void DBQueryModel::updateKeyList()
     qDebug() << "DBQueryModel::updateKeyList " << new_query_fields.size() << "  " << new_data_table.size();
     resetTable(std::move(new_data_table), std::move(new_query_fields));
     set_executing(false);
-    emit updatedKeyList();
+    emit updatedKeyList(query_string);
 }
 
 void DBQueryModel::resetTable(model_table_t&& table_data,

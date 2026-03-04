@@ -1,7 +1,7 @@
 #include <QPushButton>
 #include <QMenu>
-#include "HelpEditDialog.h"
 #include "ui_HelpEditDialog.h"
+#include "HelpEditDialog.h"
 #include "HelpFileDialog.h"
 #include "jsonqml/clients/help_client.h"
 #include "jsonqml/forms/SelectDialog.h"

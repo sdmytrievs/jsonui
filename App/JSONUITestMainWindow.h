@@ -24,8 +24,9 @@ class TJSONUITestWin : public QMainWindow
 
 public slots:
     void showErrorMessage();
+    void updateViewMenu();
 
-    // File
+    void CmSettingth();
     void CmSetWorkDir() {}
     void CmNewVertex();
     void CmNewEdge();
@@ -40,39 +41,17 @@ public slots:
     void CmHelpLicense();
     void CmHelpContens();
 
-    // update after change preferences
-    void updateViewMenu();
-    void updateModel() {}
-    void updateTable() {}
-    void updateDB() {}
-    void closeAll() {}
 
-    void onDeleteVertex() {}
-    void onDeleteEdge() {}
-    void onLoadGraph() {}
-
-    void CmSettingth();
 public:
     explicit TJSONUITestWin(QWidget *parent = nullptr);
     ~TJSONUITestWin();
 
-    /// Open new EdgesWidget  or JSONUIWidget  window
-    //void OpenNewWidget( bool isVertex, const std::string& testschema,
-    //                     const std::string& recordkey, const jsonio17::DBQueryBase& query  );
-
 private:
-
     Ui::TJSONUITestWin *ui;
     QScopedPointer<jsonqml::TableEditWidget> csv_window;
-    // Internal data
-    //std::list<jsonui17::BaseWidget*> jsonuiWindows;
-    //jsonui17::OnCloseEvent_f onCloseEvent;
-    //jsonui17::ShowVertexEdge_f showWidget;
 
-    // Work functions
     void set_actions();
     void closeEvent(QCloseEvent* e);
-
 };
 
 #endif // TMAINWINDOW_H

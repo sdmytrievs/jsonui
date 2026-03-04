@@ -24,7 +24,7 @@ signals:
     void isException(const QString& msg);
 
     /// Notify the finished query process
-    void finishedQuery();
+    void finishedQuery(std::string query_string);
 
     /// Open new arango document result
     void readedDocument(std::string schema_name, std::string doc_json);

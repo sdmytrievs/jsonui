@@ -50,7 +50,9 @@ public slots:
     // View
     void CmFollowInVertex();
     void CmFollowOutVertex();
-    void CmHelpContens();
+
+    void  CmHelpAbout();
+    void  CmHelpContens();
 
 protected slots:
     void setExecuting(bool exec);
@@ -68,9 +70,6 @@ public:
     explicit EdgesWidget(const QString& aschema, QWidget *parent = nullptr);
     explicit EdgesWidget(bool in_edges, const QString& vertex_id, QWidget *parent = nullptr);
     ~EdgesWidget();
-
-    /// Update query
-    //void setQueryEdited(QueryWidget* queryW);
 
     std::string currentKey() const;
 

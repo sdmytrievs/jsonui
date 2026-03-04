@@ -4,10 +4,9 @@
 #include <QComboBox>
 #include <QMimeData>
 #include <QDrag>
-#include <QtPrintSupport/QPrinter>
+#include <QPrinter>
 #include <QPrintDialog>
 #include <QHeaderView>
-
 #include "ui_GraphDialog.h"
 #include "jsonqml/clients/chart_client.h"
 #include "jsonqml/forms/GraphDialog.h"
@@ -15,6 +14,7 @@
 #include "jsonqml/forms/SymbolDialog.h"
 #include "jsonqml/forms/chart_view.h"
 #include "jsonqml/forms/FileDialogs.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 #include "../charts/markershapes.h"
 
 namespace jsonqml {
@@ -97,8 +97,6 @@ void GraphDialog::UpdateAll(const QString& title)
     plot->updateAll();
 }
 
-// slots ------------------------------------
-
 void GraphDialog::CmLegend()
 {
     LegendDialog legend(this);
@@ -142,7 +140,7 @@ void GraphDialog::CmPrint()
 
 void GraphDialog::CmHelp()
 {
-    // helpWin( "GraphDialogJsonui", "" );
+    helpWin("GraphDialogJsonui", "");
 }
 
 // Insert labels in legend box
@@ -285,9 +283,6 @@ void DragTableWidget::focusOutEvent(QFocusEvent *event)
     QTableWidget::focusOutEvent(event);
 }
 
-//--------------------------------------------------------------------------
-
-// Editing  Table of Labels
 QWidget *LabelDelegate::createEditor(QWidget *parent,
                                      const QStyleOptionViewItem &,
                                      const QModelIndex &index) const
@@ -332,4 +327,3 @@ void LabelDelegate::setModelData(QWidget *editor,
 
 } // namespace jsonui
 
-//--------------------- End of GraphDialog.cpp ---------------------------

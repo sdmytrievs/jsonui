@@ -267,7 +267,7 @@ void VertexClient::setEditorOid(std::string doc_id)
     }
 }
 
-void VertexClient::updateKeyList()
+void VertexClient::updateKeyList(std::string query_string)
 {
     std::string editor_id;
     if(!start_doc_id.empty()) {
@@ -284,6 +284,7 @@ void VertexClient::updateKeyList()
     if(!editor_id.empty()) {
         emit updatedKeyList(editor_id);
     }
+    emit updatedQueryString(QString::fromStdString(query_string));
 }
 
 void VertexClient::readEditorData(int row)

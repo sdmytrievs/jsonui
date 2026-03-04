@@ -45,7 +45,7 @@ public slots:
     void CmApplay();
 
     // Help
-    void CmHelp();
+    void CmHelpContens();
     void CmHelpAbout();
 
 protected slots:
@@ -58,10 +58,16 @@ public:
     /// Extern query document schema name ( default "Query" )
     static QString query_shema_name;
 
-    explicit QueryWidget(const QString& title, const QStringList& schemas,
-                         const jsonio::DBQueryDef& query, QWidget *parent);
+    explicit QueryWidget(const QString& title,
+                         const QStringList& schemas,
+                         const jsonio::DBQueryBase& query,
+                         const jsonio::values_t& query_fields,
+                         QWidget *parent);
     ~QueryWidget();
 
+    void updateQuery(const QStringList& schemas,
+                     const jsonio::DBQueryBase& query,
+                     const jsonio::values_t& query_fields);
     const jsonio::DBQueryDef& getQuery();
     QString getSchema() const;
 
@@ -76,7 +82,8 @@ protected:
     QStringListModel* lstmodel = nullptr;
 
     QString schema_name;
-    jsonio::DBQueryDef default_query;
+    jsonio::DBQueryBase default_query;
+    jsonio::values_t   default_query_fields;
     jsonio::DBQueryDef query_description;
 
     void set_actions();

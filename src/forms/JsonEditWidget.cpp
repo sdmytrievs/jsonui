@@ -4,11 +4,14 @@
 #include <QHeaderView>
 #include <QComboBox>
 #include "ui_JsonEditWidget.h"
+#include "jsonqml/models/schema_model.h"
+#include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/JsonEditWidget.h"
 #include "jsonqml/forms/json_view.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
-#include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -53,6 +56,7 @@ JsonEditWidget::JsonEditWidget(const QString& aschema, QWidget *parent):
     ui->verticalLayout->addWidget(json_tree.get());
 
     set_actions();
+    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &JsonEditWidget::updateViewMenu);
     CmNew();
 }
 
@@ -64,6 +68,16 @@ JsonEditWidget::~JsonEditWidget()
 void JsonEditWidget::CmNew()
 {
     json_client->jsonmodel()->setupModelData("", schema_name);
+}
+
+void JsonEditWidget::CmHelpContens()
+{
+    helpWin(schema_name, "" );
+}
+
+void JsonEditWidget::CmHelpAbout()
+{
+    helpWin("JsonEditJsonui", "");
 }
 
 void JsonEditWidget::CmClone()
@@ -156,6 +170,14 @@ std::vector<std::string> JsonEditWidget::select_keys(VertexClient* vclient, cons
     return keys;
 }
 
+void JsonEditWidget::updateViewMenu()
+{
+    ui->action_Show_comments->setChecked(JsonSchemaModel::showComments);
+    ui->action_Display_enums->setChecked(JsonSchemaModel::useEnumNames);
+    ui->action_Edit_id->setChecked(JsonSchemaModel::editID);
+    ui->actionKeep_Data_Fields_Expanded->setChecked(JsonClient::expanded_fields);
+}
+
 void JsonEditWidget::set_actions()
 {
     // File
@@ -184,18 +206,22 @@ void JsonEditWidget::set_actions()
     QObject::connect(ui->actionPaste_Field, &QAction::triggered, json_tree.get(), &JsonView::PasteField);
 
     // Help
-    /*
     QObject::connect(ui->action_Help_About, &QAction::triggered, this, &JsonEditWidget::CmHelpAbout);
     QObject::connect(ui->actionContents, &QAction::triggered, this, &JsonEditWidget::CmHelpContens);
-    QObject::connect(ui->actionAuthors, &QAction::triggered, this, &JsonEditWidget::CmHelpAuthors);
-    QObject::connect(ui->actionLicense, &QAction::triggered, this, &JsonEditWidget::CmHelpLicense);
+    QObject::connect(ui->actionAuthors, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpAuthors);
+    QObject::connect(ui->actionLicense, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpLicense);
+    QObject::connect( ui->actionVersion, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpVersion);
 
     // View
-    QObject::connect( ui->action_Show_comments, &QAction::toggled, &uiSettings(), &UIPreferences::CmShowComments);
-    QObject::connect( ui->action_Display_enums, &QAction::toggled, &uiSettings(), &UIPreferences::CmDisplayEnums);
-    QObject::connect( ui->action_Edit_id, &QAction::toggled, &uiSettings(), &UIPreferences::CmEditID);
-    QObject::connect( ui->actionKeep_Data_Fields_Expanded, &QAction::toggled, &uiSettings(), &UIPreferences::CmEditExpanded);
-    */
+    QObject::connect(ui->action_Show_comments, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowComments", val); });
+    QObject::connect(ui->action_Display_enums, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
+    QObject::connect(ui->action_Edit_id, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
+    QObject::connect(ui->actionKeep_Data_Fields_Expanded, &QAction::toggled,
+                     [](bool val){ jsonqml::uiSettings().setBoolValue("KeepExpanded", val); });
+    updateViewMenu();
 
     if(!collection_name.isEmpty()) {
         QObject::connect(ui->action_Update, &QAction::triggered, this, &JsonEditWidget::CmUpdate);

@@ -9,6 +9,7 @@
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/forms/VertexWidget.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 #include "jsonqml/forms/waitingspinnerwidget.h"
 #include "jsonqml/clients/edge_client.h"
 #include "jsonqml/clients/table_client.h"
@@ -128,9 +129,14 @@ void EdgesWidget::openRecordKey(const QModelIndex& index)
 
 // Menu commands -----------------------------------------------------------
 
+void EdgesWidget::CmHelpAbout()
+{
+    helpWin("AboutEdgesWidget", "");
+}
+
 void EdgesWidget::CmHelpContens()
 {
-    //  helpWin("Edges", schema_name);
+    helpWin("Edges", schema_name);
 }
 
 void EdgesWidget::CmFollowInVertex()
@@ -301,10 +307,12 @@ void EdgesWidget::set_actions()
     QObject::connect(ui->actionPaste_Field, &QAction::triggered, json_tree.get(), &JsonView::PasteField);
 
     // Help
-    //QObject::connect(ui->action_Help_About, &QAction::triggered, this, &EdgesWidget::CmHelpAbout);
+    QObject::connect(ui->action_Help_About, &QAction::triggered, this, &EdgesWidget::CmHelpAbout);
     QObject::connect(ui->actionContents, &QAction::triggered, this, &EdgesWidget::CmHelpContens);
-    //QObject::connect(ui->actionAuthors, &QAction::triggered, this, &EdgesWidget::CmHelpAuthors);
-    //QObject::connect(ui->actionLicense, &QAction::triggered, this, &EdgesWidget::CmHelpLicense);
+    QObject::connect(ui->actionAuthors, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpAuthors);
+    QObject::connect(ui->actionLicense, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpLicense);
+    QObject::connect( ui->actionVersion, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpVersion);
+
 
     // View
     QObject::connect(ui->action_Show_comments, &QAction::toggled,

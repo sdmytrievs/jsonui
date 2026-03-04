@@ -3,7 +3,6 @@
 #include <QWidget>
 #include <QString>
 
-
 namespace jsonqml {
 
 /// Open&Save Image File filters

@@ -19,7 +19,7 @@ public slots:
     void CmProjectDir();
     void CmSchemasDir();
     void CmResourcesDir();
-    void CmHelp() {}
+    void CmHelp();
 
     void ChangeDBGroup(const QString &name);
     void ChangedDBUrl(const QString &url);

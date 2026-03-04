@@ -71,6 +71,15 @@ public:
                         int role = Qt::DisplayRole) const override;
     QHash<int, QByteArray> roleNames() const override;
 
+    const model_line_t& getHeader() const
+    {
+        return header;
+    }
+    const model_table_t& getTable() const
+    {
+        return table;
+    }
+
 protected:
     model_line_t header;
     model_table_t table;
@@ -85,19 +94,19 @@ private:
 /// The SortFilterProxyModel class provides support for sorting
 /// and filtering data passed between another model and a view.
 class SortFilterProxyModel : public QSortFilterProxyModel
- {
-     Q_OBJECT
+{
+    Q_OBJECT
 
- public:
+public:
 
-     SortFilterProxyModel(QObject *parent = nullptr):
-         QSortFilterProxyModel(parent)
-     { }
+    SortFilterProxyModel(QObject *parent = nullptr):
+        QSortFilterProxyModel(parent)
+    { }
 
- protected:
-     bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+protected:
+    bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
 
- };
+};
 
 
 }

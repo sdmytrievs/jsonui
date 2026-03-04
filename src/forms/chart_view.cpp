@@ -15,7 +15,6 @@
 
 namespace jsonqml {
 
-
 PlotChartView::PlotChartView(ChartClient *client, QWidget *parent) :
     QChartView(new QChart(), parent),
     chart_client(client),
@@ -165,8 +164,6 @@ void PlotChartView::renderDocument(const QString &file_name)
     }
 }
 
-//--------------------------------------------------------------------
-
 void PlotChartView::show_plot_lines()
 {
     for(int i = 0; i <= chart_decorator->size(); i++) {
@@ -241,6 +238,5 @@ void PlotChartView::grid_decorate()
     axisY->setTitleText(chart_client->chartData()->yname);
     axisY->setLinePen(penX);
 }
-
 
 } // namespace jsonui

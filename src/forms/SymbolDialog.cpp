@@ -1,4 +1,3 @@
-
 #include <QColorDialog>
 #include <QRadioButton>
 #include "ui_SymbolDialog.h"

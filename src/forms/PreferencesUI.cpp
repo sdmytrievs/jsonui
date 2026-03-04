@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include "ui_PreferencesUI.h"
 #include "jsonqml/forms/PreferencesUI.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -66,6 +67,11 @@ void PreferencesUI::CmResourcesDir()
     QString dir = QFileDialog::getExistingDirectory(this, "Select Resource Directory", ui->resourcesEdit->text(),
                                                     QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
     ui->resourcesEdit->setText(dir);
+}
+
+void PreferencesUI::CmHelp()
+{
+    helpWin("PreferencesJsonui", "");
 }
 
 void PreferencesUI::ChangeDBGroup(const QString &name)

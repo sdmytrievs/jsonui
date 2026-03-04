@@ -6,10 +6,10 @@
 #include <QPrintDialog>
 #include "ui_HelpMainWindow.h"
 #include "HelpEditDialog.h"
-#include "jsonqml/forms/HelpMainWindow.h"
-#include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/clients/help_client.h"
 #include "jsonqml/clients/settings_client.h"
+#include "jsonqml/forms/HelpMainWindow.h"
+#include "jsonqml/forms/SelectDialog.h"
 #include "../jsonui_version.h"
 
 namespace jsonqml {
@@ -56,9 +56,19 @@ void HelpMainWindow::showHelp(const QString &name, const QString &item)
     ui->actionCreate_Update_Docpage_into_DB->setEnabled(false);
 }
 
+void HelpMainWindow::helpAuthors()
+{
+    helpWin("AuthorsJsonui", "");
+}
+
+void HelpMainWindow::helpLicense()
+{
+    helpWin("LicenseJsonui", "");
+}
+
 void HelpMainWindow::helpAbout()
 {
-    showHelp("helpAbout", "");
+    showHelp("AboutJsonui", "");
 }
 
 void HelpMainWindow::helpOnHelp()

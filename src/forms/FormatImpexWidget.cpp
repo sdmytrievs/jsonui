@@ -1,12 +1,13 @@
 #include <QMessageBox>
 #include "ui_FormatImpexWidget.h"
+#include "jsonqml/models/schema_model.h"
+#include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/FormatImpexWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/json_view.h"
-#include "jsonqml/clients/vertex_client.h"
-#include "jsonqml/clients/settings_client.h"
-#include "jsonqml/models/schema_model.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -89,14 +90,14 @@ void FormatImpexWidget::setExecuteFunction(ExecuteImpex_f afunc)
     run_funct = afunc;
 }
 
-void FormatImpexWidget::CmHelp()
+void FormatImpexWidget::CmHelpContens()
 {
-    //    helpWin(schema_name, "" );
+    helpWin(schema_name, "" );
 }
 
 void FormatImpexWidget::CmHelpAbout()
 {
-    //    helpWin( "QueryWidgetJsonui", "" );
+    helpWin("ImpexWidgetJsonui", "");
 }
 
 void FormatImpexWidget::CmClone()
@@ -255,9 +256,10 @@ void FormatImpexWidget::set_actions()
 
     // Help
     QObject::connect(ui->action_Help_About, &QAction::triggered, this, &FormatImpexWidget::CmHelpAbout);
-    //QObject::connect(ui->actionContents, &QAction::triggered, this, &FormatImpexWidget::CmHelpContens);
-    //QObject::connect(ui->actionAuthors, &QAction::triggered, this, &FormatImpexWidget::CmHelpAuthors);
-    //QObject::connect(ui->actionLicense, &QAction::triggered, this, &FormatImpexWidget::CmHelpLicense);
+    QObject::connect(ui->actionContents, &QAction::triggered, this, &FormatImpexWidget::CmHelpContens);
+    QObject::connect(ui->actionAuthors, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpAuthors);
+    QObject::connect(ui->actionLicense, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpLicense);
+    QObject::connect( ui->actionVersion, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpVersion);
 
     // View
     QObject::connect(ui->action_Show_comments, &QAction::toggled,

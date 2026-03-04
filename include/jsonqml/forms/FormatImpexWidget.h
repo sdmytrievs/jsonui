@@ -33,7 +33,7 @@ public slots:
     void CmUpdate();
     void CmDeleteList();
 
-    void CmHelp();
+    void CmHelpContens();
     void CmHelpAbout();
 
 protected slots:
@@ -69,7 +69,6 @@ protected:
 
     FormatImpexWidget::ImpexMode use_mode = editMode;
     QString parent_schema_name = "";
-
 
     void set_actions();
     std::string to_json_node();

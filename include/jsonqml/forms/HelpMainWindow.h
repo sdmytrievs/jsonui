@@ -46,6 +46,8 @@ class HelpMainWindow : public QMainWindow
 public slots:
     void helpAbout();
     void helpVersion();
+    void helpAuthors();
+    void helpLicense();
     void helpOnHelp();
 
 protected slots:

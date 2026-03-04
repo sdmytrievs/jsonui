@@ -1,8 +1,9 @@
 #include <QPushButton>
 #include <QLineEdit>
 #include "ui_FieldsSelectDialog.h"
-#include "jsonqml/forms/FieldsSelectDialog.h"
 #include "jsonqml/models/fields_model.h"
+#include "jsonqml/forms/FieldsSelectDialog.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -35,7 +36,7 @@ SelectFieldsDialog::~SelectFieldsDialog()
 
 void SelectFieldsDialog::CmHelp()
 {
-    ///    helpWin( "SchemaSelectJsonui", "" );
+    helpWin("SchemaSelectJsonui", "");
 }
 
 std::vector<std::string> SelectFieldsDialog::allSelected()

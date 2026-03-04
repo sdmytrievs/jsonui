@@ -224,6 +224,11 @@ QAbstractItemModel *TableClient::tableModel()
     return impl_func()->table_model();
 }
 
+SelectModel *TableClient::dataModel()
+{
+    return impl_func()->current_model;
+}
+
 bool TableClient::sortingEnabled()
 {
     return impl_func()->sorting_enabled();

@@ -2,9 +2,7 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QLineEdit>
-
 #include "jsonqml/clients/table_client.h"
-#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/CalcDialog.h"
 

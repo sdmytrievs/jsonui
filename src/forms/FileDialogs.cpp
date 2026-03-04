@@ -1,8 +1,7 @@
-
 #include <QFileInfo>
 #include <QFileDialog>
-#include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/clients/settings_client.h"
+#include "jsonqml/forms/FileDialogs.h"
 
 namespace jsonqml {
 

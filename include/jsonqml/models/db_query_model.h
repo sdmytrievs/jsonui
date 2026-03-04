@@ -24,14 +24,14 @@ class DBQueryModel: public SelectModel
     Q_PROPERTY(bool queryExecuting READ queryExecuting NOTIFY executingChange)
 
 signals:
-    void updatedKeyList();
+    void updatedKeyList(std::string query_string);
     void executingChange(bool exec);
     /// Execute the query \a query for the given database connection.
     void CmExecuteQuery(const jsonio::DBQueryBase& query,const std::vector<std::string>& query_fields);
 
 public slots:
     /// Refresh  documents keys list for table
-    virtual void updateKeyList();
+    virtual void updateKeyList(std::string query_string);
 
 public:
     explicit DBQueryModel(DocumentType type, const QString& schema,

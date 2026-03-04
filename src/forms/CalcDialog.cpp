@@ -1,6 +1,6 @@
-
 #include "ui_CalcDialog.h"
 #include "jsonqml/forms/CalcDialog.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -12,8 +12,9 @@ const double IPNC_DBL_MAX_EXP = 85.195648;
 const double IPNC_DBL_MIN_EXP = -85.195648;
 const std::string emptiness("---");
 const double DOUBLE_EMPTY = 2.2250738585072014e-308;
-bool IsDoubleEmpty( const double v );
-bool IsDoubleEmpty( const double v )
+
+bool IsDoubleEmpty(const double v);
+bool IsDoubleEmpty(const double v)
 {
     return (v>0. && v <= DOUBLE_EMPTY);
 }
@@ -46,7 +47,6 @@ CalcDialog::CalcDialog(QWidget* parent):
     QObject::connect(all_buttons, &QButtonGroup::idClicked, this, &CalcDialog::setMode);
     QObject::connect(ui->PushButton1_3, &QPushButton::clicked, this, &CalcDialog::ok);
     QObject::connect(ui->PushButton1_2, &QPushButton::clicked, this, &QDialog::reject);
-    //  QObject::connect(ui->PushButton1_2, &QPushButton::clicked, this, &CalcDialog::unaryMode);
     QObject::connect(ui->PushButton42, &QPushButton::clicked, this, &CalcDialog::help );
 }
 
@@ -78,7 +78,7 @@ void CalcDialog::ok()
 
 void CalcDialog::help()
 {
-    /// helpWin( "CalcDialogJsonui", "" );
+    helpWin("CalcDialogJsonui", "");
 }
 
 
@@ -164,11 +164,11 @@ QString CalcDialog::computeFunctionString(double val)
 {
     double ret = computeFunction(val);
     QString retstr;
-    if( IsDoubleEmpty( ret ) ) {
+    if(IsDoubleEmpty( ret )) {
         retstr = emptiness.c_str();
     }
     else {
-        retstr = QString::number( ret, 'g', 6 );//QVariant(ret).toString();
+        retstr = QString::number(ret, 'g', 6);
     }
     return retstr;
 }
@@ -180,14 +180,14 @@ int CalcDialog::extructInternal(double& val)
 }
 
 
-QString CalcDialog::expression(const char * val_text)
+QString CalcDialog::expression(const QString& val_text)
 {
     int ii, pos;
     QString res;
 
     ii = all_buttons->checkedId();
     QString str = "";
-    if(ii <= 5)  {
+    if(ii <= 5) {
         str = ui->pValue->currentText();
         pos = str.indexOf('(');
         if( pos >= 0 ) {
@@ -198,8 +198,7 @@ QString CalcDialog::expression(const char * val_text)
         }
     }
 
-    switch(ii)
-    {
+    switch(ii) {
     case 0:
         res = val_text; break;
     case 1:

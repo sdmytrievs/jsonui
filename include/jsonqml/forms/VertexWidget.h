@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QMainWindow>
+#include "jsonio/dbquerybase.h"
 
 namespace Ui {
 class VertexWidget;
@@ -14,6 +15,8 @@ class VertexClient;
 class JsonView;
 class TableClient;
 class DBKeysTable;
+class QueryWidget;
+class TableEditWidget;
 
 /// \class VertexWidget - window to work with Vertexes (TDBGraph)
 class VertexWidget : public QMainWindow
@@ -22,6 +25,7 @@ class VertexWidget : public QMainWindow
 
 public slots:
     void openDocument(const QString& key_document);
+    void changeQuery(jsonio::DBQueryDef query);
 
     // File
     void CmNew();
@@ -34,8 +38,8 @@ public slots:
     void CmUpdate();
     void CmDelete();
     void CmDeleteSelect();
-    void CmDisplaySearchResult() {} /// !!!
-    void CmSearchQuery() {} /// !!!!
+    void CmDisplaySearchResult();
+    void CmSearchQuery();
     void CmBackupQueriedRecordstoFile();
     void CmRestoreMultipleRecordsfromFile();
     void CmBackupGraphtoFile();
@@ -51,6 +55,9 @@ public slots:
     void CmFollowInEdges();
     void CmFollowOutEdges();
 
+    void CmHelpAbout();
+    void CmHelpContens();
+
 protected slots:
     void setExecuting(bool exec);
     void updateViewMenu();
@@ -64,6 +71,9 @@ public:
     /// void setQueryEdited( QueryWidget* queryW  ) override;
     std::string currentKey() const;
 
+protected:
+    void closeEvent(QCloseEvent *e);
+
 private:
     QScopedPointer<Ui::VertexWidget> ui;
     QScopedPointer<VertexClient> vertex_client;
@@ -74,6 +84,12 @@ private:
 
     /// Dialog when waiting db_rquest command ends
     WaitingSpinnerWidget* wait_dialog = nullptr;
+
+    /// Keys query window
+    QScopedPointer<QueryWidget> query_window;
+
+    /// Keys list demo window
+    QScopedPointer<TableEditWidget> result_window;
 
     void set_actions();
     std::vector<std::string> select_keys(const QString &title);

@@ -24,19 +24,15 @@ TJSONUITestWin::TJSONUITestWin(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // init help window
+    new jsonqml::HelpMainWindow(nullptr);
+
     set_actions();
     connect(&jsonqml::uiSettings(), &jsonqml::Preferences::errorChanged,
             this, &TJSONUITestWin::showErrorMessage);
     connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged,
             this, &TJSONUITestWin::updateViewMenu);
 
-    // init help window
-    //try {
-        new jsonqml::HelpMainWindow(nullptr);
-    //}
-    //catch(std::exception& e)  {
-    //    jsonqml::ui_logger->warn("std exception when open help {}", e.what());
-    //}
 }
 
 TJSONUITestWin::~TJSONUITestWin()
@@ -62,6 +58,7 @@ void TJSONUITestWin::set_actions()
     connect( ui->actionContents, &QAction::triggered, this, &TJSONUITestWin::CmHelpContens);
     connect( ui->actionAuthors, &QAction::triggered, this, &TJSONUITestWin::CmHelpAuthors);
     connect( ui->actionLicense, &QAction::triggered, this, &TJSONUITestWin::CmHelpLicense);
+    connect( ui->actionVersion, &QAction::triggered, jsonqml::HelpMainWindow::pDia, &jsonqml::HelpMainWindow::helpVersion);
     connect( ui->actionPreferences, &QAction::triggered, this, &TJSONUITestWin::CmSettingth);
 
     // View
@@ -71,6 +68,7 @@ void TJSONUITestWin::set_actions()
             [](bool val){ jsonqml::uiSettings().setBoolValue("ShowEnumNames", val); });
     connect( ui->action_Edit_id, &QAction::toggled,
             [](bool val){ jsonqml::uiSettings().setBoolValue("CanEdit_id", val); });
+    updateViewMenu();
 }
 
 void TJSONUITestWin::CmHelpContens()

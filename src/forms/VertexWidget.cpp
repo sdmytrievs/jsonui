@@ -3,17 +3,21 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include "ui_VertexWidget.h"
+#include "jsonio/dbquerybase.h"
+#include "jsonqml/models/schema_model.h"
+#include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/clients/table_client.h"
+#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/VertexWidget.h"
+#include "jsonqml/forms/EdgesWidget.h"
 #include "jsonqml/forms/json_view.h"
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
-#include "jsonqml/forms/EdgesWidget.h"
+#include "jsonqml/forms/QueryWidget.h"
+#include "jsonqml/forms/TableEditWindow.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 #include "jsonqml/forms/waitingspinnerwidget.h"
-#include "jsonqml/clients/vertex_client.h"
-#include "jsonqml/clients/table_client.h"
-#include "jsonqml/clients/settings_client.h"
-#include "jsonqml/models/schema_model.h"
 
 namespace jsonqml {
 
@@ -59,8 +63,8 @@ VertexWidget::VertexWidget(const QString& aschema, const QString& document_id, Q
     ui->horizontalLayout->addWidget(keys_view.get());
 
     set_actions();
-    connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &VertexWidget::updateViewMenu);
-
+    QObject::connect(&jsonqml::uiSettings(), &jsonqml::Preferences::settingsChanged, this, &VertexWidget::updateViewMenu);
+    QObject::connect(vertex_client.get(), &VertexClient::updatedQueryString, ui->queryEdit, &QTextEdit::setText);
     qDebug() << "VertexWidget construct";
 }
 
@@ -74,6 +78,11 @@ void VertexWidget::openDocument(const QString &key_document)
 {
     vertex_client->readEditorId(key_document);
     keys_view->move_to_key(key_document.toStdString());
+}
+
+void VertexWidget::changeQuery(jsonio::DBQueryDef query)
+{
+    vertex_client->tablemodel()->setQuery(*query.condition(), query.fields());
 }
 
 void VertexWidget::setExecuting(bool exec)
@@ -107,6 +116,16 @@ void VertexWidget::openRecordKey(const QModelIndex& index)
 }
 
 // Menu commands -----------------------------------------------------------
+
+void VertexWidget::CmHelpAbout()
+{
+    helpWin("AboutVertexWidget", "");
+}
+
+void VertexWidget::CmHelpContens()
+{
+    helpWin(schema_name, "");
+}
 
 void VertexWidget::CmFollowInEdges()
 {
@@ -237,7 +256,59 @@ void VertexWidget::CmDeleteSelect()
     }
 }
 
+void VertexWidget::CmDisplaySearchResult()
+{
+    try  {
+        if(!result_window)  {
+            result_window.reset(new TableEditWidget("Vertex Query Result window", TableFlag::RowSortingEnabled, this));
+        }
+        else {
+            result_window->raise();
+        }
+        model_line_t header = vertex_client->tablemodel()->getHeader();
+        model_table_t table = vertex_client->tablemodel()->getTable();
+        result_window->resetTable(std::move(table), header);
+        result_window->show();
+     }
+    catch(std::exception& e)
+    {
+        QMessageBox::critical(this, "CmDisplaySearchResult", e.what());
+    }
+}
+
+void VertexWidget::CmSearchQuery()
+{
+    try {
+        auto query = vertex_client->tablemodel()->query();
+        auto query_fields = vertex_client->tablemodel()->queryFields();
+        query_fields.erase(query_fields.begin());
+        if(!query_window) {
+            query_window.reset(new QueryWidget("Vertex Query Widget", {schema_name}, query, query_fields, this));
+            QObject::connect(query_window.get(), &QueryWidget::queryChanged, this, &VertexWidget::changeQuery);
+        }
+        else {
+            query_window->updateQuery({schema_name}, query, query_fields);
+            query_window->raise();
+        }
+        query_window->show();
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical( this, "CmSearchQuery", e.what() );
+    }
+}
+
 // private -----------------------------------------------------------
+
+void VertexWidget::closeEvent(QCloseEvent* e)
+{
+    if(query_window) {
+        query_window->close();
+    }
+    if(result_window) {
+        result_window->close();
+    }
+    QMainWindow::closeEvent(e);
+}
 
 std::vector<std::string> VertexWidget::select_keys(const QString& title)
 {
@@ -274,10 +345,11 @@ void VertexWidget::set_actions()
     QObject::connect(ui->actionPaste_Field, &QAction::triggered, json_tree.get(), &JsonView::PasteField);
 
     // Help
-    /// QObject::connect( ui->action_Help_About, &QAction::triggered, this, &VertexWidget::CmHelpAbout);
-    /// QObject::connect( ui->actionContents, &QAction::triggered, this, &VertexWidget::CmHelpContens);
-    /// QObject::connect( ui->actionAuthors, &QAction::triggered, this, &VertexWidget::CmHelpAuthors);
-    /// QObject::connect( ui->actionLicense, &QAction::triggered, this, &VertexWidget::CmHelpLicense);
+    QObject::connect(ui->action_Help_About, &QAction::triggered, this, &VertexWidget::CmHelpAbout);
+    QObject::connect(ui->actionContents, &QAction::triggered, this, &VertexWidget::CmHelpContens);
+    QObject::connect(ui->actionAuthors, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpAuthors);
+    QObject::connect(ui->actionLicense, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpLicense);
+    QObject::connect( ui->actionVersion, &QAction::triggered, HelpMainWindow::pDia, &HelpMainWindow::helpVersion);
 
     // View
     QObject::connect(ui->action_Show_comments, &QAction::toggled,

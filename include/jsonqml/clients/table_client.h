@@ -38,6 +38,7 @@ public:
     ~TableClient();
 
     QAbstractItemModel *tableModel();
+    SelectModel *dataModel();
     bool sortingEnabled();
     Q_INVOKABLE QItemSelection selectAll();
 

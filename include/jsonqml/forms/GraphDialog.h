@@ -11,8 +11,6 @@ class GraphDialogData;
 
 namespace jsonqml {
 
-void helpWin( const std::string& name, const std::string& item );
-
 class DragTableWidget;
 class LabelDelegate;
 class PlotChartView;
@@ -21,8 +19,6 @@ class ChartClient;
 /// \class GraphDialog plotting system main dialog
 class GraphDialog: public QDialog
 {
-    friend class LegendDialog;
-
     Q_OBJECT
 
 public slots:
@@ -61,6 +57,8 @@ private:
     void show_legend();
 
     friend class LabelDelegate;
+    friend class LegendDialog;
+
 };
 
 

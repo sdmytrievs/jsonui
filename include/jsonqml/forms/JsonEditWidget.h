@@ -29,12 +29,16 @@ public slots:
     void CmDeleteList();
     void CmBackup();
 
+    void CmHelpContens();
+    void CmHelpAbout();
+
+protected slots:
+    void updateViewMenu();
+
 public:
     explicit JsonEditWidget(const QString& aschema_name = "",
                             QWidget *parent = nullptr );
     ~JsonEditWidget();
-
-//    void setQueryEdited(QueryWidget* ) override {}
 
 private:
     QScopedPointer<Ui::JsonEditWidget> ui;

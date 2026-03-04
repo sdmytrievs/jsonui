@@ -1,29 +1,34 @@
 #include <QMessageBox>
 #include "ui_QueryWidget.h"
+#include "jsonqml/clients/vertex_client.h"
+#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/QueryWidget.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/FieldsSelectDialog.h"
 #include "jsonqml/forms/query_view.h"
-#include "jsonqml/clients/vertex_client.h"
-#include "jsonqml/clients/settings_client.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
 QString QueryWidget::query_shema_name = "Query";
 
-QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
-                         const jsonio::DBQueryDef& query, QWidget* parent):
+QueryWidget::QueryWidget(const QString &atitle,
+                         const QStringList &schemas,
+                         const jsonio::DBQueryBase &query,
+                         const jsonio::values_t &query_fields,
+                         QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::QueryWidget),
     query_client(),
     query_edit(),
     schema_name(schemas[0]),
     default_query(query),
-    query_description(query)
+    default_query_fields(query_fields),
+    query_description(std::make_shared<jsonio::DBQueryBase>(query), query_fields)
 {
     ui->setupUi(this);
-    this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
+    //this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
     QString title = qApp->applicationName()+atitle;
     this->setWindowTitle(title);
 
@@ -59,6 +64,18 @@ QueryWidget::QueryWidget(const QString &atitle, const QStringList& schemas,
 QueryWidget::~QueryWidget()
 {}
 
+void QueryWidget::updateQuery(const QStringList &schemas,
+                              const jsonio::DBQueryBase &query,
+                              const jsonio::values_t &query_fields)
+{
+    ui->qSchema->clear();
+    ui->qSchema->insertItems(0, schemas);
+    schema_name = schemas[0];
+    jsonio::DBQueryDef new_description(std::make_shared<jsonio::DBQueryBase>(query), query_fields);
+    query_description = new_description;
+    show_query();
+}
+
 QString QueryWidget::getSchema() const
 {
     return ui->qSchema->currentText();
@@ -81,15 +98,14 @@ void QueryWidget::CmApplay()
     close();
 }
 
-
-void QueryWidget::CmHelp()
+void QueryWidget::CmHelpContens()
 {
-///    helpWin(schema_name, "" );
+    helpWin(schema_name, "");
 }
 
 void QueryWidget::CmHelpAbout()
 {
-///    helpWin( "QueryWidgetJsonui", "" );
+    helpWin("QueryWidgetJsonui", "");
 }
 
 void QueryWidget::CmLoadQuery()
@@ -168,9 +184,7 @@ void QueryWidget::CmWhereApply()
 
 void QueryWidget::CmWhereRestore()
 {
-    auto selection = query_description.fields();
-    query_description = default_query;
-    query_description.setFields(selection);
+    query_description.setCondition(std::make_shared<jsonio::DBQueryBase>(default_query));
     show_query();
 }
 
@@ -216,9 +230,9 @@ void QueryWidget::AQL_toggled(bool checked)
     ui->actionAdd_not_regexp->setEnabled(checked);
 
     if(query_edit->AQLmode(checked))  { // changed mode
-        if((checked && default_query.condition()->type() == jsonio::DBQueryBase::qAQL)
-            || (!checked && default_query.condition()->type() == jsonio::DBQueryBase::qTemplate)) {
-            ui->queryText->setText(QString::fromStdString(default_query.condition()->queryString()));
+        if((checked && default_query.type() == jsonio::DBQueryBase::qAQL)
+            || (!checked && default_query.type() == jsonio::DBQueryBase::qTemplate)) {
+            ui->queryText->setText(QString::fromStdString(default_query.queryString()));
         }
         else {
             ui->queryText->setText("");
@@ -236,7 +250,7 @@ void QueryWidget::schema_changed(const QString& text)
 
 void QueryWidget::select_restore()
 {
-    query_description.setFields(default_query.fields());
+    query_description.setFields(default_query_fields);
     lstmodel->setStringList(transform2qt(query_description.fields()));
 }
 
@@ -244,7 +258,6 @@ void QueryWidget::editor_changed()
 {
     from_json_node(query_client->jsonmodel()->current_object());
 }
-
 
 //----------------------------------------------------------------
 
@@ -323,7 +336,7 @@ void QueryWidget::set_actions()
 
     // Help
     QObject::connect(ui->actionHelp_About, &QAction::triggered, this, &QueryWidget::CmHelpAbout);
-    QObject::connect(ui->action_Help, &QAction::triggered, this, &QueryWidget::CmHelp);
+    QObject::connect(ui->action_Help, &QAction::triggered, this, &QueryWidget::CmHelpContens);
 
     qId.reset(new QLineEdit(ui->nameToolBar));
     qId->setEnabled(true);

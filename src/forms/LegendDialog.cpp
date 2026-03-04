@@ -2,9 +2,10 @@
 #include <QFontDialog>
 #include "ui_LegendDialog.h"
 #include "jsonqml/clients/chart_client.h"
+#include "jsonqml/charts/graph_data.h"
 #include "jsonqml/forms/LegendDialog.h"
 #include "jsonqml/forms/GraphDialog.h"
-#include "jsonqml/charts/graph_data.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -77,10 +78,8 @@ void LegendDialog::CmBackground()
 
 void LegendDialog::CmHelp()
 {
-    //    helpWin( "LegendDialogJsonui", "" );
+    helpWin("LegendDialogJsonui", "");
 }
-
-//------------------------------------------------------------------------------
 
 void LegendDialog::set_chart_data()
 {

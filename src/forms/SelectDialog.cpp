@@ -1,12 +1,12 @@
-
 #include <QHeaderView>
 #include <QPushButton>
 #include "ui_SelectDialog.h"
-#include "jsonqml/forms/SelectDialog.h"
-#include "jsonqml/forms/table_view.h"
+#include "jsonqml/models/db_keys_model.h"
 #include "jsonqml/clients/table_client.h"
 #include "jsonqml/clients/vertex_client.h"
-#include "jsonqml/models/db_keys_model.h"
+#include "jsonqml/forms/SelectDialog.h"
+#include "jsonqml/forms/table_view.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -100,7 +100,7 @@ size_t SelectDialog::getSelectedIndex() const
 
 void SelectDialog::CmHelp()
 {
-    // helpWin( "SelectJsonui", "" );
+    helpWin("SelectJsonui", "");
 }
 
 void SelectDialog::CmSelectAll()
@@ -112,8 +112,6 @@ void SelectDialog::CmClearAll()
 {
     table_view->clearSelection();
 }
-
-//-----------------------------------------------------
 
 void SelectDialog::init_dialog(const QString& title)
 {

@@ -1,12 +1,13 @@
 #include <QMessageBox>
 #include <QFile>
 #include "ui_TableEditWindow.h"
+#include "jsonqml/clients/chart_client.h"
+#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/TableEditWindow.h"
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/GraphDialog.h"
-#include "jsonqml/clients/chart_client.h"
-#include "jsonqml/clients/settings_client.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 
 namespace jsonqml {
 
@@ -47,9 +48,17 @@ TableEditWidget::TableEditWidget(const QString& title,
 TableEditWidget::~TableEditWidget()
 {}
 
-// Menu commands -----------------------------------------------------------
+void TableEditWidget::resetTable(std::vector<std::vector<std::string> > &&table_data, const std::vector<std::string> &header_data)
+{
+    table_client->dataModel()->resetTable(std::move(table_data), header_data);
+}
 
-/// Write all table to csv file
+void TableEditWidget::CmHelp()
+{
+    helpWin("HelpTableWindow","");
+}
+
+// Write all table to csv file
 void TableEditWidget::CmExportCSV()
 {
     QString file_name;
@@ -61,7 +70,7 @@ void TableEditWidget::CmExportCSV()
     }
 }
 
-/// Read table from csv file
+// Read table from csv file
 void TableEditWidget::CmImportCSV()
 {
     QString file_name;
@@ -86,7 +95,6 @@ void TableEditWidget::CmPlotTable()
         QMessageBox::critical( this, "std::exception", e.what() );
     }
 }
-
 
 void TableEditWidget::closeEvent(QCloseEvent* )
 {

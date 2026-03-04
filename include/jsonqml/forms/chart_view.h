@@ -3,14 +3,8 @@
 #include <QtCharts/QChartView>
 #include <QtCharts/QValueAxis>
 
-
-#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
-    QT_CHARTS_USE_NAMESPACE
-#endif
-
 namespace jsonqml {
 
-//class PlotChartViewPrivate;
 class ChartClient;
 class QXYSeriesDecorator;
 
@@ -55,7 +49,7 @@ public:
 
 protected:
     QRubberBand* rubberBand;
-    ChartClient *chart_client;
+    ChartClient* chart_client;
     QXYSeriesDecorator* chart_decorator;
 
     QValueAxis *axisX = nullptr;

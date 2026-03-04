@@ -5,11 +5,11 @@
 #include <QMessageBox>
 #include <QLineEdit>
 #include <QComboBox>
-
 #include "jsonqml/clients/json_client.h"
 #include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/json_view.h"
 #include "jsonqml/forms/CalcDialog.h"
+#include "jsonqml/forms/HelpMainWindow.h"
 #include "ModelLineDialog.h"
 
 
@@ -402,7 +402,7 @@ void JsonView::CmHelp()
             hlp = hlp.sliced(pos+1);
         }
         ui_logger->info("help  {}#{}", schema.toStdString(), hlp.toStdString());
-        //helpWin(schema, hlp);
+        helpWin(schema, hlp);
     }
 }
 

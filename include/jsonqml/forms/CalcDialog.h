@@ -36,7 +36,7 @@ public:
 
     /// The function returns a string representation of expression of
     /// the selected function with a given parameter text
-    QString expression(const char * val_text);
+    QString expression(const QString& val_text);
 
 private:
     Ui::CalcDialogData *ui;

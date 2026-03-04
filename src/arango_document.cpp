@@ -317,7 +317,7 @@ void ArangoDBDocument::resetClient()
 {
     ui_logger->debug("resetClient");
     if(impl_func()->clear_document()) {
-        emit finishedQuery();
+        emit finishedQuery(impl_func()->last_good_query.queryString());
     }
 }
 
@@ -328,7 +328,7 @@ void ArangoDBDocument::resetSchema(std::string aschema_name)
     QMutexLocker locker(&result_mutex);
     try {
         if(impl_func()->update_schema(aschema_name)) {
-            emit finishedQuery(); // only if new schema
+            emit finishedQuery(impl_func()->last_good_query.queryString()); // only if new schema
         }
     }
     catch(std::exception& e) {
@@ -344,7 +344,7 @@ void ArangoDBDocument::reloadQuery()
     QMutexLocker locker(&result_mutex);
     try {
         impl_func()->update_query();
-        emit finishedQuery();
+        emit finishedQuery(impl_func()->last_good_query.queryString());
     }
     catch(std::exception& e) {
         emit isException(e.what());
@@ -358,7 +358,7 @@ void ArangoDBDocument::reloadTable(std::string schema_name, std::string doc_id)
     if(schema_name.empty() || impl_func()->document_schema_name == schema_name) {
         // now reset all model
         impl_func()->build_table();
-        emit finishedQuery();
+        emit finishedQuery(impl_func()->last_good_query.queryString());
     }
 }
 
@@ -368,7 +368,7 @@ void ArangoDBDocument::changeQuery(jsonio::DBQueryBase query, std::vector<std::s
     QMutexLocker locker(&result_mutex);
     try {
         impl_func()->set_query(query, query_fields);
-        emit finishedQuery();
+        emit finishedQuery(impl_func()->last_good_query.queryString());
     }
     catch(std::exception& e) {
         emit isException(e.what());
@@ -382,7 +382,7 @@ void ArangoDBDocument::executeQuery(jsonio::DBQueryBase query, std::vector<std::
     QMutexLocker locker(&result_mutex);
     try {
         impl_func()->execute_query(query, query_fields);
-        emit finishedQuery();
+        emit finishedQuery(impl_func()->last_good_query.queryString());
     }
     catch(std::exception& e) {
         emit isException(e.what());
