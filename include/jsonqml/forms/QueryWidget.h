@@ -59,13 +59,14 @@ public:
     static QString query_shema_name;
 
     explicit QueryWidget(const QString& title,
+                         const QString& curschema,
                          const QStringList& schemas,
                          const jsonio::DBQueryBase& query,
                          const jsonio::values_t& query_fields,
                          QWidget *parent);
     ~QueryWidget();
 
-    void updateQuery(const QStringList& schemas,
+    void updateQuery(const QString& curschema,
                      const jsonio::DBQueryBase& query,
                      const jsonio::values_t& query_fields);
     const jsonio::DBQueryDef& getQuery();

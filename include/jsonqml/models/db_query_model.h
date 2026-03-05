@@ -47,12 +47,14 @@ public:
     /// Returns a reference to the const jsonio::DBQueryBase object associated with this model.
     const jsonio::DBQueryBase& query() const;
     /// Returns a reference to the query fields associated with this model.
-    const model_line_t& queryFields() const;
+    model_line_t queryFields() const;
 
     Q_INVOKABLE QString lastQuery() const;
     Q_INVOKABLE QStringList lastQueryFields() const;
 
     Q_INVOKABLE bool queryExecuting();
+
+    Q_INVOKABLE virtual std::string get_field(const std::string field, size_t row) const;
 
 protected:
     jsonio::DBQueryBase data_query;

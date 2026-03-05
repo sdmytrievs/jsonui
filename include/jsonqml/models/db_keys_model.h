@@ -90,7 +90,6 @@ public:
     void backup_graph(QString file, std::vector<std::string>&& keys);
     void restore_graph(QString file);
     void delete_records(std::vector<std::string>&& keys);
-
 };
 
 }

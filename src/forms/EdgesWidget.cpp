@@ -3,18 +3,20 @@
 #include <QHeaderView>
 #include <QLineEdit>
 #include "ui_EdgesWidget.h"
+#include "jsonqml/models/schema_model.h"
+#include "jsonqml/clients/edge_client.h"
+#include "jsonqml/clients/table_client.h"
+#include "jsonqml/clients/settings_client.h"
 #include "jsonqml/forms/EdgesWidget.h"
 #include "jsonqml/forms/json_view.h"
 #include "jsonqml/forms/table_view.h"
 #include "jsonqml/forms/FileDialogs.h"
 #include "jsonqml/forms/SelectDialog.h"
 #include "jsonqml/forms/VertexWidget.h"
+#include "jsonqml/forms/QueryWidget.h"
+#include "jsonqml/forms/TableEditWindow.h"
 #include "jsonqml/forms/HelpMainWindow.h"
 #include "jsonqml/forms/waitingspinnerwidget.h"
-#include "jsonqml/clients/edge_client.h"
-#include "jsonqml/clients/table_client.h"
-#include "jsonqml/clients/settings_client.h"
-#include "jsonqml/models/schema_model.h"
 
 namespace jsonqml {
 
@@ -114,6 +116,21 @@ void EdgesWidget::openOutgoing(const QString &vertex_id)
 {
     edge_client->setOutgoingEdges(vertex_id);
     edge_client->readEditorData(0);
+}
+
+void EdgesWidget::changeQuery(jsonio::DBQueryDef query)
+{
+    edge_client->tablemodel()->setQuery(*query.condition(), query.fields());
+}
+
+void EdgesWidget::changeInQuery(jsonio::DBQueryDef query)
+{
+     edge_client->intablemodel()->executeQuery(*query.condition(), query.fields());
+}
+
+void EdgesWidget::changeOutQuery(jsonio::DBQueryDef query)
+{
+    edge_client->outtablemodel()->executeQuery(*query.condition(), query.fields());
 }
 
 std::string EdgesWidget::currentKey() const
@@ -270,7 +287,123 @@ void EdgesWidget::CmDeleteSelect()
     }
 }
 
-// private -----------------------------------------------------------
+void EdgesWidget::addIncoming(const QModelIndex &index)
+{
+    edge_client->set_to(index);
+}
+
+void EdgesWidget::addOutgoing(const QModelIndex &index)
+{
+    edge_client->set_from(index);
+}
+
+void EdgesWidget::CmDisplaySearchResult()
+{
+    try  {
+        if(!result_window)  {
+            result_window.reset(new TableEditWidget("Vertex Query Result window", TableFlag::RowSortingEnabled, this));
+        }
+        else {
+            result_window->raise();
+        }
+        model_line_t header = edge_client->tablemodel()->getHeader();
+        model_table_t table = edge_client->tablemodel()->getTable();
+        result_window->resetTable(std::move(table), header);
+        result_window->show();
+    }
+    catch(std::exception& e)
+    {
+        QMessageBox::critical(this, "CmDisplaySearchResult", e.what());
+    }
+}
+
+void EdgesWidget::CmSearchQuery()
+{
+    try {
+        auto query = edge_client->tablemodel()->query();
+        auto query_fields = edge_client->tablemodel()->queryFields();
+        if(!query_window) {
+            query_window.reset(new QueryWidget("Edges Query Widget", schema_name, {schema_name}, query, query_fields, this));
+            QObject::connect(query_window.get(), &QueryWidget::queryChanged, this, &EdgesWidget::changeQuery);
+        }
+        else {
+            query_window->updateQuery(schema_name, query, query_fields);
+            query_window->raise();
+        }
+        query_window->show();
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical( this, "CmSearchQuery", e.what() );
+    }
+}
+
+void EdgesWidget::CmOutgoingQuery()
+{
+    try {
+        QString schema;
+        auto vertex = edge_client->incomingVertex();
+        if(!vertex.isEmpty()) {
+            schema = edge_client->vertex_schema_from_id(vertex);
+        }
+        auto query = edge_client->intablemodel()->query();
+        auto query_fields = edge_client->intablemodel()->queryFields();
+        if(!in_query_window) {
+            in_query_window.reset(new QueryWidget("Incoming Query Widget", schema, ArangoDatabase::getVertexesList(), query, query_fields, this));
+            QObject::connect(in_query_window.get(), &QueryWidget::queryChanged, this, &EdgesWidget::changeInQuery);
+        }
+        else {
+            in_query_window->updateQuery(schema, query, query_fields);
+            in_query_window->raise();
+        }
+        in_query_window->show();
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical( this, "CmOutgoingQuery", e.what() );
+    }
+}
+
+void EdgesWidget::CmIncomingQuery()
+{
+    try {
+        QString schema;
+        auto vertex = edge_client->outgoingVertex();
+        if(!vertex.isEmpty()) {
+            schema = edge_client->vertex_schema_from_id(vertex);
+        }
+        auto query = edge_client->outtablemodel()->query();
+        auto query_fields = edge_client->outtablemodel()->queryFields();
+        if(!out_query_window) {
+            out_query_window.reset(new QueryWidget("Incoming Query Widget", schema, ArangoDatabase::getVertexesList(), query, query_fields, this));
+            QObject::connect(out_query_window.get(), &QueryWidget::queryChanged, this, &EdgesWidget::changeOutQuery);
+        }
+        else {
+            out_query_window->updateQuery(schema, query, query_fields);
+            out_query_window->raise();
+        }
+        out_query_window->show();
+    }
+    catch(std::exception& e) {
+        QMessageBox::critical( this, "CmIncomingQuery", e.what() );
+    }
+}
+
+void EdgesWidget::closeEvent(QCloseEvent* e)
+{
+    if(query_window) {
+        query_window->close();
+    }
+    if(in_query_window) {
+        in_query_window->close();
+    }
+    if(out_query_window) {
+        out_query_window->close();
+    }
+    if(result_window) {
+        result_window->close();
+    }
+    QMainWindow::closeEvent(e);
+}
+
 
 std::vector<std::string> EdgesWidget::select_keys(const QString& title)
 {
@@ -419,6 +552,7 @@ void EdgesWidget::define_window()
     QObject::connect(ui->typeBox, &QComboBox::currentTextChanged, this, &EdgesWidget::typeChanged);
     QObject::connect(edge_client.get(), &VertexClient::editorChanged, this, &EdgesWidget::scrollInOut);
     QObject::connect(edge_client.get(), &VertexClient::executingChange, this, &EdgesWidget::setExecuting);
+    QObject::connect(edge_client.get(), &VertexClient::updatedQueryString, ui->edgeQuery, &QTextEdit::setText);
 
     qDebug() << "EdgesWidget construct";
 }

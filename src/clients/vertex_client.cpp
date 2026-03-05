@@ -313,6 +313,14 @@ std::string VertexClient::tableId(size_t row) const
     return {};
 }
 
+std::string VertexClient::tableField(const std::string field, size_t row) const
+{
+    if(impl_func()->keys_model) {
+        return impl_func()->keys_model->get_field(field, row);
+    }
+    return {};
+}
+
 void VertexClient::deleteRecord(QString vertex_id)
 {
     if(impl_func()->keys_model) {

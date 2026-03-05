@@ -48,7 +48,11 @@ public:
     Q_INVOKABLE QString incomingVertex() const;
     Q_INVOKABLE QString outgoingVertex() const;
 
+    void set_to(const QModelIndex &index);
+    void set_from(const QModelIndex &index);
+
     QString vertex_schema_from_id(const QString &key_id);
+
 protected:
     EdgeClientPrivate* impl_func()
     { return reinterpret_cast<EdgeClientPrivate *>(impl_ptr.get()); }

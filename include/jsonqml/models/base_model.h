@@ -105,6 +105,20 @@ public:
     /// Set document-handle(_id) to document
     Q_INVOKABLE void setOid(const std::string& doc_id);
 
+    template <typename T>
+    bool setValue(const std::string& jsonpath, const T& value) {
+        bool ret=false;
+        try {
+            beginResetModel();
+            ret = current_data().set_value_via_path(jsonpath, value);
+            endResetModel();
+        }
+        catch(std::exception& e) {
+            endResetModel();
+        }
+        return ret;
+    }
+
 protected:
     static const QStringList type_names;
     bool use_combo_box;

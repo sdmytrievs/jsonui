@@ -52,6 +52,7 @@ public:
     Q_INVOKABLE virtual void readEditorId(QString vertex_id);
     Q_INVOKABLE QString editorId();
     std::string tableId(size_t row) const;
+    std::string tableField(const std::string field, size_t row) const;
 
     Q_INVOKABLE virtual void deleteRecord(QString vertex_id);
     Q_INVOKABLE virtual void updateRecord();

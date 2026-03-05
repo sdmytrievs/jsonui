@@ -184,7 +184,7 @@ void FormatImpexWidget::CmRunScript()
         jsonio::JSONIO_THROW_IF(datafile.empty(), "impex", 13, " undefined file with data to import");
         bool overwrite = ui->overwriteBox->isChecked();
         std::string impex_data_name = ui->schemaBox->currentText().toStdString();
-        recipe_client->jsonmodel()->current_object().get_value_via_path("label", impex_data_name, impex_data_name);
+        recipe_client->getValue("label", impex_data_name, impex_data_name);
         run_funct(impex_data_name, schema_name.toStdString(),
                   recipe_client->jsonmodel()->current_object().dump(true),
                   datafile, overwrite);

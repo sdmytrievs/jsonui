@@ -49,6 +49,23 @@ public:
 
     void setSchemaList(const QStringList &new_list);
 
+    template <typename T>
+    bool setValue(const std::string& jsonpath, const T& value) {
+        if(jsonmodel()) {
+            return jsonmodel()->setValue(jsonpath, value);
+        }
+        return false;
+    }
+
+    template <typename T>
+    bool getValue(const std::string& jsonpath, T& value, const T& def_value)
+    {
+        if(jsonmodel()) {
+            return jsonmodel()->current_object().get_value_via_path(jsonpath, value, def_value);
+        }
+        return false;
+    }
+
     Q_INVOKABLE void readJson(const QString& path);
     Q_INVOKABLE void saveJson(const QString& path);
 

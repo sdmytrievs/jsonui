@@ -85,8 +85,10 @@ const jsonio::DBQueryBase &DBQueryModel::query() const
     return  data_query;
 }
 
-const model_line_t &DBQueryModel::queryFields() const
+model_line_t DBQueryModel::queryFields() const
 {
+    auto fields = header;
+    fields.erase(fields.begin());
     return header;
 }
 
@@ -97,12 +99,24 @@ QString DBQueryModel::lastQuery() const
 
 QStringList DBQueryModel::lastQueryFields() const
 {
-    return transform2qt(header);
+    return transform2qt(queryFields());
 }
 
 bool DBQueryModel::queryExecuting()
 {
     return query_executing;
+}
+
+std::string DBQueryModel::get_field(const std::string field, size_t row) const
+{
+    if(row<table.size()) {
+        for(size_t ii=0; ii<header.size(); ++ii) {
+            if(header[ii] == field) {
+                return table[row][ii];
+            }
+        }
+    }
+    return {};
 }
 
 }

@@ -1,6 +1,5 @@
 1. HelpMainWindow - not implemented scroll to anchor
-3. Check help keys(na,me) for all applications/windows
-4. Implement&debug vertex and edge widgets commands
+3. Check help keys(name) for all applications/windows
 5. run script to FormatImpexWidget
 6. deploy script
 7. github CI
@@ -39,8 +38,5 @@ json_view.h
 JsonEditWidget.h
 
 VertexWidget.h
-
-!!!!!
-
-include/jsonqml/forms/EdgesWidget.h \
+EdgesWidget.h 
 

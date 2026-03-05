@@ -261,4 +261,26 @@ QString EdgeClient::outgoingVertex() const
     return QString::fromStdString(impl_func()->out_vertex_id);
 }
 
+void EdgeClient::set_to(const QModelIndex &index)
+{
+    std::string in_id = outtablemodel()->get_field("_id", index.row());
+    std::string id_get;
+    getValue<std::string>("_id", id_get, "");
+    // only to unsaved records
+    if(id_get.empty() && !in_id.empty()) {
+        setValue("_to", in_id);
+    }
+}
+
+void EdgeClient::set_from(const QModelIndex &index)
+{
+    std::string out_id = intablemodel()->get_field("_id", index.row());
+    std::string id_get;
+    getValue<std::string>("_id", id_get, "");
+    // only to unsaved records
+    if(id_get.empty() && !out_id.empty()) {
+        setValue("_from", out_id);
+    }
+}
+
 }

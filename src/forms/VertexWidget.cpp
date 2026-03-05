@@ -281,13 +281,12 @@ void VertexWidget::CmSearchQuery()
     try {
         auto query = vertex_client->tablemodel()->query();
         auto query_fields = vertex_client->tablemodel()->queryFields();
-        query_fields.erase(query_fields.begin());
         if(!query_window) {
-            query_window.reset(new QueryWidget("Vertex Query Widget", {schema_name}, query, query_fields, this));
+            query_window.reset(new QueryWidget("Vertex Query Widget", schema_name, {schema_name}, query, query_fields, this));
             QObject::connect(query_window.get(), &QueryWidget::queryChanged, this, &VertexWidget::changeQuery);
         }
         else {
-            query_window->updateQuery({schema_name}, query, query_fields);
+            query_window->updateQuery(schema_name, query, query_fields);
             query_window->raise();
         }
         query_window->show();
@@ -296,8 +295,6 @@ void VertexWidget::CmSearchQuery()
         QMessageBox::critical( this, "CmSearchQuery", e.what() );
     }
 }
-
-// private -----------------------------------------------------------
 
 void VertexWidget::closeEvent(QCloseEvent* e)
 {

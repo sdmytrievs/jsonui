@@ -14,6 +14,7 @@ namespace jsonqml {
 QString QueryWidget::query_shema_name = "Query";
 
 QueryWidget::QueryWidget(const QString &atitle,
+                         const QString& curschema,
                          const QStringList &schemas,
                          const jsonio::DBQueryBase &query,
                          const jsonio::values_t &query_fields,
@@ -22,11 +23,13 @@ QueryWidget::QueryWidget(const QString &atitle,
     ui(new Ui::QueryWidget),
     query_client(),
     query_edit(),
-    schema_name(schemas[0]),
+    schema_name(curschema),
     default_query(query),
     default_query_fields(query_fields),
     query_description(std::make_shared<jsonio::DBQueryBase>(query), query_fields)
 {
+    query_description.setSchema(schema_name.toStdString());
+
     ui->setupUi(this);
     //this->setAttribute(Qt::WA_DeleteOnClose); // automatically delete itself when window is closed
     QString title = qApp->applicationName()+atitle;
@@ -36,10 +39,9 @@ QueryWidget::QueryWidget(const QString &atitle,
     ui->splitterSelect->setStretchFactor(0, 1);
     ui->splitterSelect->setStretchFactor(1, 2);
     ui->qSchema->insertItems(0, schemas);
+    ui->qSchema->setCurrentText(schema_name);
 
     query_client.reset(new VertexClient(Resource, query_shema_name, new_schema_query(), {}, this));
-    connect(query_client.get(), &VertexClient::editorChanged,
-            this, &QueryWidget::editor_changed);
 
     // set up select model
     lstmodel = new QStringListModel(this);
@@ -64,15 +66,16 @@ QueryWidget::QueryWidget(const QString &atitle,
 QueryWidget::~QueryWidget()
 {}
 
-void QueryWidget::updateQuery(const QStringList &schemas,
+void QueryWidget::updateQuery(const QString& curschema,
                               const jsonio::DBQueryBase &query,
                               const jsonio::values_t &query_fields)
 {
-    ui->qSchema->clear();
-    ui->qSchema->insertItems(0, schemas);
-    schema_name = schemas[0];
+    default_query = query;
+    default_query_fields = query_fields;
     jsonio::DBQueryDef new_description(std::make_shared<jsonio::DBQueryBase>(query), query_fields);
     query_description = new_description;
+    query_description.setSchema(curschema.toStdString());
+    ui->qSchema->setCurrentText(curschema);
     show_query();
 }
 
@@ -144,6 +147,8 @@ void QueryWidget::CmRead()
     if(sel_dlg.exec())  {
         auto selndx = sel_dlg.selIndex();
         if(selndx>=0) {
+            connect(query_client.get(), &VertexClient::editorChanged,
+                    this, &QueryWidget::editor_changed, Qt::UniqueConnection);
             query_client->readEditorData(selndx);
         }
     }
@@ -242,6 +247,7 @@ void QueryWidget::AQL_toggled(bool checked)
 
 void QueryWidget::schema_changed(const QString& text)
 {
+    qDebug() << "schema_changed " << text;
     if(schema_name != text) {
         schema_name = text;
         query_client->tablemodel()->updateQuery(new_schema_query());
@@ -257,6 +263,8 @@ void QueryWidget::select_restore()
 void QueryWidget::editor_changed()
 {
     from_json_node(query_client->jsonmodel()->current_object());
+    disconnect(query_client.get(), &VertexClient::editorChanged,
+            this, &QueryWidget::editor_changed);
 }
 
 //----------------------------------------------------------------
